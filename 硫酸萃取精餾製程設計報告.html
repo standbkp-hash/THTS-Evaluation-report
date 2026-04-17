@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HF 濃縮製程工程設計：10% 至 50% 硫酸萃取精餾</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Slate (professional/industrial), Emerald (product/HF), Amber (Sulfuric Acid/Heat), Cyan (Water/UPW). -->
+    <!-- Application Structure Plan: 
+         1. Header & Design Basis: Clearly states the 50 t/d input and 50% output goals.
+         2. High-Level Mass Balance Dashboard: Quick executive overview of inputs and outputs.
+         3. Interactive PFD (Process Flow Diagram): HTML/CSS-based block diagram showing T-101, T-102, M-103. Clickable nodes.
+         4. Dynamic Parameter Panel: Displays detailed operating conditions (T, P, Flow, Specs) based on the selected PFD node.
+         5. Component Mass Tracking Chart: Chart.js bar chart showing the mass flow of HF vs H2O across the key process streams. -->
+    <!-- Visualization & Content Choices: 
+         - PFD -> CSS Flexbox with Unicode icons/arrows (NO SVG/Mermaid) to ensure strict compliance while maintaining interactivity.
+         - Data tracking -> Stacked Bar Chart (Chart.js) effectively shows how water is removed and HF is isolated/diluted. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; }
+        
+        /* Strict Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 45vh; max-height: 450px; }
+        }
+
+        /* PFD Node Styling */
+        .pfd-node {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            text-align: center;
+            min-width: 160px;
+            z-index: 10;
+        }
+        .pfd-node:hover { transform: translateY(-4px); border-color: #0d9488; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .pfd-node.active { border-color: #0d9488; background-color: #f0fdfa; ring: 4px; ring-color: #ccfbf1; }
+        
+        .pfd-arrow-v { font-size: 1.5rem; color: #94a3b8; font-weight: bold; line-height: 1; padding: 0.5rem 0; text-align: center; }
+        .pfd-arrow-h { font-size: 1.5rem; color: #94a3b8; font-weight: bold; display: flex; align-items: center; justify-content: center; padding: 0 1rem; }
+        
+        .stream-label { font-size: 0.75rem; font-weight: bold; color: #64748b; background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; position: absolute; white-space: nowrap; z-index: 20; }
+        
+        /* 專業直立式蒸餾塔插圖 CSS */
+        .tower-icon {
+            width: 28px;
+            height: 44px;
+            border: 3px solid currentColor;
+            border-radius: 14px 14px 2px 2px;
+            margin: 0 auto 8px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .tower-icon::before, .tower-icon::after {
+            content: '';
+            width: 100%;
+            height: 3px;
+            background-color: currentColor;
+        }
+
+        /* Custom Scrollbar for details */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2">HF 濃縮製程工程設計 (10% → 50%)</h1>
+            <p class="text-teal-400 font-medium">設計基準：進料 50 t/d (10% HF) | 目標產物 50% HF | 廢棄物 HF &lt; 0.1%</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- 1. Mass Balance Dashboard -->
+        <section class="bg-slate-100 p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-300 pb-2">
+                <h2 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <span class="text-indigo-600">⚖️</span> 全系統物料平衡 (Total Mass Balance: 95.0 t/d)
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Inputs -->
+                <div class="space-y-3">
+                    <span class="text-xs font-bold text-indigo-700 uppercase bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200">系統進料 (Inputs) : 95.0 t/d</span>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-white border-l-4 border-slate-500 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            <span class="block text-xs font-bold text-slate-500 mb-1">進料原液</span>
+                            <span class="text-xl font-black text-slate-800">50.0 <span class="text-xs font-normal">t/d</span></span>
+                            <span class="block text-[10px] text-slate-400 mt-1">10% HF</span>
+                        </div>
+                        <div class="bg-white border-l-4 border-amber-400 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            <span class="block text-xs font-bold text-amber-600 mb-1">98% 硫酸</span>
+                            <span class="text-xl font-black text-slate-800">40.0 <span class="text-xs font-normal">t/d</span></span>
+                            <span class="block text-[10px] text-amber-600/70 mt-1">萃取劑</span>
+                        </div>
+                        <div class="bg-white border-l-4 border-blue-400 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            <span class="block text-xs font-bold text-blue-600 mb-1">調配超純水</span>
+                            <span class="text-xl font-black text-slate-800">5.0 <span class="text-xs font-normal">t/d</span></span>
+                            <span class="block text-[10px] text-blue-400 mt-1">UPW (M-103)</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Outputs -->
+                <div class="space-y-3">
+                    <span class="text-xs font-bold text-rose-700 uppercase bg-rose-100 px-3 py-1 rounded-full border border-rose-200">系統出料 (Outputs) : 95.0 t/d</span>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-white border-l-4 border-cyan-500 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            <span class="block text-xs font-bold text-cyan-600 mb-1">塔頂廢水</span>
+                            <span class="text-xl font-black text-slate-800">36.8 <span class="text-xs font-normal">t/d</span></span>
+                            <span class="block text-[10px] text-cyan-600/70 mt-1">HF < 0.1%</span>
+                        </div>
+                        <div class="bg-white border-l-4 border-amber-600 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            <span class="block text-xs font-bold text-amber-700 mb-1">塔底廢酸</span>
+                            <span class="text-xl font-black text-slate-800">48.2 <span class="text-xs font-normal">t/d</span></span>
+                            <span class="block text-[10px] text-amber-700/70 mt-1">~81% H₂SO₄</span>
+                        </div>
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            <span class="block text-xs font-bold text-emerald-600 mb-1">50% HF 產品</span>
+                            <span class="text-xl font-black text-emerald-700">10.0 <span class="text-xs font-normal text-emerald-600">t/d</span></span>
+                            <span class="block text-[10px] text-emerald-600/70 mt-1">Product</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Interactive PFD & Details -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <span class="text-teal-600">⚙️</span> 互動式製程方塊圖 (PFD)
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">點擊下方製程節點，查看各單元的詳細操作溫壓、質量流量與組成。</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row">
+                
+                <!-- Diagram Area (Left) -->
+                <div class="w-full lg:w-3/5 p-8 border-b lg:border-b-0 lg:border-r border-slate-200 flex justify-center bg-slate-100/50 overflow-x-auto relative min-h-[450px] items-center">
+                    
+                    <div class="flex justify-center items-center w-full relative min-w-[850px] py-16">
+                        
+                        <!-- Feed In -->
+                        <div class="flex items-center shrink-0">
+                            <div class="bg-slate-700 text-white px-3 py-2 rounded text-sm font-bold shadow-md whitespace-nowrap z-20">10% HF 進料</div>
+                            <div class="pfd-arrow-h">→</div>
+                        </div>
+
+                        <!-- T-101 Column Wrapper -->
+                        <div class="flex flex-col items-center relative shrink-0">
+                            <!-- Top Output -->
+                            <div class="absolute bottom-full mb-2 flex flex-col items-center">
+                                <div class="bg-cyan-100 text-cyan-800 px-3 py-1 rounded text-xs font-bold border border-cyan-300 shadow-sm whitespace-nowrap">廢水 (36.8 t/d)</div>
+                                <div class="pfd-arrow-v text-cyan-400">↑</div>
+                            </div>
+                            <!-- T-101 Node -->
+                            <div id="node-t101" class="pfd-node active" onclick="updateDetails('t101')">
+                                <div class="tower-icon text-teal-600"></div>
+                                <h3 class="font-bold text-slate-800">預濃縮塔</h3>
+                                <span class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded mt-1 inline-block">T-101</span>
+                            </div>
+                        </div>
+
+                        <!-- Arrow T101 -> T102 -->
+                        <div class="pfd-arrow-h relative w-24 shrink-0">
+                            →
+                            <span class="stream-label -top-3 left-1/2 -translate-x-1/2">~38% HF</span>
+                        </div>
+
+                        <!-- T-102 Column Wrapper -->
+                        <div class="flex flex-col items-center relative shrink-0">
+                            <!-- Top Input -->
+                            <div class="absolute bottom-full mb-2 flex flex-col items-center">
+                                <div class="bg-amber-100 text-amber-800 px-3 py-1 rounded text-xs font-bold border border-amber-300 shadow-sm whitespace-nowrap">98% 硫酸 (40.0 t/d)</div>
+                                <div class="pfd-arrow-v text-amber-400">↓</div>
+                            </div>
+                            <!-- T-102 Node -->
+                            <div id="node-t102" class="pfd-node" onclick="updateDetails('t102')">
+                                <div class="tower-icon text-amber-600"></div>
+                                <h3 class="font-bold text-slate-800">萃取精餾塔</h3>
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded mt-1 inline-block">T-102</span>
+                            </div>
+                            <!-- Bottom Output -->
+                            <div class="absolute top-full mt-2 flex flex-col items-center">
+                                <div class="pfd-arrow-v text-amber-500">↓</div>
+                                <div class="bg-amber-100 text-amber-800 px-3 py-1 rounded text-xs font-bold border border-amber-300 shadow-sm whitespace-nowrap">廢硫酸 (48.2 t/d)</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow T102 -> M103 -->
+                        <div class="pfd-arrow-h relative w-24 shrink-0">
+                            →
+                            <span class="stream-label -top-3 left-1/2 -translate-x-1/2">100% AHF</span>
+                        </div>
+
+                        <!-- M-103 Column Wrapper -->
+                        <div class="flex flex-col items-center relative shrink-0">
+                            <!-- Top Input -->
+                            <div class="absolute bottom-full mb-2 flex flex-col items-center">
+                                <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded text-xs font-bold border border-blue-300 shadow-sm whitespace-nowrap">超純水 (UPW)</div>
+                                <div class="pfd-arrow-v text-blue-400">↓</div>
+                            </div>
+                            <!-- M-103 Node -->
+                            <div id="node-m103" class="pfd-node border-emerald-300" onclick="updateDetails('m103')">
+                                <div class="tower-icon text-emerald-600"></div>
+                                <h3 class="font-bold text-slate-800">調配吸收槽</h3>
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded mt-1 inline-block">M-103</span>
+                            </div>
+                        </div>
+
+                        <!-- Product Out -->
+                        <div class="flex items-center shrink-0">
+                            <div class="pfd-arrow-h">→</div>
+                            <div class="bg-emerald-600 text-white px-4 py-2 rounded text-sm font-bold shadow-md whitespace-nowrap z-20">50% HF 產品</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Parameter Detail Panel (Right) -->
+                <div class="w-full lg:w-2/5 p-6 bg-white flex flex-col h-[450px]">
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+                        <div id="detail-icon" class="flex-shrink-0"></div>
+                        <div>
+                            <h3 id="detail-title" class="text-xl font-extrabold text-teal-700">T-101 預濃縮塔</h3>
+                            <p id="detail-subtitle" class="text-xs text-slate-500 font-bold uppercase tracking-wider">Vacuum Pre-concentration</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-y-auto custom-scroll pr-2 flex-grow space-y-4">
+                        <!-- Purpose -->
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 mb-1">設備目的</h4>
+                            <p id="detail-purpose" class="text-sm text-slate-700 leading-relaxed bg-slate-50 p-2 rounded border border-slate-100">
+                                於負壓下將大量水分拔除，將 HF 濃縮至接近共沸點 (約 38%)，大幅降低後段萃取塔的負荷與硫酸消耗量。
+                            </p>
+                        </div>
+
+                        <!-- Operating Conditions -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                                <span class="block text-xs text-slate-400 font-bold mb-1">操作壓力</span>
+                                <span id="detail-press" class="text-lg font-mono font-bold text-slate-800">200 torr</span>
+                            </div>
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                                <span class="block text-xs text-slate-400 font-bold mb-1">回流比 (R/R)</span>
+                                <span id="detail-reflux" class="text-lg font-mono font-bold text-slate-800">0.5 ~ 1.5</span>
+                            </div>
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                                <span class="block text-xs text-slate-400 font-bold mb-1">塔頂溫度</span>
+                                <span id="detail-ttop" class="text-lg font-mono font-bold text-blue-600">~ 66 °C</span>
+                            </div>
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm">
+                                <span class="block text-xs text-slate-400 font-bold mb-1">塔底溫度</span>
+                                <span id="detail-tbtm" class="text-lg font-mono font-bold text-red-500">~ 82 °C</span>
+                            </div>
+                        </div>
+
+                        <!-- Streams Data -->
+                        <div class="bg-slate-800 text-white rounded-lg p-3 shadow-inner">
+                            <h4 class="text-xs font-bold text-teal-400 border-b border-slate-600 pb-1 mb-2">物料平衡 (Mass Balance)</h4>
+                            <ul id="detail-streams" class="space-y-2 text-sm font-mono">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Component Mass Tracking Chart -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                    <span class="text-indigo-600">📊</span> 全製程 HF 與 H₂O 質量分佈追蹤
+                </h2>
+                <p class="text-slate-500 mt-1">追蹤 50 t/d 進料中，HF (5t) 與 H₂O (45t) 在各物流中的流向與分離效果。</p>
+            </div>
+            
+            <div class="chart-container bg-slate-50 border border-slate-100">
+                <canvas id="massBalanceChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 py-6 border-t border-slate-800 text-center mt-8">
+        <p class="text-slate-400 text-sm">THTS© 2026 Process Development & Design. Confidential & Proprietary.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Configuration for the Process Nodes
+        const processData = {
+            t101: {
+                id: 't101', icon: '<div class="tower-icon text-teal-600 !m-0"></div>', title: 'T-101 預濃縮塔', subtitle: 'Vacuum Pre-concentration', color: 'teal',
+                purpose: '於負壓下將大量水分拔除，將 HF 濃縮至接近共沸點 (約 38%)。採用負壓是為了將塔底溫度降至 85°C 以下，減輕高溫濃 HF 對 PFA 內襯的腐蝕破壞。',
+                params: { press: '200 torr', reflux: '0.5 ~ 1.5', tTop: '~ 66 °C', tBtm: '~ 82 °C' },
+                streams: [
+                    { name: '進料 (Feed)', details: '50.0 t/d (HF: 10%, H₂O: 90%)', highlight: '' },
+                    { name: '塔頂產出 (Waste)', details: '36.8 t/d (H₂O, <0.1% HF)', highlight: 'text-cyan-300' },
+                    { name: '塔底產出 (To T-102)', details: '13.2 t/d (HF: ~38%, H₂O: 62%)', highlight: 'text-amber-300' }
+                ]
+            },
+            t102: {
+                id: 't102', icon: '<div class="tower-icon text-amber-600 !m-0"></div>', title: 'T-102 萃取精餾塔', subtitle: 'Extractive Distillation', color: 'amber',
+                purpose: '導入 98% 濃硫酸作為萃取劑破壞 HF-H₂O 共沸。濃硫酸吸水並降低水蒸氣壓，迫使 100% 無水氟化氫 (AHF) 從塔頂精餾逸出。',
+                params: { press: '760 torr', reflux: '2.0 ~ 4.0', tTop: '~ 20 °C', tBtm: '130 ~ 150 °C' },
+                streams: [
+                    { name: '塔中進料 (From T-101)', details: '13.2 t/d (~38% HF)', highlight: '' },
+                    { name: '塔頂進料 (Extractant)', details: '40.0 t/d (98% H₂SO₄)', highlight: 'text-amber-400' },
+                    { name: '塔頂產出 (AHF Gas)', details: '5.0 t/d (100% HF, 無水)', highlight: 'text-emerald-400' },
+                    { name: '塔底產出 (Waste Acid)', details: '48.2 t/d (H₂SO₄: ~81.3%, HF: <0.1%)', highlight: 'text-rose-400' }
+                ]
+            },
+            m103: {
+                id: 'm103', icon: '<div class="tower-icon text-emerald-600 !m-0"></div>', title: 'M-103 調配吸收槽', subtitle: 'UPW Blending / Absorption', color: 'emerald',
+                purpose: '將 100% 無水 AHF 氣體以超純水 (UPW) 吸收稀釋。因溶解熱極大，需配備碳化矽 (SiC) 換熱器將溫度嚴格控制於 25°C 以下，避免 HF 揮發並確保 50% 濃度精準度。',
+                params: { press: '760 torr', reflux: 'N/A', tTop: 'N/A', tBtm: '< 25 °C (冷卻)' },
+                streams: [
+                    { name: '進料 1 (AHF)', details: '5.0 t/d (100% HF)', highlight: '' },
+                    { name: '進料 2 (UPW)', details: '5.0 t/d (100% H₂O)', highlight: 'text-blue-300' },
+                    { name: '最終產物 (Product)', details: '10.0 t/d (精準 50.0% HF)', highlight: 'text-emerald-400 font-bold' }
+                ]
+            }
+        };
+
+        // Interaction Logic
+        function updateDetails(nodeId) {
+            // UI Active State Toggle
+            document.querySelectorAll('.pfd-node').forEach(node => {
+                node.classList.remove('active');
+            });
+            document.getElementById(`node-${nodeId}`).classList.add('active');
+
+            // Fetch Data
+            const data = processData[nodeId];
+
+            // Update DOM Elements
+            document.getElementById('detail-icon').innerHTML = data.icon;
+            document.getElementById('detail-title').textContent = data.title;
+            document.getElementById('detail-title').className = `text-xl font-extrabold text-${data.color}-700`;
+            document.getElementById('detail-subtitle').textContent = data.subtitle;
+            document.getElementById('detail-purpose').textContent = data.purpose;
+            
+            document.getElementById('detail-press').textContent = data.params.press;
+            document.getElementById('detail-reflux').textContent = data.params.reflux;
+            document.getElementById('detail-ttop').textContent = data.params.tTop;
+            document.getElementById('detail-tbtm').textContent = data.params.tBtm;
+
+            // Render Streams List
+            const streamContainer = document.getElementById('detail-streams');
+            streamContainer.innerHTML = '';
+            data.streams.forEach(stream => {
+                const li = document.createElement('li');
+                li.className = "flex flex-col border-b border-slate-600/50 pb-1 last:border-0 last:pb-0";
+                li.innerHTML = `
+                    <span class="text-slate-400 text-xs">${stream.name}</span>
+                    <span class="${stream.highlight || 'text-slate-200'}">${stream.details}</span>
+                `;
+                streamContainer.appendChild(li);
+            });
+        }
+
+        // Initialize Chart.js
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial detail load
+            updateDetails('t101');
+
+            // Chart Configuration
+            const ctx = document.getElementById('massBalanceChart').getContext('2d');
+            
+            // Mass Data (t/d) based on mass balance calculations
+            // Streams: 1.Feed, 2.T101 Top(Water), 3.T101 Btm(38%), 4.T102 Top(AHF), 5.M103 UPW Add, 6.Final Product
+            const labels = ['進料原液', 'T-101 廢水排出', 'T-101 塔底濃縮', 'T-102 塔頂無水HF', 'M-103 超純水添加', '最終 50% 產品'];
+            const hfMass = [5.0, 0.0, 5.0, 5.0, 0.0, 5.0];
+            const waterMass = [45.0, 36.8, 8.2, 0.0, 5.0, 5.0];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'HF 質量 (t/d)',
+                            data: hfMass,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)', // Emerald 500
+                            borderColor: 'rgb(5, 150, 105)',
+                            borderWidth: 1,
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: 'H₂O 質量 (t/d)',
+                            data: waterMass,
+                            backgroundColor: 'rgba(6, 182, 212, 0.8)', // Cyan 500
+                            borderColor: 'rgb(8, 145, 178)',
+                            borderWidth: 1,
+                            stack: 'Stack 0',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                footer: (tooltipItems) => {
+                                    let total = 0;
+                                    tooltipItems.forEach(item => {
+                                        total += item.parsed.y;
+                                    });
+                                    return '總質量: ' + total.toFixed(1) + ' t/d';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: {
+                            stacked: true,
+                            title: { display: true, text: '質量流量 (t/d)', font: { weight: 'bold' } },
+                            suggestedMax: 55
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

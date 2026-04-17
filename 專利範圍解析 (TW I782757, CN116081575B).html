@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TW I782757 專利申請專利範圍解析報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Slate (professional/neutral background), Indigo (analytical/tech accents), Emerald (environmental/recycling highlights), Amber (warnings/parameters), Rose (invalidation/threats). -->
+    <!-- Application Structure Plan: A modern interactive dashboard layout. 
+         1. Overview Section: High-level patent metadata and core technology summary. 
+         2. Interactive Claims Flow: A dynamic, HTML/CSS-based block diagram allowing users to toggle between "Mixed Acid (Claim 1)" and "Single Acid (Claim 7)" processes.
+         3. Parameter Analysis: Visualizing dependent claims using interactive Chart.js graphs.
+         4. TW vs CN Comparison: A structured comparison matrix showing that the granted TW patent and the granted CN patent have identical claims. 
+         5. UPDATED: Invalidation Strategy: A dedicated section outlining prior art (CN 104261349 A, US 5,603,811 A) and newly added CN 101423194 A (Dehydration using metal fluorides) and strategies to invalidate the current patent based on obviousness and routine optimization. -->
+    <!-- Visualization & Content Choices: 
+         - Overview -> Stats cards & text.
+         - Process flow -> Interactive CSS Flexbox/Grid nodes + JS state. NO SVG/Mermaid.
+         - Operating Temperatures -> Chart.js Bar Chart.
+         - TW vs CN Comparison -> Tailwind styled Grid for clear side-by-side comparison of the identical granted claims. 
+         - Invalidation -> Highlighted cards emphasizing technical overlaps and attack vectors, now including analysis on the "dehydration" patent. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 50vh; max-height: 450px; }
+        }
+
+        .flow-node {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            position: relative;
+        }
+        .flow-node:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .flow-node.active { ring: 4px; ring-color: #4f46e5; border-color: #4f46e5; background-color: #eef2ff; }
+        
+        .arrow-down { font-size: 1.5rem; color: #94a3b8; text-align: center; line-height: 1; padding: 0.25rem 0; }
+        .arrow-right { font-size: 1.5rem; color: #94a3b8; display: flex; align-items: center; justify-content: center; padding: 0 0.5rem; }
+        
+        .recycle-path {
+            border-left: 3px dashed #10b981;
+            border-bottom: 3px dashed #10b981;
+            border-top: 3px dashed #10b981;
+            border-radius: 12px 0 0 12px;
+            position: absolute;
+            left: -30px;
+            width: 30px;
+            z-index: 0;
+        }
+        
+        .hidden-flow { display: none !important; }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-200 selection:text-indigo-900">
+
+    <!-- Navigation -->
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">📜</span>
+                    <span class="font-bold text-lg tracking-wide">專利範圍解析與攻防策略</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#overview" class="hover:text-indigo-300 text-sm font-medium transition-colors">專利總覽</a>
+                    <a href="#process-flows" class="hover:text-indigo-300 text-sm font-medium transition-colors">權利要求核心製程</a>
+                    <a href="#parameters" class="hover:text-indigo-300 text-sm font-medium transition-colors">附屬項參數分析</a>
+                    <a href="#cn-tw-comparison" class="hover:text-indigo-300 text-sm font-medium transition-colors">兩岸授權比對</a>
+                    <a href="#invalidation-strategy" class="hover:text-rose-300 text-sm font-bold transition-colors">舉發策略與前案</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Section 1: Overview -->
+        <section id="overview" class="scroll-mt-20">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                <div class="mb-6 border-b border-slate-100 pb-4">
+                    <h2 class="text-3xl font-extrabold text-slate-800 mb-2">專利保護範圍總覽</h2>
+                    <p class="text-slate-500 text-lg">本區塊摘要本專利的基本資訊、核心技術價值與權利要求（Claims）的整體結構。使用者可藉此快速掌握該專利在氫氟酸廢液處理上的獨特佈局與保護範疇。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5">
+                        <span class="block text-indigo-800 font-bold mb-1 text-sm uppercase tracking-wider">專利名稱</span>
+                        <span class="text-lg text-slate-800 font-semibold">以廢氫氟酸液為原料製備電子級無機酸的方法</span>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5">
+                        <span class="block text-emerald-800 font-bold mb-1 text-sm uppercase tracking-wider">核心保護技術</span>
+                        <span class="text-lg text-slate-800 font-semibold">萃取精餾 + 鹽類封閉循環系統</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                        <span class="block text-slate-600 font-bold mb-1 text-sm uppercase tracking-wider">權利要求總數</span>
+                        <span class="text-2xl font-black text-indigo-600">10 <span class="text-base font-normal text-slate-500">項 (CN版) / 8 項 (TW版)</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 text-white rounded-xl p-6">
+                    <h3 class="font-bold text-xl mb-4 border-l-4 border-emerald-400 pl-3">核心保護板塊劃分</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-2xl">⚗️</span>
+                                <h4 class="font-bold text-lg text-indigo-300">混酸廢液回收製程</h4>
+                            </div>
+                            <p class="text-slate-300 text-sm mb-2">處理對象：HF + HNO₃ + H₂O</p>
+                            <p class="text-emerald-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded inline-block">對應 Claim 1 (S1~S8)</p>
+                        </div>
+                        <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-2xl">💧</span>
+                                <h4 class="font-bold text-lg text-blue-300">單一酸廢液回收製程</h4>
+                            </div>
+                            <p class="text-slate-300 text-sm mb-2">處理對象：HF + H₂O</p>
+                            <p class="text-emerald-400 text-sm font-bold bg-slate-800 px-2 py-1 rounded inline-block">對應 CN: Claim 8 / TW: Claim 7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Process Flows -->
+        <section id="process-flows" class="scroll-mt-20">
+            <div class="mb-4">
+                <h2 class="text-3xl font-extrabold text-slate-800 mb-2">核心獨立項解析：互動製程地圖</h2>
+                <p class="text-slate-600">本區塊將獨立項（混酸回收與單一酸回收）的抽象法律文字轉換為具象的互動式流程。請選擇欲探索的專利標的，並點擊各步驟節點（Node），以查看專利要求中限定的化學機制與設備參數。</p>
+            </div>
+
+            <!-- Flow Toggle -->
+            <div class="flex gap-2 mb-6 bg-slate-200 p-1 rounded-lg inline-flex">
+                <button onclick="switchFlow('mixed')" id="btn-mixed" class="px-6 py-2 rounded-md bg-white shadow-sm font-bold text-indigo-700 transition-all">混酸廢液 (S1-S8)</button>
+                <button onclick="switchFlow('single')" id="btn-single" class="px-6 py-2 rounded-md font-medium text-slate-600 hover:text-slate-800 transition-all">單一酸廢液 (S1-S3)</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                
+                <!-- Diagram Area -->
+                <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 overflow-x-auto relative">
+                    
+                    <!-- MIXED ACID FLOW (Claim 1) -->
+                    <div id="flow-mixed" class="flex flex-col items-center min-w-[500px]">
+                        
+                        <!-- Stage 1 -->
+                        <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 relative z-10">
+                            <span class="absolute top-2 left-3 text-xs font-bold text-slate-400 uppercase tracking-wider">第一段：HF 提取</span>
+                            <div class="flex justify-center items-center mt-4">
+                                <div class="flex flex-col items-center mr-4">
+                                    <div class="bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold px-2 py-1 rounded shadow-sm text-center">
+                                        鹼金屬氟化鹽 +<br>鹼金屬硝酸鹽
+                                    </div>
+                                    <div class="arrow-down">↓</div>
+                                </div>
+                                <div onclick="showStepDetails('s1-3', 'mixed')" id="node-s1-3" class="flow-node active bg-white border-2 border-indigo-400 p-3 rounded-lg w-48 text-center shadow-md">
+                                    <span class="block font-bold text-indigo-800 mb-1">S1-S3: 破共沸精餾</span>
+                                    <span class="text-xs text-slate-500 block">分離並純化 HF 蒸氣</span>
+                                </div>
+                                <div class="arrow-right">→</div>
+                                <div class="bg-indigo-50 border border-indigo-200 text-indigo-800 text-sm font-bold px-3 py-2 rounded shadow-sm">
+                                    🧪 49% 電子級 HF
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-down font-bold text-slate-400 h-8 flex items-center justify-center">↓ 餾餘物</div>
+
+                        <!-- Stage 2 -->
+                        <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 relative z-10">
+                            <span class="absolute top-2 left-3 text-xs font-bold text-slate-400 uppercase tracking-wider">第一循環：鹽類回收</span>
+                            <div class="recycle-path h-[160px] top-[-80px]"></div>
+                            <div class="flex justify-center items-center mt-4">
+                                <div class="arrow-right text-emerald-500 font-bold w-12 flex-col text-xs leading-none">
+                                    <span class="block">↰ 循環</span>
+                                </div>
+                                <div onclick="showStepDetails('s4', 'mixed')" id="node-s4" class="flow-node bg-white border-2 border-slate-300 p-3 rounded-lg w-48 text-center shadow-md">
+                                    <span class="block font-bold text-emerald-700 mb-1">S4: 混合液蒸發</span>
+                                    <span class="text-xs text-slate-500 block">濃縮鹽類 / 蒸出酸水</span>
+                                </div>
+                                <div class="w-12"></div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-down font-bold text-slate-400 h-8 flex items-center justify-center">↓ HNO₃-水 混合氣體</div>
+
+                        <!-- Stage 3 -->
+                        <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 relative z-10">
+                            <span class="absolute top-2 left-3 text-xs font-bold text-slate-400 uppercase tracking-wider">第二段：HNO₃ 提取</span>
+                            <div class="flex justify-center items-center mt-4">
+                                <div class="flex flex-col items-center mr-4">
+                                    <div class="bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold px-2 py-1 rounded shadow-sm text-center">
+                                        鹼土金屬硝酸鹽
+                                    </div>
+                                    <div class="arrow-down">↓</div>
+                                </div>
+                                <div onclick="showStepDetails('s5-7', 'mixed')" id="node-s5-7" class="flow-node bg-white border-2 border-slate-300 p-3 rounded-lg w-48 text-center shadow-md">
+                                    <span class="block font-bold text-blue-700 mb-1">S5-S7: 破共沸精餾</span>
+                                    <span class="text-xs text-slate-500 block">分離並純化 HNO₃ 蒸氣</span>
+                                </div>
+                                <div class="arrow-right">→</div>
+                                <div class="bg-blue-50 border border-blue-200 text-blue-800 text-sm font-bold px-3 py-2 rounded shadow-sm">
+                                    🧪 70% 電子級 HNO₃
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-down font-bold text-slate-400 h-8 flex items-center justify-center">↓ 餾餘物</div>
+
+                        <!-- Stage 4 -->
+                        <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 relative z-10">
+                            <span class="absolute top-2 left-3 text-xs font-bold text-slate-400 uppercase tracking-wider">第二循環：鹽類回收</span>
+                            <div class="recycle-path h-[160px] top-[-80px] border-blue-400"></div>
+                            <div class="flex justify-center items-center mt-4">
+                                <div class="arrow-right text-blue-500 font-bold w-12 flex-col text-xs leading-none">
+                                    <span class="block">↰ 循環</span>
+                                </div>
+                                <div onclick="showStepDetails('s8', 'mixed')" id="node-s8" class="flow-node bg-white border-2 border-slate-300 p-3 rounded-lg w-48 text-center shadow-md">
+                                    <span class="block font-bold text-blue-700 mb-1">S8: 第二蒸發處理</span>
+                                    <span class="text-xs text-slate-500 block">濃縮鹼土金屬鹽</span>
+                                </div>
+                                <div class="w-12"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- SINGLE ACID FLOW (Claim 7/8) -->
+                    <div id="flow-single" class="flex flex-col items-center min-w-[500px] hidden-flow py-12">
+                        <div class="w-full max-w-md bg-white border border-slate-200 rounded-xl p-6 shadow-sm relative z-10 text-center">
+                            <span class="absolute top-0 right-0 bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-xl">單一酸版</span>
+                            <div class="bg-slate-100 rounded-lg p-3 mb-6 inline-block">
+                                <span class="font-bold text-slate-700">進料：不含硝酸之廢氫氟酸 (HF + H₂O)</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold px-4 py-2 rounded shadow-sm text-center mb-2 z-20">
+                                    添加：鹼金屬氟化鹽 + 鹼金屬硝酸鹽<br>
+                                    <span class="text-red-600 font-black tracking-widest text-sm">(> 20 mol%)</span>
+                                </div>
+                                <div class="arrow-down">↓</div>
+                                <div onclick="showStepDetails('s1-3-single', 'single')" id="node-s1-3-single" class="flow-node active bg-white border-2 border-indigo-400 p-4 rounded-xl w-64 text-center shadow-lg">
+                                    <span class="block text-2xl mb-2">🗼</span>
+                                    <span class="block font-bold text-xl text-indigo-800 mb-1">S1-S3: 提取氫氟酸</span>
+                                    <span class="text-sm text-slate-500 block">破共沸精餾 / 除霧 / 調配</span>
+                                </div>
+                                <div class="arrow-down">↓</div>
+                                <div class="bg-indigo-600 border border-indigo-700 text-white text-lg font-bold px-6 py-3 rounded-lg shadow-md">
+                                    🧪 49±0.5% 電子級 HF
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Panel -->
+                <div class="lg:col-span-2">
+                    <div class="bg-slate-800 text-white rounded-2xl shadow-lg border border-slate-700 p-6 h-full flex flex-col transition-all" id="detail-panel">
+                        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-600">
+                            <span id="detail-icon" class="text-3xl">⚙️</span>
+                            <h3 id="detail-title" class="text-2xl font-bold text-indigo-300">步驟 S1~S3 解析</h3>
+                        </div>
+                        <div class="space-y-5 flex-grow overflow-y-auto pr-2 custom-scrollbar">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">專利機制 / 目的</h4>
+                                <p id="detail-desc" class="text-slate-200 text-sm leading-relaxed"></p>
+                            </div>
+                            <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2"><span class="text-base">⚖️</span> 權利要求強制限定</h4>
+                                <ul id="detail-limits" class="space-y-2 text-sm text-slate-200"></ul>
+                            </div>
+                            <div class="bg-indigo-900/50 rounded-lg p-4 border border-indigo-800">
+                                <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-1">技術壁壘分析</h4>
+                                <p id="detail-analysis" class="text-slate-300 text-sm leading-relaxed"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 3: Dependent Claims & Parameters -->
+        <section id="parameters" class="scroll-mt-20">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                <div class="mb-6 border-b border-slate-100 pb-4">
+                    <h2 class="text-3xl font-extrabold text-slate-800 mb-2">附屬項 (Dependent Claims) 參數深度分析</h2>
+                    <p class="text-slate-500 text-lg">本區塊針對附屬項中進一步限縮的物理化學參數進行視覺化與結構化呈現。這些參數構成了該專利更具體的防禦性保護範圍（此部分中台專利寫法一致）。</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Chart: Temperature Ranges -->
+                    <div class="flex flex-col">
+                        <h3 class="font-bold text-lg text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="text-red-500">🌡️</span> 設備操作溫度限縮區間
+                        </h3>
+                        <div class="chart-container bg-slate-50 border border-slate-200 rounded-xl p-4 flex-grow">
+                            <canvas id="tempChart"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2 text-center">附註：蒸發處理需較高溫度以分離水分，精餾塔則依塔頂/塔釜產生溫度梯度。</p>
+                    </div>
+
+                    <!-- Grid: Other Parameters -->
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-lg text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="text-indigo-500">🧪</span> 試劑與設備設定限縮
+                        </h3>
+                        
+                        <div class="bg-white border-l-4 border-indigo-500 rounded-r-xl shadow-sm p-4 hover:bg-slate-50 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-indigo-700">精餾塔回流比限定</span>
+                            </div>
+                            <p class="text-2xl font-black text-slate-800 mb-1">0.5 ~ 3.0</p>
+                            <p class="text-sm text-slate-500">影響塔頂產物純度與能耗的關鍵設備參數。應用於第一階段(HF)與第二階段(HNO₃)精餾。</p>
+                        </div>
+
+                        <div class="bg-white border-l-4 border-amber-500 rounded-r-xl shadow-sm p-4 hover:bg-slate-50 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-amber-700">第二段破共沸劑 (HNO₃分離)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-2">
+                                <div>
+                                    <span class="block text-xs text-slate-400 font-bold uppercase">指定物質</span>
+                                    <span class="font-bold text-slate-700">硝酸鎂 / 硝酸鈣</span>
+                                </div>
+                                <div>
+                                    <span class="block text-xs text-slate-400 font-bold uppercase">嚴格用量</span>
+                                    <span class="font-bold text-amber-600 text-lg">40 ~ 65 mol%</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-2 border-t border-slate-100 pt-2">限定特定鹼土金屬以破壞硝酸-水共沸。此比例可確保分離效率並避免管路結晶阻塞。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: TW vs CN Comparison -->
+        <section id="cn-tw-comparison" class="scroll-mt-20">
+            <div class="bg-slate-900 text-white rounded-2xl shadow-xl border border-slate-700 p-6 md:p-8">
+                <div class="mb-8 border-b border-slate-700 pb-4 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-amber-400 mb-2">兩岸授權公告本比對 (TW vs CN)</h2>
+                        <p class="text-slate-400 text-lg">相同發明技術在兩岸最終取得專利權的權利要求對照</p>
+                    </div>
+                    <div class="text-4xl">🔍</div>
+                </div>
+
+                <div class="bg-emerald-900/30 rounded-xl p-5 mb-8 border border-emerald-700">
+                    <h3 class="font-bold text-emerald-400 mb-2">✅ 分析結論：最終保護範圍完全一致</h3>
+                    <p class="text-slate-300 leading-relaxed text-sm">
+                        經比對最新的台灣公告本 (TW I782757 B) 與中國大陸授權公告本 (CN 116081575 B)，兩者在核心獨立項的文字描述與參數限定上已經**完全相同**。這顯示申請人在兩岸審查過程中，最終都選擇了將相同的關鍵特徵（如金屬種類、PTFE材質、操作溫壓區間）限縮至獨立項中，以確保專利的穩定性與獲准。
+                    </p>
+                </div>
+
+                <!-- Comparison Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- TW Patent Column -->
+                    <div class="bg-slate-50 text-slate-800 rounded-xl overflow-hidden border-2 border-indigo-500 shadow-md">
+                        <div class="bg-indigo-600 text-white p-4 text-center flex flex-col justify-center items-center">
+                            <span class="block text-xs uppercase tracking-wider mb-1">台灣專利 (公告本)</span>
+                            <h3 class="font-bold text-xl">TW I782757 B</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="block text-xs font-bold text-slate-400 uppercase">總項數</span>
+                                <span class="font-black text-indigo-700 text-lg">8 項</span>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3">
+                                <span class="block text-xs font-bold text-slate-400 uppercase mb-2">獨立項 (Claim 1) 相同限縮特徵</span>
+                                <ul class="space-y-2 text-sm text-slate-700">
+                                    <li class="flex gap-2"><span class="text-indigo-500">✓</span> <span>限定鹼金屬氟化鹽 (Li, K, Cs)</span></li>
+                                    <li class="flex gap-2"><span class="text-indigo-500">✓</span> <span>限定鹼金屬硝酸鹽 (Li, K, Cs)</span></li>
+                                    <li class="flex gap-2"><span class="text-indigo-500">✓</span> <span>限定莫耳比值 (0.05 至 10)</span></li>
+                                    <li class="flex gap-2"><span class="text-indigo-500">✓</span> <span>限定精餾塔設備 (PTFE內襯)</span></li>
+                                    <li class="flex gap-2"><span class="text-indigo-500">✓</span> <span>限定精餾真空度與溫度區間</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CN Patent Column -->
+                    <div class="bg-slate-50 text-slate-800 rounded-xl overflow-hidden border-2 border-emerald-500 shadow-md">
+                        <div class="bg-emerald-600 text-white p-4 text-center flex flex-col justify-center items-center">
+                            <span class="block text-xs uppercase tracking-wider mb-1">中國大陸專利 (授權公告本)</span>
+                            <h3 class="font-bold text-xl">CN 116081575 B</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="block text-xs font-bold text-slate-400 uppercase">總項數</span>
+                                <span class="font-black text-emerald-700 text-lg">10 項</span>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3">
+                                <span class="block text-xs font-bold text-slate-400 uppercase mb-2">獨立項 (Claim 1) 寫法差異</span>
+                                <ul class="space-y-2 text-sm text-slate-700">
+                                    <li class="flex gap-2"><span class="text-emerald-600">ℹ️</span> <span>CN版本的獨立項 (Claim 1) 雖然未直接寫入所有的附屬參數，但在隨後的附屬項中，將TW版本獨立項中的限制特徵（金屬種類、PTFE、溫壓）分拆至Claim 2與Claim 3中。</span></li>
+                                    <li class="flex gap-2"><span class="text-emerald-600">ℹ️</span> <span>就整體專利家族的佈局與保護範圍而言，兩者在實質上保護的技術特徵與限縮範圍已達一致。</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Invalidation Strategy (NEW) -->
+        <section id="invalidation-strategy" class="scroll-mt-20">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                <div class="mb-6 border-b border-slate-100 pb-4 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-slate-800 mb-2">專利無效宣告 (舉發) 策略與前案分析</h2>
+                        <p class="text-slate-500 text-lg">透過檢索相關之全球專利文獻，探討本案之專利有效性，並彙整潛在的舉發切入點與組合證據。</p>
+                    </div>
+                    <div class="text-4xl">⚖️</div>
+                </div>
+
+                <!-- Core Threat -->
+                <h3 class="font-bold text-xl text-rose-600 mb-4 flex items-center gap-2"><span class="text-2xl">🎯</span> 核心威脅前案 (台灣審查委員已引證)</h3>
+                <div class="bg-rose-50 border-l-4 border-rose-500 rounded-r-xl p-5 mb-6 shadow-sm">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-4">
+                        <div>
+                            <span class="inline-block bg-rose-200 text-rose-800 text-xs font-bold px-2 py-1 rounded mb-1">公開日期：2015-01-07 (早於本案)</span>
+                            <h4 class="font-bold text-lg text-slate-800">CN 104261349 A : 一种从电子废酸中分离氢氟酸和硝酸的工艺方法</h4>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 text-sm mb-4 leading-relaxed"><strong>技術重疊處：</strong> 同樣為解決「電子廢酸（HF + HNO₃ + H₂O）難以普通精餾分離」問題，且明確揭示了<strong class="text-rose-700">「使用無機鹽硝酸銫等進行鹽析精餾」</strong>的方法來破壞共沸並分離氫氟酸與硝酸。</p>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-rose-100 shadow-sm">
+                        <p class="text-sm text-slate-800 leading-relaxed"><strong class="text-rose-600 flex items-center gap-1 mb-1"><span class="text-lg">⚡</span> 舉發切入點：進步性攻擊 (Inventive Step)</strong> 
+                        既然已知「加硝酸鹽可破共沸 (CN 104261349 A)」的前提下，本案進一步混入「鹼金屬氟化鹽」並設定「20~40 mol%」的比例，對於熟習該項技術者（化學工程師）而言，是否僅為<strong>「常規參數的實驗與最佳化 (Routine Optimization)」</strong>？若能佐證加入氟化鹽（同離子效應）並不具備無法預期的驚人功效，即可強烈打擊其專利進步性。</p>
+                    </div>
+                </div>
+
+                <!-- NEW Threat: Dehydration Patent -->
+                <h3 class="font-bold text-xl text-rose-600 mb-4 mt-8 flex items-center gap-2"><span class="text-2xl">🎯</span> 金屬氟化物處理前案 (化學機制重疊)</h3>
+                <div class="bg-amber-50 border-l-4 border-amber-500 rounded-r-xl p-5 mb-6 shadow-sm">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-4">
+                        <div>
+                            <span class="inline-block bg-amber-200 text-amber-800 text-xs font-bold px-2 py-1 rounded mb-1">公開日期：2009-05-06 (早於本案)</span>
+                            <h4 class="font-bold text-lg text-slate-800">CN 101423194 A : 氟化氢的脱水方法</h4>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 text-sm mb-4 leading-relaxed"><strong>技術重疊處：</strong> 該專利旨在降低氫氟酸中的水分（脫水），其核心手段是**「利用能與水反應的金屬氟化物作為脫水劑」**（例如加入氟化錳等）。這證明了在處理氫氟酸水溶液時，加入金屬氟化物來改變系統中水分狀態的化學機制，在業界早已為人所知。</p>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-amber-200 shadow-sm">
+                        <p class="text-sm text-slate-800 leading-relaxed"><strong class="text-amber-700 flex items-center gap-1 mb-1"><span class="text-lg">⚡</span> 舉發切入點：化學手段的顯而易知性</strong> 
+                        雖然 CN 101423194 A 稱為「脫水劑」，而本案 (TW I782757) 稱為「破共沸劑」，但兩者本質上都是在氫氟酸系統中**加入金屬氟化物來牽制水分子（改變其揮發度或與其反應）**。
+                        您可以主張：本案在已知添加硝酸鹽（前案1）的基礎上，再混合添加氟化鹽，這僅是利用了 CN 101423194 A 所揭示的「氟化鹽對氫氟酸/水系統具有特殊親和或反應性」的**已知化學知識**。將兩種已知對該系統有影響的鹽類混合，屬於所屬技術領域中具有通常知識者能輕易完成之組合，藉此進一步打擊其進步性。</p>
+                    </div>
+                </div>
+
+                <!-- Supporting Prior Art -->
+                <h3 class="font-bold text-xl text-slate-700 mb-4 mt-8 flex items-center gap-2"><span class="text-2xl">📚</span> 可作為「組合證據」的輔助前案</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <span class="inline-block bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded mb-2">US 5,603,811 A (1997-02-18)</span>
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm leading-snug">Process for the treatment of an aqueous solution mainly containing nitric acid and hydrofluoric acid</h4>
+                        <p class="text-slate-600 text-sm mb-3 leading-relaxed"><strong>技術重疊：</strong> 詳細探討 HF 與 HNO₃ 水溶液在共沸點附近的氣液平衡特性，並提出利用濃縮與精餾來分離這兩種酸的基礎工程架構。</p>
+                        <div class="bg-indigo-50 border-l-2 border-indigo-400 p-2 mt-auto">
+                            <p class="text-indigo-800 text-xs font-bold mb-1">組合目的：</p>
+                            <p class="text-slate-600 text-xs">證明本案所宣稱的「雙塔精餾」與「特定溫度/壓力區間設計」，實屬該領域早已公開之標準化工製程架構。</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <span class="inline-block bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded mb-2">CN 104016305 A (2014-09-03)</span>
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm leading-snug">一种从氢氟烃粗品中回收氟化氢的方法</h4>
+                        <p class="text-slate-600 text-sm mb-3 leading-relaxed"><strong>技術重疊：</strong> 揭示了在含有 HF 的複雜酸液系統中，利用萃取劑與精餾結合 (Extractive distillation) 來回收氟化氫的工業操作。</p>
+                        <div class="bg-indigo-50 border-l-2 border-indigo-400 p-2 mt-auto">
+                            <p class="text-indigo-800 text-xs font-bold mb-1">組合目的：</p>
+                            <p class="text-slate-600 text-xs">用以佐證在 HF 系統中使用萃取精餾技術來達到分離純化目的，乃業界廣為習知之常規技術手段。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy Summary -->
+                <div class="bg-slate-800 text-white rounded-xl p-6 shadow-md border-t-4 border-emerald-500">
+                    <h3 class="font-bold text-emerald-400 mb-4 text-lg flex items-center gap-2"><span>📝</span> 專利舉發策略總結論</h3>
+                    <ul class="space-y-5 text-sm text-slate-300">
+                        <li class="flex gap-4">
+                            <span class="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0 mt-0.5">1</span>
+                            <div>
+                                <strong class="text-white block mb-1 text-base">主攻缺乏進步性 (組合前案的顯而易知性)</strong>
+                                <p class="leading-relaxed">組合 <span class="text-emerald-300">CN 104261349 A</span> (硝酸鹽破共沸) 與 <span class="text-emerald-300">CN 101423194 A</span> (金屬氟化鹽影響氫氟酸水分)。主張本案「氟化鹽+硝酸鹽」的配方，僅是將這兩種已知對氫氟酸-水系統具有影響力的無機鹽進行常規的拼湊與參數最佳化 (Routine Optimization)，並不具備無法預期的實質性特點。</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span class="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0 mt-0.5">2</span>
+                            <div>
+                                <strong class="text-white block mb-1 text-base">削弱附屬參數的臨界意義</strong>
+                                <p class="leading-relaxed">專利中被限縮到獨立項的附屬參數（例如：回流比 0.5~3、真空度 100~500 mmHg），在強酸精餾的工業實務上為極其常見的操作規格。此外，採用 <strong class="text-white">PTFE (聚四氟乙烯) 內襯</strong>來對抗氫氟酸的高強腐蝕，更是業界普通常識，絕不能作為賦予專利進步性的獨特技術特徵。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 py-6 border-t border-slate-800 text-center">
+        <p class="text-slate-400 text-sm">© 2026 Patent Claims Analysis Dashboard for TW I782757 / CN 116081575 B. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Storage for Claims Steps
+        const claimsData = {
+            'mixed': {
+                's1-3': {
+                    title: 'S1-S3: 提取氟化氫',
+                    icon: '⚙️',
+                    desc: '加入破共沸劑破壞氫氟酸與水共沸，於精餾塔中分離HF蒸氣。隨後經多重除霧器去除雜質霧滴，並冷凝添加超純水。',
+                    limits: [
+                        '破共沸劑: 鹼金屬氟化鹽(Li,K,Cs) + 鹼金屬硝酸鹽(Li,K,Cs)',
+                        '鹽類莫耳比: 0.05 至 10',
+                        '鹽類總用量: 20 mol% 至 40 mol%',
+                        '精餾塔: 真空 100~500 mmHg, PTFE內襯',
+                        '產品標準: 49±0.5% 電子級 HF'
+                    ],
+                    analysis: '限制總用量上限為 40 mol%，是為確保打破 HF-H₂O 共沸的同時，避免干擾硝酸共沸，防止此階段夾帶硝酸蒸氣。'
+                },
+                's4': {
+                    title: 'S4: 第一階段鹽類循環',
+                    icon: '🔄',
+                    desc: '將第一段精餾殘留的混合溶液（含硝酸、水、鹼金屬鹽）進行真空蒸發處理，將硝酸與水氣化帶出。',
+                    limits: [
+                        '蒸發對象: HNO₃ + H₂O + 鹽類混合液',
+                        '專利強制特徵: 剩餘之鹼金屬鹽濃縮液，必須導回 S1 循環使用'
+                    ],
+                    analysis: '此步驟確立了專利的環保與經濟價值：「鹽類封閉循環」。不產生二次固體廢棄物，大幅降低藥劑消耗成本。'
+                },
+                's5-7': {
+                    title: 'S5-S7: 提取硝酸',
+                    icon: '🧪',
+                    desc: '針對 S4 蒸發出來的硝酸-水混合氣體/液體，投入第二道破共沸劑，於精餾塔中分離HNO₃。經除霧與調配達到電子級標準。',
+                    limits: [
+                        '破共沸劑: 鹼土金屬硝酸鹽 (Mg, Ca)',
+                        '產品標準: 70±0.5% 電子級 HNO₃'
+                    ],
+                    analysis: '運用不同的鹽類（鹼土金屬）針對性破壞第二段（硝酸-水）共沸。實現混酸廢液中兩大主要酸類的徹底剝離。'
+                },
+                's8': {
+                    title: 'S8: 第二階段鹽類循環',
+                    icon: '♻️',
+                    desc: '將 S5-S7 步驟分離硝酸後遺留的鹼土金屬硝酸鹽溶液，進行第二次蒸發濃縮。',
+                    limits: [
+                        '蒸發對象: 鹼土金屬硝酸鹽 + 殘水',
+                        '專利強制特徵: 濃縮液必須導回 S5 循環使用'
+                    ],
+                    analysis: '完成全系統的雙重閉環設計。確保前後兩段破共沸劑皆能在系統內自我消化循環。'
+                }
+            },
+            'single': {
+                's1-3-single': {
+                    title: 'S1-S3: 提取氫氟酸 (單一酸版)',
+                    icon: '💧',
+                    desc: '針對僅含 HF 與 水 的廢液進行處理。機制與混酸版 S1-S3 相同。',
+                    limits: [
+                        '破共沸劑: 鹼金屬氟化鹽 + 鹼金屬硝酸鹽',
+                        '鹽類總用量: 20 mol% 以上 (無上限)',
+                        '精餾塔: 真空 100~500 mmHg, PTFE內襯'
+                    ],
+                    analysis: '關鍵差異：由於進料不含硝酸，無需擔心分離出硝酸蒸氣的干擾風險，因此將鹽類用量的限制放寬為「20 mol% 以上」。'
+                }
+            }
+        };
+
+        let currentFlow = 'mixed';
+        let currentNode = 's1-3';
+
+        // Core Interaction Handling
+        function switchFlow(flowType) {
+            currentFlow = flowType;
+            
+            // Toggle Buttons
+            document.getElementById('btn-mixed').className = flowType === 'mixed' 
+                ? 'px-6 py-2 rounded-md bg-white shadow-sm font-bold text-indigo-700 transition-all'
+                : 'px-6 py-2 rounded-md font-medium text-slate-600 hover:text-slate-800 transition-all';
+            
+            document.getElementById('btn-single').className = flowType === 'single'
+                ? 'px-6 py-2 rounded-md bg-white shadow-sm font-bold text-blue-700 transition-all'
+                : 'px-6 py-2 rounded-md font-medium text-slate-600 hover:text-slate-800 transition-all';
+
+            // Toggle Flow Diagrams
+            document.getElementById('flow-mixed').classList.toggle('hidden-flow', flowType !== 'mixed');
+            document.getElementById('flow-single').classList.toggle('hidden-flow', flowType !== 'single');
+
+            // Reset selected node
+            if(flowType === 'mixed') showStepDetails('s1-3', 'mixed');
+            else showStepDetails('s1-3-single', 'single');
+        }
+
+        function showStepDetails(nodeId, flowType) {
+            // Update Active Node Styling
+            document.querySelectorAll('.flow-node').forEach(node => {
+                node.classList.remove('active', 'border-indigo-400', 'ring', 'bg-indigo-50');
+                if(!node.classList.contains('active')){
+                    node.classList.add('border-slate-300', 'bg-white');
+                }
+            });
+
+            const selectedNode = document.getElementById(`node-${nodeId}`);
+            if(selectedNode) {
+                selectedNode.classList.remove('border-slate-300', 'bg-white');
+                selectedNode.classList.add('active');
+            }
+
+            // Update Detail Panel Content dynamically
+            const data = claimsData[flowType][nodeId];
+            
+            // Determine color theme based on step
+            let colorTheme = 'indigo';
+            if(nodeId === 's4' || nodeId === 's8') colorTheme = 'emerald';
+            if(nodeId === 's5-7') colorTheme = 'blue';
+
+            document.getElementById('detail-icon').textContent = data.icon;
+            
+            const titleEl = document.getElementById('detail-title');
+            titleEl.textContent = data.title;
+            titleEl.className = `text-2xl font-bold text-${colorTheme}-300`;
+
+            document.getElementById('detail-desc').textContent = data.desc;
+
+            // Render Limits List
+            const limitsList = document.getElementById('detail-limits');
+            limitsList.innerHTML = '';
+            data.limits.forEach(limit => {
+                const li = document.createElement('li');
+                li.className = "flex items-start gap-2 border-b border-slate-600/50 pb-2 mb-2 last:border-0 last:pb-0 last:mb-0";
+                
+                // Bold the text before the colon if exists
+                let formattedText = limit;
+                if(limit.includes(':')) {
+                    const parts = limit.split(':');
+                    formattedText = `<strong class="text-${colorTheme}-300 font-bold">${parts[0]}:</strong>${parts[1]}`;
+                } else if(limit.includes('**')) {
+                    formattedText = limit.replace(/\*\*(.*?)\*\*/g, `<strong class="text-${colorTheme}-300 font-bold">$1</strong>`);
+                }
+
+                li.innerHTML = `<span class="text-amber-400 mt-0.5">▹</span> <span class="text-slate-200">${formattedText}</span>`;
+                limitsList.appendChild(li);
+            });
+
+            document.getElementById('detail-analysis').textContent = data.analysis;
+        }
+
+        // Initialize Chart.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial load call
+            showStepDetails('s1-3', 'mixed');
+
+            const ctx = document.getElementById('tempChart').getContext('2d');
+            
+            // Custom plugin to draw floating bars for ranges
+            const floatingBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        '第一精餾塔 (S1)', 
+                        '第一蒸發處理 (S4)', 
+                        '第二精餾塔 (S5)', 
+                        '第二蒸發處理 (S8)'
+                    ],
+                    datasets: [
+                        {
+                            label: '塔頂溫度 (°C)',
+                            data: [
+                                [50, 100], // S1 Top
+                                null,      // S4 N/A
+                                [70, 100], // S5 Top
+                                null       // S8 N/A
+                            ],
+                            backgroundColor: 'rgba(99, 102, 241, 0.8)', // Indigo
+                            borderColor: 'rgb(79, 70, 229)',
+                            borderWidth: 1,
+                            barPercentage: 0.8
+                        },
+                        {
+                            label: '塔釜/蒸發釜溫度 (°C)',
+                            data: [
+                                [80, 130],  // S1 Bottom
+                                [130, 180], // S4 Evap
+                                [120, 140], // S5 Bottom
+                                [130, 180]  // S8 Evap
+                            ],
+                            backgroundColor: 'rgba(245, 158, 11, 0.8)', // Amber
+                            borderColor: 'rgb(217, 119, 6)',
+                            borderWidth: 1,
+                            barPercentage: 0.8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Make it horizontal for better readability of ranges
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if(context.raw === null) return null;
+                                    return `${context.dataset.label}: ${context.raw[0]}°C ~ ${context.raw[1]}°C`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: '溫度區間 (°C)' },
+                            min: 0,
+                            max: 200
+                        },
+                        y: {
+                            stacked: false // side by side floating bars
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

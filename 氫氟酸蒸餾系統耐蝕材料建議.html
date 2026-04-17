@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高溫氫氟酸 (HF) 系統材質評估互動儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 50vh;
+                max-height: 500px;
+            }
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+        }
+        .nav-active {
+            background-color: #e2e8f0;
+            border-left: 4px solid #0ea5e9;
+            font-weight: bold;
+            color: #0f172a;
+        }
+        .nav-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-item:hover:not(.nav-active) {
+            background-color: #f1f5f9;
+            padding-left: 1.5rem;
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-in forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pipe-horizontal {
+            height: 12px;
+            background: linear-gradient(to bottom, #94a3b8, #cbd5e1, #94a3b8);
+            border-top: 1px solid #64748b;
+            border-bottom: 1px solid #64748b;
+        }
+        .pipe-vertical {
+            width: 12px;
+            background: linear-gradient(to right, #94a3b8, #cbd5e1, #94a3b8);
+            border-left: 1px solid #64748b;
+            border-right: 1px solid #64748b;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Chosen Palette: Slate (Neutrals), Sky Blue (Primary), Rose (Danger/Alert), Emerald (Safe/Recommended), Purple (Alternative Non-Metal/Graphite) -->
+    <!-- Application Structure Plan: Sidebar navigation dashboard. Incorporates both ORNL metal corrosion data and generic impregnated graphite specifications to provide a comprehensive, vendor-agnostic engineering assessment. Updated to handle temperature gradients (160C bottom vs 80C top). -->
+    <!-- Visualization & Content Choices: 1. Overview -> Goal: Emphasize extreme conditions & integrated solutions -> Viz: Big numeric metric cards & integrated graphite solutions. 2. Lab Data -> Goal: Compare alloy performance against Graphite -> Viz: Chart.js Bar Chart & Line Chart (adding flat 0 mpy line for PTFE Graphite) -> Interaction: Hover tooltips -> Library: Chart.js. 3. Equipment Configuration -> Goal: Spatial understanding -> Viz: Interactive HTML/CSS schematic diagram -> Interaction: Clickable components updating detail panel with generic equipment specs. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <aside class="w-64 bg-slate-50 border-r border-slate-200 flex flex-col shadow-sm z-10 flex-shrink-0">
+        <div class="p-6 border-b border-slate-200">
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight leading-tight">HF 蒸餾系統<br><span class="text-sky-600 text-lg">材質評估分析儀</span></h1>
+            <p class="text-xs text-slate-500 mt-2 font-medium">整合特種石墨與高合金金屬配置</p>
+        </div>
+        <nav class="flex-1 py-4 flex flex-col gap-1">
+            <button onclick="app.switchTab('overview')" id="nav-overview" class="nav-item nav-active text-left px-6 py-3 text-sm text-slate-600 font-medium">系統工況概述</button>
+            <button onclick="app.switchTab('data')" id="nav-data" class="nav-item text-left px-6 py-3 text-sm text-slate-600 font-medium">材質腐蝕率數據</button>
+            <button onclick="app.switchTab('equipment')" id="nav-equipment" class="nav-item text-left px-6 py-3 text-sm text-slate-600 font-medium">分區材質配置圖</button>
+            <button onclick="app.switchTab('ops')" id="nav-ops" class="nav-item text-left px-6 py-3 text-sm text-slate-600 font-medium">工程與操作規範</button>
+        </nav>
+        <div class="p-6 border-t border-slate-200 bg-slate-100">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
+                <span class="text-xs font-bold text-slate-700">塔底 160°C 極端工況警告</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto bg-white relative">
+        <div id="section-overview" class="p-8 md:p-12 fade-in max-w-6xl mx-auto block">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">系統工況概述</h2>
+                <p class="text-slate-600 text-lg leading-relaxed max-w-4xl">本區塊展示標的蒸餾系統的極端操作環境參數。系統具備顯著的溫度梯度（塔底 160°C 至 塔頂 80°C），必須依據不同區段的溫度嚴苛程度，混搭「特種浸漬石墨」與「高合金金屬」，以兼顧抗腐蝕與抗壓安全性。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 shadow-lg text-white border border-slate-700 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-slate-700 opacity-20 text-8xl font-black">&#9888;</div>
+                    <p class="text-slate-400 text-sm font-bold tracking-wider mb-2 uppercase">流體濃度</p>
+                    <div class="text-5xl font-black text-sky-400 mb-2">50<span class="text-2xl text-slate-300 ml-1">%</span></div>
+                    <p class="text-lg font-medium">氫氟酸 (HF)</p>
+                    <div class="mt-4 pt-4 border-t border-slate-700/50 text-sm text-slate-300">
+                        極度活躍的氟離子，會破壞絕大多數金屬表面的鈍化保護膜。
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-rose-600 to-rose-800 rounded-2xl p-8 shadow-lg text-white border border-rose-500 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-rose-500 opacity-30 text-8xl font-black">&#8451;</div>
+                    <p class="text-rose-200 text-sm font-bold tracking-wider mb-2 uppercase">操作溫度梯度</p>
+                    <div class="text-5xl font-black text-white mb-2">160<span class="text-2xl text-rose-200 ml-1">°C</span></div>
+                    <p class="text-lg font-medium">塔底高溫 / 塔頂 80°C</p>
+                    <div class="mt-4 pt-4 border-t border-rose-500/50 text-sm text-rose-100">
+                        塔底 160°C 已遠超金屬防腐極限，需導入石墨；塔頂 80°C 則落在金屬安全區。
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-sky-600 to-sky-800 rounded-2xl p-8 shadow-lg text-white border border-sky-500 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-sky-500 opacity-30 text-8xl font-black">&#10022;</div>
+                    <p class="text-sky-200 text-sm font-bold tracking-wider mb-2 uppercase">操作壓力</p>
+                    <div class="text-5xl font-black text-white mb-2">5<span class="text-xl text-sky-200 ml-1">kg/cm²G</span></div>
+                    <p class="text-lg font-medium">帶壓沸騰系統</p>
+                    <div class="mt-4 pt-4 border-t border-sky-500/50 text-sm text-sky-100">
+                        高壓排除一般鐵氟龍內襯；石墨設備需具備鋼製外殼以承受此 5kg 壓力。
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">&#10004;</span>
+                    核心分區評估結論
+                </h3>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                            <div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">&#10008;</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-lg">禁用內襯與傳統 Monel 400</h4>
+                                <p class="text-slate-600 mt-1">高溫高壓導致鐵氟龍滲透破裂風險極高；而 Monel 400 雖為常溫防腐聖品，一旦超過 88°C 將快速崩解，全系統不適用。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                            <div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm">&#10004;</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-lg">塔頂低溫段最佳金屬：Hastelloy C-276</h4>
+                                <p class="text-slate-600 mt-1">塔頂區段溫度降至 80°C，哈氏合金 C-276 在此溫度下抗蝕力極佳。用於塔頂管線與冷凝器可兼顧耐壓、耐衝擊與造價。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4 p-5 rounded-xl bg-gradient-to-r from-purple-50 to-white border border-purple-200 shadow-sm">
+                        <div class="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg">&#10026;</div>
+                        <div>
+                            <h4 class="font-bold text-purple-900 text-xl mb-2">塔底高溫段突破方案：特種浸漬石墨 + 鋼殼承壓</h4>
+                            <p class="text-slate-700 leading-relaxed">
+                                塔底及再沸器高達 160°C，即使是 C-276 每年亦有 2.5mm 的劇烈耗損。必須全面導入特種浸漬石墨技術：
+                                <br><span class="inline-block mt-2 font-semibold text-purple-800">&#9656; 塔底及塔身：</span> 採用樹脂浸漬石墨塔節，外部加裝碳鋼外殼承受 5kg/cm²G 系統壓力。
+                                <br><span class="inline-block mt-1 font-semibold text-purple-800">&#9656; 加熱端 (再沸器)：</span> 採用純 PTFE 浸漬的塊孔式石墨換熱器，可徹底免疫 160°C HF 腐蝕。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-data" class="p-8 md:p-12 fade-in max-w-6xl mx-auto hidden">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">材質腐蝕率數據分析</h2>
+                <p class="text-slate-600 text-lg leading-relaxed max-w-4xl">本區塊視覺化呈現高合金金屬與特種浸漬石墨在 HF 環境下的實驗與實務推估數據。可清晰看出為何在塔頂 80°C 可使用金屬，而在塔底 160°C 必須轉換為石墨材質。</p>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">溫度效應：金屬衰退 vs 石墨抗性</h3>
+                    <p class="text-sm text-slate-500 mb-6">高溫 HF 環境腐蝕率推估模型 (單位: mpy)。虛線標示塔頂與塔底溫度。</p>
+                    <div class="flex-1 w-full flex items-center justify-center">
+                        <div class="chart-container w-full">
+                            <canvas id="tempChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 bg-slate-50 rounded-lg text-sm text-slate-700 border border-slate-200">
+                        <span class="font-bold text-emerald-600">塔頂 80°C (金屬可用)：</span> C-276 腐蝕率約 20 mpy，作為實心管壁處於安全耐用範圍。<br>
+                        <span class="font-bold text-rose-600">塔底 160°C (金屬失效)：</span> C-276 腐蝕率飆升至 96 mpy (約 2.5 mm/年)，若用於塔底或換熱薄壁將迅速溶穿，因此必須改用腐蝕率趨近於 0 的<strong class="text-purple-700">純 PTFE 浸漬石墨</strong>。
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <span class="text-purple-600">&#9776;</span> 特種浸漬石墨耐腐蝕基準 (HF)
+                        </h3>
+                        <div class="overflow-hidden rounded-xl border border-slate-200">
+                            <table class="w-full text-left text-sm text-slate-600">
+                                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-4">材料等級</th>
+                                        <th class="p-4">浸漬劑類型</th>
+                                        <th class="p-4">容許最高溫度</th>
+                                        <th class="p-4">對抗 HF 實績</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 bg-white">
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-4 font-bold text-slate-800">酚醛樹脂浸漬石墨</td>
+                                        <td class="p-4">酚醛樹脂</td>
+                                        <td class="p-4 text-slate-800">200°C</td>
+                                        <td class="p-4"><span class="font-bold text-sky-600">60% HF / 160°C</span><br>滿足塔底與塔內件需求</td>
+                                    </tr>
+                                    <tr class="hover:bg-purple-50 transition-colors bg-purple-50/30">
+                                        <td class="p-4 font-bold text-purple-900">純 PTFE 浸漬石墨</td>
+                                        <td class="p-4 font-semibold">純 PTFE</td>
+                                        <td class="p-4 text-slate-800">250°C</td>
+                                        <td class="p-4"><span class="font-bold text-purple-700">100% HF / 250°C</span><br>塔釜再沸器終極解決方案</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-4 font-bold text-slate-800">純碳浸漬石墨</td>
+                                        <td class="p-4">碳</td>
+                                        <td class="p-4 text-slate-800">600°C</td>
+                                        <td class="p-4"><span class="font-bold text-rose-600">100% HF / 400°C</span><br>用於極端超高溫</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">為什麼不用純 PTFE (鐵氟龍)?</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            純聚四氟乙烯 (PTFE) 導熱係數極低 (約 0.3 W/m.°C)，幾乎具備隔熱效果，無法作為熱交換器。而**石墨的導熱係數高達 120 W/m.°C** (遠勝不鏽鋼的 16 與鉭的 45)。此類 PTFE 浸漬石墨結合了石墨的高導熱與 PTFE 的極致抗腐蝕特性。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-equipment" class="p-8 md:p-12 fade-in max-w-6xl mx-auto hidden">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">系統分區材質配置圖</h2>
+                <p class="text-slate-600 text-lg leading-relaxed max-w-4xl">依據「塔底 160°C、塔頂 80°C」的溫度梯度，本系統採用異材質分區設計。高溫端由特種石墨搭配外包鋼殼抗腐抗壓，低溫端則使用高合金金屬。請點擊左側圖解元件檢視細節。</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="lg:w-5/12 bg-slate-100 rounded-2xl border border-slate-200 p-8 flex items-center justify-center relative min-h-[500px]">
+                    
+                    <div class="relative w-full max-w-sm h-full flex flex-col items-center justify-center gap-4">
+                        
+                        <button onclick="app.selectComponent('top_piping')" class="w-full flex items-center justify-center group cursor-pointer absolute -top-8 left-0 right-0 z-20 hover:-translate-y-1 transition-transform">
+                            <div class="pipe-vertical h-16 relative">
+                                <div class="absolute -left-36 top-1/2 -translate-y-1/2 bg-white px-3 py-1 rounded-full text-xs font-bold border border-slate-300 shadow-sm text-slate-600 group-hover:text-emerald-600 group-hover:border-emerald-300">塔頂 80°C 管線/冷凝</div>
+                            </div>
+                        </button>
+
+                        <button onclick="app.selectComponent('tower')" class="w-32 h-[300px] bg-slate-800 border-4 border-slate-600 rounded-full relative shadow-inner flex flex-col justify-evenly p-2 cursor-pointer group hover:border-purple-500 hover:bg-slate-700 transition-colors z-10">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="bg-white/95 px-3 py-1 rounded-md text-sm font-bold text-purple-900 shadow-sm pointer-events-none group-hover:text-purple-700 text-center">浸漬石墨塔體<br><span class="text-[10px] text-slate-500">(外包鋼殼)</span></span>
+                            </div>
+                            
+                            <div onclick="app.selectComponent('internals'); event.stopPropagation();" class="w-full h-2 bg-slate-500 rounded-full opacity-60 hover:bg-purple-400 hover:opacity-100 transition-colors z-20" title="點擊檢視石墨塔內件"></div>
+                            <div onclick="app.selectComponent('internals'); event.stopPropagation();" class="w-full h-2 bg-slate-500 rounded-full opacity-60 hover:bg-purple-400 hover:opacity-100 transition-colors z-20" title="點擊檢視石墨塔內件"></div>
+                            <div onclick="app.selectComponent('internals'); event.stopPropagation();" class="w-full h-2 bg-slate-500 rounded-full opacity-60 hover:bg-purple-400 hover:opacity-100 transition-colors z-20" title="點擊檢視石墨塔內件"></div>
+                            <div onclick="app.selectComponent('internals'); event.stopPropagation();" class="w-full h-2 bg-slate-500 rounded-full opacity-60 hover:bg-purple-400 hover:opacity-100 transition-colors z-20" title="點擊檢視石墨塔內件"></div>
+                        </button>
+
+                        <div class="absolute bottom-16 right-0 translate-x-1/2 flex items-center z-0">
+                            <div class="pipe-horizontal w-16"></div>
+                            <button onclick="app.selectComponent('exchanger')" class="w-24 h-32 bg-slate-900 border-4 border-slate-700 rounded-xl relative shadow-lg flex items-center justify-center cursor-pointer group hover:border-purple-500 hover:bg-slate-800 transition-all transform hover:scale-105">
+                                <div class="w-full h-full absolute inset-0 opacity-40 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,#94a3b8_4px,#94a3b8_8px)] rounded-lg"></div>
+                                <span class="bg-white/95 px-2 py-1 rounded-md text-xs font-black text-purple-900 shadow-sm z-10 pointer-events-none text-center leading-tight">石墨<br>塊孔換熱器</span>
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-10 left-0 -translate-x-12 flex items-center z-10">
+                            <div class="pipe-horizontal w-16"></div>
+                            <button onclick="app.selectComponent('valves')" class="w-12 h-12 rounded-full border-4 border-slate-400 bg-slate-100 flex items-center justify-center cursor-pointer group hover:border-sky-400 relative">
+                                <div class="w-8 h-2 bg-slate-400 absolute top-0 -translate-y-full group-hover:bg-sky-400 transition-colors"></div>
+                                <span class="text-xl font-bold text-slate-500 group-hover:text-sky-500">&#10005;</span>
+                                <div class="absolute -top-10 bg-white px-2 py-1 rounded text-xs font-bold border border-slate-300 shadow-sm text-slate-600 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">控制閥門</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-7/12 flex flex-col">
+                    <div id="component-detail" class="bg-white border-2 border-sky-100 rounded-2xl p-8 shadow-md flex-1 h-full flex flex-col justify-center">
+                        <div class="text-center text-slate-400 flex flex-col items-center justify-center h-full">
+                            <div class="text-6xl mb-4">&#9756;</div>
+                            <p class="text-xl font-medium">請點擊左側圖解中的設備元件</p>
+                            <p class="text-sm mt-2">檢視對應之抗腐蝕材質配置與工程建議</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-ops" class="p-8 md:p-12 fade-in max-w-6xl mx-auto hidden">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">工程設計與操作規範</h2>
+                <p class="text-slate-600 text-lg leading-relaxed max-w-4xl">在極端高溫高壓工況下，即使選用了正確的特種浸漬石墨或哈氏合金，仍須嚴格遵循設備力學結構保護與製程化學保護規範。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xl font-bold mb-4">&#9881;</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-3">石墨設備力學與承壓保護</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-1">石墨抗拉強度低，面對 5kg/cm²G 的系統壓力是一大考驗。無論是塔體或再沸器，都必須依賴外部鋼構支撐。</p>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 text-xs text-purple-800 leading-relaxed">
+                        <strong>規範：</strong>塔體必須是「內部石墨層 + 外部碳鋼殼」設計。操作時須緩慢升溫避免熱衝擊，且嚴格防止系統發生「水鎚現象」導致石墨破裂。
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold mb-4">&#9888;</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-3">金屬管線銲接與連接段管控</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-1">對於塔頂採用 C-276 金屬的管線與冷凝器，在製造與對接石墨塔體的法蘭處，必須極度謹慎。</p>
+                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-100 text-xs text-amber-800 leading-relaxed">
+                        <strong>致命防範：</strong>金屬與石墨連接處的墊片必須採用耐高溫純石墨複合墊片。此外，C-276 管線銲接若有碳鋼參與，嚴禁鐵元素稀釋混入焊道，否則將導致焊縫迅速溶穿。
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold mb-4">&#10052;</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-3">絕對惰性氣體保護</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-1">高溫 HF 對氧化劑極度敏感。即使塔頂溫度僅 80°C，若系統混入微量氧氣，C-276 金屬的腐蝕速率仍會飆升。</p>
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 text-xs text-blue-800 leading-relaxed">
+                        <strong>操作要求：</strong>蒸餾系統必須配備完善的<strong class="text-slate-800">氮氣純化封存 (N2 Blanketing)</strong>，確保絕對無氧，以保障塔頂金屬設備與閥門的安全壽命。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const app = {
+            currentTab: 'overview',
+            chartsRendered: false,
+            tempChartInstance: null,
+
+            componentData: {
+                tower: {
+                    title: '蒸餾塔本體 (Distillation Column)',
+                    material: '浸漬石墨塔節 + 外層碳鋼承壓殼',
+                    spec: '內部特種石墨抗腐蝕，外部厚鋼殼承受 5kg/cm²G 壓力',
+                    reason: '塔底高達 160°C，若使用 C-276 每年耗損可達 2.5mm，極不安全。為確保塔體長久穩定，塔底及塔身必須改用石墨材質。由於石墨抗拉強度低，工程上必須採用「內部石墨塔節 + 外部鋼製承壓殼」的複合結構，由鋼殼對抗 5kg/cm²G 的操作壓力。',
+                    color: 'purple'
+                },
+                internals: {
+                    title: '塔內件 (分配器/支撐格柵/填料)',
+                    material: '特種浸漬石墨 (PTFE 或 酚醛樹脂浸漬)',
+                    spec: '特製石墨液體分配器、支撐格柵與石墨填料',
+                    reason: '塔盤或填料等內件結構極薄，在 160°C 至中段的高溫下，任何金屬內件都會被迅速溶穿，無法支撐正常的製程分離。全面導入浸漬石墨材質的塔內件，可徹底解決內部薄壁元件被酸液破壞的問題。',
+                    color: 'purple'
+                },
+                exchanger: {
+                    title: '塔釜再沸器 (Reboiler Heater)',
+                    material: '塊孔式石墨換熱器 (Block Type)',
+                    spec: '採用純 PTFE 或酚醛樹脂浸漬材質，外部包覆鋼殼',
+                    reason: '此處為全系統溫度最高點 (160°C 以上)，C-276 換熱管將面臨災難性腐蝕。塊孔式石墨換熱器具備 120 W/m.°C 絕佳熱導率。設備採堆疊厚實石墨塊設計，並由外部鋼殼承受 5kg/cm²G 壓力，內部搭載彈簧壓緊系統抗應力疲勞，是高溫 HF 加熱端的終極解決方案。',
+                    color: 'purple'
+                },
+                top_piping: {
+                    title: '塔頂管線與冷凝器 (Top Piping & Condenser)',
+                    material: '實心 Hastelloy C-276 (哈氏合金)',
+                    spec: '實心 C-276 無縫管與換熱器',
+                    reason: '塔頂區段溫度已降至 80°C。依據推估，哈氏合金 C-276 在 80°C 且無氧的 HF 中腐蝕率極低 (約 20 mpy)，處於工程安全範圍內。因此塔頂冷凝系統與氣體管線可維持使用金屬 C-276，如此可有效兼顧系統承壓韌性、現場配管加工便利性與總體建置成本。',
+                    color: 'emerald'
+                },
+                valves: {
+                    title: '控制閥門 (Control Valves)',
+                    material: 'C-276 閥體 + Inconel 600 波紋管',
+                    spec: '主體實心 C-276，氣相接液波紋管(Bellows)採 Alloy 600',
+                    reason: '閥體與閥桿升級至 C-276。對於波紋管密封設計，根據 ORNL 測試，全 Inconel 600 材質在 HF 氣相環境中具備優異抗性，能維持極長生命週期。墊片選用耐高溫純石墨複合墊片或聚四氟乙烯。',
+                    color: 'amber'
+                }
+            },
+
+            init: function() {
+                this.switchTab('overview');
+            },
+
+            switchTab: function(tabId) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('nav-active'));
+                document.getElementById('nav-' + tabId).classList.add('nav-active');
+
+                const sections = ['overview', 'data', 'equipment', 'ops'];
+                sections.forEach(sec => {
+                    const el = document.getElementById('section-' + sec);
+                    if (sec === tabId) {
+                        el.classList.remove('hidden');
+                        el.classList.add('block');
+                        
+                        if (tabId === 'data' && !this.chartsRendered) {
+                            setTimeout(() => this.renderCharts(), 100);
+                        }
+                    } else {
+                        el.classList.add('hidden');
+                        el.classList.remove('block');
+                    }
+                });
+            },
+
+            selectComponent: function(compId) {
+                const data = this.componentData[compId];
+                const detailContainer = document.getElementById('component-detail');
+                
+                const colorMap = {
+                    emerald: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+                    blue: 'bg-blue-50 border-blue-200 text-blue-800',
+                    rose: 'bg-rose-50 border-rose-200 text-rose-800',
+                    sky: 'bg-sky-50 border-sky-200 text-sky-800',
+                    amber: 'bg-amber-50 border-amber-200 text-amber-800',
+                    purple: 'bg-purple-50 border-purple-200 text-purple-900'
+                };
+                
+                const badgeColorMap = {
+                    emerald: 'bg-emerald-100 text-emerald-700',
+                    blue: 'bg-blue-100 text-blue-700',
+                    rose: 'bg-rose-100 text-rose-700',
+                    sky: 'bg-sky-100 text-sky-700',
+                    amber: 'bg-amber-100 text-amber-700',
+                    purple: 'bg-purple-100 text-purple-800'
+                };
+
+                const themeClass = colorMap[data.color];
+                const badgeClass = badgeColorMap[data.color];
+
+                const html = `
+                    <div class="fade-in flex flex-col h-full">
+                        <div class="mb-4">
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold ${badgeClass} mb-3 uppercase tracking-wider">選用元件解析</span>
+                            <h3 class="text-2xl font-bold text-slate-900">${data.title}</h3>
+                        </div>
+                        
+                        <div class="p-5 rounded-xl ${themeClass} border mb-6">
+                            <p class="text-sm font-bold opacity-70 mb-1 uppercase">推薦核心材質</p>
+                            <p class="text-xl font-bold mb-2">${data.material}</p>
+                            <p class="text-sm opacity-90 font-medium">${data.spec}</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-500 mb-2 uppercase tracking-wider border-b border-slate-200 pb-2">工程評估與考量痛點</h4>
+                            <p class="text-slate-700 leading-relaxed text-base">${data.reason}</p>
+                        </div>
+                    </div>
+                `;
+                
+                detailContainer.innerHTML = html;
+            },
+
+            renderCharts: function() {
+                if (this.chartsRendered) return;
+
+                Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+                Chart.defaults.color = '#64748b';
+
+                const ctxTemp = document.getElementById('tempChart').getContext('2d');
+                this.tempChartInstance = new Chart(ctxTemp, {
+                    type: 'line',
+                    data: {
+                        labels: ['20°C', '50°C', '80°C', '110°C', '140°C', '170°C', '200°C', '230°C', '250°C'],
+                        datasets: [
+                            {
+                                label: 'Monel 400 金屬衰退趨勢',
+                                data: [10, 40, 180, 400, 700, 1100, 1600, null, null],
+                                borderColor: 'rgba(244, 63, 94, 1)',
+                                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                                borderWidth: 3,
+                                pointBackgroundColor: 'rgba(244, 63, 94, 1)',
+                                pointRadius: 4,
+                                fill: false,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Hastelloy C-276 金屬衰退',
+                                data: [5, 10, 20, 40, 70, 110, 160, 220, 280],
+                                borderColor: 'rgba(245, 158, 11, 1)',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                borderWidth: 3,
+                                pointBackgroundColor: 'rgba(245, 158, 11, 1)',
+                                pointRadius: 4,
+                                fill: false,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'PTFE浸漬石墨',
+                                data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                borderColor: 'rgba(147, 51, 234, 1)', // Purple-600
+                                backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                borderWidth: 4,
+                                pointBackgroundColor: 'rgba(147, 51, 234, 1)',
+                                pointRadius: 5,
+                                pointStyle: 'rectRot',
+                                fill: true,
+                                tension: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { usePointStyle: true, boxWidth: 10, font: {weight: 'bold'} }
+                            },
+                            tooltip: {
+                                padding: 12,
+                                titleFont: { size: 13 },
+                                bodyFont: { size: 13 }
+                            },
+                            annotation: {
+                                annotations: {
+                                    line1: {
+                                        type: 'line',
+                                        xMin: '170°C',
+                                        xMax: '170°C',
+                                        borderColor: '#e11d48', // rose-600
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            content: '塔底 160°C 基準 (改用石墨)',
+                                            enabled: true,
+                                            position: 'top',
+                                            backgroundColor: 'rgba(225, 29, 72, 0.9)'
+                                        }
+                                    },
+                                    line2: {
+                                        type: 'line',
+                                        xMin: '80°C',
+                                        xMax: '80°C',
+                                        borderColor: '#059669', // emerald-600
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            content: '塔頂 80°C (C-276可用)',
+                                            enabled: true,
+                                            position: 'center',
+                                            backgroundColor: 'rgba(5, 150, 105, 0.9)',
+                                            yAdjust: -50
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: '推估腐蝕率 (mpy)' },
+                                grid: { color: '#f1f5f9' },
+                                max: 500 // Limit Y axis to show the comparison better before Monel shoots to infinity
+                            },
+                            x: { grid: { color: '#f1f5f9' } }
+                        }
+                    }
+                });
+
+                this.chartsRendered = true;
+            }
+        };
+
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>

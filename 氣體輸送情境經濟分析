@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>氣體輸送與處理製程：情境經濟與優化操作分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-button.active {
+            background-color: #0ea5e9;
+            color: white;
+            border-color: #0ea5e9;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #0ea5e9;
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+        .hidden-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- Chosen Palette: Warm Neutrals with Blue (Case 1) and Orange (Case 2) accents. Background #f8fafc (Slate 50), Text #334155 (Slate 700). Case 1: #0ea5e9 (Sky 500). Case 2: #f59e0b (Amber 500). -->
+<!-- Application Structure Plan: A single-page dashboard format was chosen to allow users to linearly or non-linearly explore the engineering trade-offs. It features a sticky navigation bar for quick jumps. Section 1 introduces the core physical problem (flow variation). Section 2 provides interactive tabs to compare the architectural logic of the two solutions. Section 3 presents quantitative visualizations of the engineering assessment (Radar for qualitative scores, Bar for scale multipliers). Section 4 delivers the final conclusion. This structure transforms a dry engineering report into an interactive consulting presentation. -->
+<!-- Visualization & Content Choices: 1. Flow Profile -> Line Chart (Goal: Change/Compare over time) -> Shows A Tank peak vs Case 1 flatline vs Case 2 mimic. 2. Scenario Architectures -> Tabbed Text (Goal: Organize) -> Allows easy toggling without cluttering the screen. 3. Multi-dimensional Eval -> Radar Chart (Goal: Compare) -> Visually demonstrates the trade-offs (CAPEX vs OPEX vs Stability). 4. Scale Quantified -> Bar Chart (Goal: Compare magnitude) -> Highlights the 7.05x scale difference powerfully. All use Chart.js on Canvas. NO SVG used. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <span class="text-xl font-bold text-slate-800">🏭 氣體輸送與處理製程分析</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-2" id="nav-menu">
+                <button data-target="intro" class="nav-button active px-3 py-2 rounded-md text-sm font-medium border border-transparent hover:bg-slate-100 transition">製程挑戰</button>
+                <button data-target="process" class="nav-button px-3 py-2 rounded-md text-sm font-medium border border-transparent hover:bg-slate-100 transition">流程與條件</button>
+                <button data-target="architecture" class="nav-button px-3 py-2 rounded-md text-sm font-medium border border-transparent hover:bg-slate-100 transition">架構解析</button>
+                <button data-target="evaluation" class="nav-button px-3 py-2 rounded-md text-sm font-medium border border-transparent hover:bg-slate-100 transition">綜合評估</button>
+                <button data-target="conclusion" class="nav-button px-3 py-2 rounded-md text-sm font-medium border border-transparent hover:bg-slate-100 transition">決策建議</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+    <section id="intro" class="scroll-mt-20">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl mb-4">情境經濟與優化操作分析</h1>
+            <p class="max-w-2xl mx-auto text-xl text-slate-500">針對週期性極端變化的氣體來源，探討「平準化壓縮」與「全流量鼓風」兩種輸送處理策略的工程權衡。</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">📊 第一部分：氣體來源特性與製程挑戰</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    本區塊旨在呈現上游（A槽）氣體產生的極端物理特性。該氣體源具有極高的瞬間流量與長期的零產出期。透過互動圖表，您可以清楚看見未經處理的原始氣流波動，以及兩種不同操作情境（Case 1 平準化 vs Case 2 原始輸送）對下游設備所造成的流量衝擊差異。理解此流量曲線是評估後續所有建置與營運成本的核心基礎。
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="text-slate-400 text-sm font-semibold uppercase tracking-wide mb-1">氣體來源溫度</div>
+                        <div class="text-2xl font-bold text-slate-800">25℃</div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="text-slate-400 text-sm font-semibold uppercase tracking-wide mb-1">每週期總產氣量</div>
+                        <div class="text-2xl font-bold text-slate-800">170 kg <span class="text-sm font-normal text-slate-500">/ 3小時</span></div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="text-slate-400 text-sm font-semibold uppercase tracking-wide mb-1">平準化平均流量</div>
+                        <div class="text-2xl font-bold text-slate-800">56.7 kg/h <span class="text-sm font-normal text-slate-500">(峰值的14.2%)</span></div>
+                    </div>
+                </div>
+
+                <div class="chart-container mb-6">
+                    <canvas id="flowChart"></canvas>
+                </div>
+                <div class="text-sm text-center text-slate-500">
+                    互動提示：點擊圖表上方的圖例以隱藏/顯示特定曲線。觀察 Case 1 如何將劇烈波動轉化為穩定的直線。
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="process" class="scroll-mt-20">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">🔍 第二部分：製程條件背景與設備流程</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    在深入探討架構設計之前，必須先確立各設備的基礎功能設定與物理條件。本區塊總結了系統中各槽體的具體任務，並透過視覺化方塊圖，呈現 Case 1 與 Case 2 的實體氣體輸送路徑與防喘振回流（Bypass）機制。
+                </p>
+
+                <h3 class="text-lg font-bold text-slate-700 mb-3 border-b pb-2">槽體設備與操作條件定義</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="font-bold text-slate-800 mb-1 flex items-center"><span class="text-xl mr-2">🛢️</span> A槽 (產氣源)</div>
+                        <ul class="text-sm text-slate-600 list-disc pl-4 space-y-1 mt-2">
+                            <li>氣體初始溫度：<strong>25℃</strong></li>
+                            <li>最大峰值流量：<strong>400 kg/h</strong></li>
+                            <li>具備 3 小時的極端週期性變化</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="font-bold text-slate-800 mb-1 flex items-center"><span class="text-xl mr-2">🛡️</span> B槽 (Surge Tank)</div>
+                        <ul class="text-sm text-slate-600 list-disc pl-4 space-y-1 mt-2">
+                            <li>接收 A 槽風量與下游防喘振回流</li>
+                            <li>穩定轉動機械吸入端壓力</li>
+                            <li>兩方案皆必備之前端緩衝區</li>
+                        </ul>
+                    </div>
+                    <div class="bg-sky-50 p-4 rounded-xl border border-sky-200">
+                        <div class="font-bold text-sky-900 mb-1 flex items-center"><span class="text-xl mr-2">🔋</span> C槽 (壓力儲槽)</div>
+                        <ul class="text-sm text-sky-800 list-disc pl-4 space-y-1 mt-2">
+                            <li><strong>Case 1 專用設備</strong></li>
+                            <li>儲存被加壓後的高壓氣體</li>
+                            <li>平準化釋放固定微小流量至下游</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-4 rounded-xl border border-rose-200">
+                        <div class="font-bold text-rose-900 mb-1 flex items-center"><span class="text-xl mr-2">🔥</span> D槽 (處理設備)</div>
+                        <ul class="text-sm text-rose-800 list-disc pl-4 space-y-1 mt-2">
+                            <li>填充觸媒分解特定氣體分子</li>
+                            <li>進入前需被 <strong>加熱至 100℃</strong></li>
+                            <li>配置尾氣熱交換器預熱進氣</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">氣體輸送流程圖</h3>
+                
+                <!-- Case 1 Flow -->
+                <div class="mb-8">
+                    <div class="text-sky-700 font-bold mb-2 text-sm uppercase tracking-wide">Case 1: 壓縮機平準化流程</div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 relative">
+                        <div class="flex flex-wrap items-center gap-y-4 gap-x-2 text-sm font-medium text-slate-700">
+                            <div class="bg-white border border-slate-300 px-3 py-2 rounded shadow-sm text-center">A槽<br><span class="text-xs text-slate-500">25℃ 變動流</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-white border-2 border-indigo-300 px-3 py-2 rounded shadow-sm text-center">B槽<br><span class="text-xs text-slate-500">緩衝</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-sky-100 border border-sky-300 px-3 py-2 rounded shadow-sm text-sky-800 font-bold text-center">壓縮機<br><span class="text-xs font-normal">+VFD</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-sky-100 border border-sky-300 px-3 py-2 rounded shadow-sm text-sky-800 font-bold text-center">C槽<br><span class="text-xs font-normal">高壓儲存</span></div>
+                            <span class="text-slate-400 font-bold text-sky-500">➔</span>
+                            <div class="bg-white border border-slate-300 px-3 py-2 rounded shadow-sm text-center">熱交換<br><span class="text-xs text-slate-500">微小恆定流</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-rose-50 border border-rose-300 px-3 py-2 rounded shadow-sm text-center">加熱器<br><span class="text-xs text-slate-500">微調 100℃</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-rose-100 border border-rose-400 px-3 py-2 rounded shadow-sm text-rose-900 font-bold text-center">D槽<br><span class="text-xs font-normal">微型觸媒床</span></div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-indigo-600 font-semibold bg-indigo-50 inline-block px-3 py-1 rounded border border-indigo-200">
+                            <span>⟲ 防喘振回流 (Surge Control)：</span>
+                            <span class="ml-2 text-slate-600 font-normal">壓縮機出口 ➔ B槽 (僅在低風量或無產出時空轉作動)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case 2 Flow -->
+                <div>
+                    <div class="text-amber-700 font-bold mb-2 text-sm uppercase tracking-wide">Case 2: 鼓風機全流量流程</div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 relative">
+                        <div class="flex flex-wrap items-center gap-y-4 gap-x-2 text-sm font-medium text-slate-700">
+                            <div class="bg-white border border-slate-300 px-3 py-2 rounded shadow-sm text-center">A槽<br><span class="text-xs text-slate-500">25℃ 變動流</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-white border-2 border-indigo-300 px-3 py-2 rounded shadow-sm text-center">B槽<br><span class="text-xs text-slate-500">緩衝</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-amber-100 border border-amber-300 px-3 py-2 rounded shadow-sm text-amber-800 font-bold text-center">鼓風機<br><span class="text-xs font-normal">+VFD</span></div>
+                            <span class="text-slate-400 font-bold text-amber-500">➔</span>
+                            <div class="bg-white border border-slate-300 px-3 py-2 rounded shadow-sm text-center">熱交換<br><span class="text-xs text-slate-500">巨大變動流</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-rose-50 border border-rose-300 px-3 py-2 rounded shadow-sm text-center">加熱器<br><span class="text-xs text-slate-500">高負載追蹤</span></div>
+                            <span class="text-slate-400">➔</span>
+                            <div class="bg-rose-100 border border-rose-400 px-3 py-2 rounded shadow-sm text-rose-900 font-bold text-center">D槽<br><span class="text-xs font-normal">全量觸媒床</span></div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-indigo-600 font-semibold bg-indigo-50 inline-block px-3 py-1 rounded border border-indigo-200">
+                            <span>⟲ 防喘振回流 (Surge Control)：</span>
+                            <span class="ml-2 text-slate-600 font-normal">D槽尾氣後 ➔ B槽 (需帶動氣流克服龐大設備之系統壓降)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="scroll-mt-20">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">⚙️ 第三部分：系統架構與操作策略解析</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    本區塊詳細說明為應對上述極端流量，工程上提出的兩種截然不同的設計邏輯。您可以點擊下方頁籤，切換查看「Case 1: 壓縮機平準化策略」與「Case 2: 鼓風機全流量策略」的運作流程與控制限制。此部分展示了在前端阻斷波動與在後端硬扛波動的設計哲學差異。
+                </p>
+
+                <div class="border-b border-slate-200 mb-6 flex">
+                    <button id="tab-case1" class="tab-btn active px-6 py-3 text-lg transition-colors duration-200">Case 1: 儲槽平準化設計</button>
+                    <button id="tab-case2" class="tab-btn px-6 py-3 text-lg text-slate-500 hover:text-slate-700 transition-colors duration-200">Case 2: 全流量直送設計</button>
+                </div>
+
+                <div id="content-case1" class="transition-opacity duration-300">
+                    <div class="flex flex-col md:flex-row items-center gap-6 mb-6 p-4 bg-sky-50 rounded-xl border border-sky-100">
+                        <div class="text-4xl">🔄</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-sky-900 mb-2">壓縮機 (VFD) + 壓力儲槽緩衝 + 尾氣熱回收</h3>
+                            <p class="text-sky-800">核心精神：將投資集中於前端高壓系統，打造「微型化工廠」，創造最平穩的反應條件。</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-4 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2 text-sky-500 font-bold">1.</span> <div><strong>平準化控制：</strong> C 槽 (壓力儲槽) 將週期性變動氣流，轉化為連續且相對恆定的流量 (約 56.7 kg/h，僅峰值 15%) 供應下游。</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-sky-500 font-bold">2.</span> <div><strong>壓縮機操作限制：</strong> 前端高風量時 VFD 全速運轉；但在低風量或無氣體產出時 (長達兩小時)，受限於壓縮機的最低運轉負載 (Turndown ratio)，無法完全停機，仍需透過 Bypass 回流維持機台運作，產生空轉耗電。</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-sky-500 font-bold">3.</span> <div><strong>設備微型化：</strong> 下游設備（D 槽、觸媒、熱交換器、加熱器）可依據平準化後的平均流量進行微型化設計，節省大量空間與耗材。</div></li>
+                    </ul>
+                </div>
+
+                <div id="content-case2" class="hidden-section transition-opacity duration-300">
+                    <div class="flex flex-col md:flex-row items-center gap-6 mb-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                        <div class="text-4xl">💨</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-amber-900 mb-2">鼓風機 (VFD) + 尾氣熱回收 + 全流量處理槽</h3>
+                            <p class="text-amber-800">核心精神：以龐大的低壓靜態設備硬扛瞬間峰值，避免建置高壓容器與複雜壓縮機。</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-4 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2 text-amber-500 font-bold">1.</span> <div><strong>全流量對應設計：</strong> D 槽、觸媒與熱交換器必須依據 100% 峰值流量 (400 kg/h) 設計，以確保系統在最初 10 分鐘能達成氣體分解條件。設備量體極大。</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-amber-500 font-bold">2.</span> <div><strong>防喘振妥協操作：</strong> 鼓風機配合 VFD 降速，當流量低於防喘振底線時 (如 120 kg/h)，開啟回流閥將氣體推過龐大的反應器系統後拉回 B 槽，進行低載循環維持動態平衡。</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-amber-500 font-bold">3.</span> <div><strong>系統阻力損耗：</strong> 低風量期間，鼓風機需持續消耗電能以克服巨型熱交換器與大觸媒床所帶來的系統壓降。</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="evaluation" class="scroll-mt-20">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">⚖️ 第四部分：綜合評估與量化數據</h2>
+                <p class="text-slate-600 mb-8 leading-relaxed">
+                    本區塊將兩個情境放入工程決策的四個核心維度（操作反應、系統能效、維護耗材、建置成本）進行客觀雷達圖比對。同時，以直方圖具體量化「平準化」與「全流量」設計在實體設備規模上的驚人差異（高達 7.05 倍）。這揭示了資本支出(CAPEX)與營運支出(OPEX)之間最真實的 Trade-off。
+                </p>
+
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-bold text-center text-slate-700 mb-2">多維度指標評估 (分數越高越優)</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-sm text-slate-500 space-y-2">
+                            <p><strong>操作反應：</strong> Case 1 恆定條件有利觸媒；Case 2 需應對動態變動。</p>
+                            <p><strong>系統能效：</strong> 兩者皆有低載回流耗電，取決於壓縮機空轉與風機克服系統壓降之比較。</p>
+                            <p><strong>維護耗材：</strong> Case 1 承受高昂壓縮機保養；Case 2 承受龐大觸媒更換費。</p>
+                            <p><strong>建置成本：</strong> Case 2 採用低壓擴建，初期資金門檻較低；Case 1 需高壓法規驗證。</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-bold text-center text-slate-700 mb-2">關鍵設計參數規模倍數 (基準化比對)</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="scaleChart"></canvas>
+                        </div>
+                        <div class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-100 text-sm text-slate-600">
+                            <p class="mb-2">依據最大流量 400 kg/h 計算，單一週期(3hr)總產氣量 170 kg。</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Case 1 設計基準：<strong>56.7 kg/h</strong> (微型化)</li>
+                                <li>Case 2 設計基準：<strong>400.0 kg/h</strong> (全流量)</li>
+                                <li>規模差異：高達 <strong>7.05 倍</strong>，直接反映在鋼構容積與觸媒首次採購資金。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="conclusion" class="scroll-mt-20">
+        <div class="bg-slate-800 rounded-2xl shadow-lg overflow-hidden text-white">
+            <div class="p-6 md:p-10">
+                <h2 class="text-3xl font-extrabold mb-6">💡 第五部分：工程決策總結與建議</h2>
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-slate-700/50 p-6 rounded-xl border border-slate-600">
+                        <h3 class="text-xl font-bold text-sky-400 mb-3">選擇 Case 1 適合...</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            「高 CAPEX、追求穩定」策略。廠內已有成熟的壓縮機維護團隊，且製程使用的 D 槽「觸媒單價極高」或對溫度/流速波動極度敏感。利用前端平準化，最大程度延長昂貴觸媒的壽命。
+                        </p>
+                    </div>
+                    <div class="bg-slate-700/50 p-6 rounded-xl border border-slate-600">
+                        <h3 class="text-xl font-bold text-amber-400 mb-3">選擇 Case 2 適合...</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            「低 CAPEX、動態應對」策略。廠區希望避免高壓設備法規檢驗，欲降低精密機械日常維修風險。前提是觸媒成本合理，且允許系統在低風量時進行較大循環量的動態操作。
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-emerald-900/40 border border-emerald-500/30 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-2">🔑 最終決策關鍵 (The Golden Cross)</h3>
+                    <p class="text-slate-200">
+                        決策的最後一哩路，端看 <strong>「壓縮機採購與十年保養費」</strong> 與 <strong>「7倍龐大觸媒的初次填裝與未來更換費」</strong> 之間的黃金交叉點。建議針對這兩個最大變數進行實體廠家詢價，以計算生命週期成本 (LCC)，即可輕易得出符合貴廠財務期望的最佳解。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="border-t border-slate-200 mt-12 py-8 text-center text-slate-500 text-sm">
+    <p>氣體輸送情境經濟分析與優化儀表板</p>
+</footer>
+
+<script>
+    const case1Color = 'rgba(14, 165, 233, 1)';
+    const case1Bg = 'rgba(14, 165, 233, 0.2)';
+    const case2Color = 'rgba(245, 158, 11, 1)';
+    const case2Bg = 'rgba(245, 158, 11, 0.2)';
+    const sourceColor = 'rgba(100, 116, 139, 0.8)';
+    const sourceBg = 'rgba(100, 116, 139, 0.1)';
+
+    function initFlowChart() {
+        const ctx = document.getElementById('flowChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['0 min', '10 min', '30 min', '120 min', '180 min'],
+                datasets: [
+                    {
+                        label: '原始氣體來源 (A槽)',
+                        data: [400, 400, 40, 0, 0],
+                        borderColor: sourceColor,
+                        backgroundColor: sourceBg,
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: true,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Case 1 進入下游流量 (C槽釋放)',
+                        data: [56.7, 56.7, 56.7, 56.7, 56.7],
+                        borderColor: case1Color,
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        tension: 0
+                    },
+                    {
+                        label: 'Case 2 進入下游流量 (含最低回流)',
+                        data: [400, 400, 120, 120, 120],
+                        borderColor: case2Color,
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + ' kg/h';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '流量 (kg/h)' }
+                    },
+                    x: {
+                        title: { display: true, text: '製程時間 (單一週期 3 小時)' }
+                    }
+                }
+            }
+        });
+    }
+
+    function initRadarChart() {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: [
+                    '操作反應條件穩定度',
+                    '系統能效表現 (OPEX)',
+                    '維護與低耗材成本 (OPEX)',
+                    '低建置成本優勢 (CAPEX)'
+                ],
+                datasets: [
+                    {
+                        label: 'Case 1 (壓縮機+儲槽平準化)',
+                        data: [4, 3, 3, 2],
+                        backgroundColor: case1Bg,
+                        borderColor: case1Color,
+                        pointBackgroundColor: case1Color,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Case 2 (鼓風機+全流量對應)',
+                        data: [3, 3, 3, 4],
+                        backgroundColor: case2Bg,
+                        borderColor: case2Color,
+                        pointBackgroundColor: case2Color,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: { stepSize: 1, display: false }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + ' / 5 分';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function initScaleChart() {
+        const ctx = document.getElementById('scaleChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['設計基準流量', 'D槽容積與觸媒量', '熱交換器面積', '系統熱負荷'],
+                datasets: [
+                    {
+                        label: 'Case 1 (微型化)',
+                        data: [1, 1, 1, 1],
+                        backgroundColor: case1Color,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Case 2 (全流量峰值)',
+                        data: [7.05, 7.05, 7.05, 7.05],
+                        backgroundColor: case2Color,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + ' 倍';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '規模倍數 (以 Case 1 為 1X 基準)' }
+                    }
+                }
+            }
+        });
+    }
+
+    function setupTabs() {
+        const tab1 = document.getElementById('tab-case1');
+        const tab2 = document.getElementById('tab-case2');
+        const content1 = document.getElementById('content-case1');
+        const content2 = document.getElementById('content-case2');
+
+        tab1.addEventListener('click', () => {
+            tab1.classList.add('active', 'text-sky-600', 'font-bold', 'border-sky-600', 'border-b-2');
+            tab1.classList.remove('text-slate-500');
+            tab2.classList.remove('active', 'text-sky-600', 'font-bold', 'border-sky-600', 'border-b-2');
+            tab2.classList.add('text-slate-500');
+            
+            content1.style.display = 'block';
+            content2.style.display = 'none';
+        });
+
+        tab2.addEventListener('click', () => {
+            tab2.classList.add('active', 'text-amber-600', 'font-bold', 'border-amber-600', 'border-b-2');
+            tab2.classList.remove('text-slate-500');
+            tab1.classList.remove('active', 'text-amber-600', 'font-bold', 'border-amber-600', 'border-b-2');
+            tab1.classList.remove('text-sky-600', 'border-sky-600');
+            tab1.classList.add('text-slate-500');
+            
+            content2.style.display = 'block';
+            content1.style.display = 'none';
+        });
+    }
+
+    function setupNavigation() {
+        const navButtons = document.querySelectorAll('.nav-button');
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                navButtons.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                const targetId = e.target.getAttribute('data-target');
+                document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navButtons.forEach(btn => {
+                        if (btn.getAttribute('data-target') === id) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initFlowChart();
+        initRadarChart();
+        initScaleChart();
+        setupTabs();
+        setupNavigation();
+        document.getElementById('tab-case1').click();
+    });
+</script>
+</body>
+</html>

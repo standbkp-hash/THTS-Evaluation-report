@@ -51,12 +51,13 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         th, td {
             border: 1px solid #cbd5e0;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
+            font-size: 0.95em;
         }
         th {
             background-color: var(--primary);
@@ -83,6 +84,7 @@
             font-family: 'Courier New', Courier, monospace;
             margin: 15px 0;
             overflow-x: auto;
+            font-size: 0.95em;
         }
         .note {
             font-size: 0.9em;
@@ -123,30 +125,89 @@
 
     <div class="formula">
         考慮基礎承擔軸力 Pu = 1.0PD + 1.0PL = 199.8 + 51.25 = 251.05 t<br>
-        (原計算參考版設計載重: Pu = 0.75(1.4PD + 1.7PL) = 275.13 t)
+        (用於計算版結構配筋之極限載重: Pu = 0.75(1.4PD + 1.7PL) = 275.13 t)
     </div>
 
     <p>基礎寬度 × 長度為 4.5m × 12.0m，深度 Df 為 1.5m。<br>
-    因此土壤承受上部軸力傳遞之承載壓力為：</p>
+    土壤承受上部軸力傳遞之承載壓力為：</p>
     <div class="formula">
         P / A = 251.05 / (4.5 × 12) = <strong>4.65 t/m²</strong>
     </div>
     <p>檢核：4.65 t/m² &lt; Qnet (10.0 t/m²)，<span class="success">故縮減後基礎承載力絕對足夠 (O.K.)</span>。</p>
 
-    <h3>三、貫穿剪力檢驗 (Punching shear)</h3>
+    <h3>三、淨接觸壓力</h3>
+    <p>計算結構剪力與彎矩所使用之淨接觸壓力 (qu) 如下：</p>
+    <div class="formula">
+        qu = 極限載重 Pu / 面積 A = 275.13 / 54 = <strong>5.10 t/m²</strong>
+    </div>
+
+    <h3>四、貫穿剪力檢驗 (Punching shear)</h3>
     <p>假設樓板有效深度 d = 150cm - 10cm (保護層) = 140cm。</p>
     <ul>
-        <li><strong>臨界周界 (b₀):</strong> 距柱面 d/2 距離，b₀ = 4 × (120 + 140) = 1040 cm</li>
-        <li><strong>極限接觸壓力 (qu):</strong> 保守取 qu = 5.5 t/m² (由新 Pu 估算)</li>
+        <li><strong>臨界斷面：</strong> 距柱面 d/2 距離之周界。原假設虛擬支承柱尺寸 a=120cm, b=120cm。</li>
+        <li><strong>臨界周界 (b₀):</strong> b₀ = 4 × (120 + 140) = 1040 cm</li>
     </ul>
 
     <div class="formula">
         貫穿剪力強度 φVc = 0.85 × (1.06√f'c) × b₀ × d<br>
-        φVc = 0.85 × 17.74 kg/cm² × 1040 cm × 140 cm = <strong>2195.5 Ton</strong><br><br>
+        φVc = 0.85 × 17.74 kg/cm² × 1040 cm × 140 cm / 1000 = <strong>2195.5 Ton</strong><br><br>
         極限剪力需求 Vu = qu × [BxBy - (a+d)(b+d)]<br>
-        Vu = 5.5 × [54 - 2.6×2.6] = <strong>260.0 Ton</strong>
+        Vu = 5.10 × [54 - 2.6×2.6] = <strong>240.9 Ton</strong>
     </div>
-    <p>檢核：φVc (2195.5 t) &gt; Vu (260.0 t)，<span class="success">抗剪餘裕極大 (O.K.)</span>。</p>
+    <p>檢核：φVc (2195.5 t) &gt; Vu (240.9 t)，<span class="success">抗剪餘裕極大 (O.K.)</span>。</p>
+
+    <h3>五、梁式剪力 (Beam shear)</h3>
+    <p>臨界斷面：距柱面 d 距離之橫斷面。</p>
+    <ul>
+        <li><strong>梁式剪力強度 (vc):</strong> 0.53√f'c = 8.87 kg/cm²</li>
+        <li><strong>X向剪力強度 (φVcx):</strong> 0.85 × 8.87 × 1200 × 140 / 1000 = <strong>1266.6 Ton</strong></li>
+        <li><strong>Y向剪力強度 (φVcy):</strong> 0.85 × 8.87 × 450 × 140 / 1000 = <strong>475.0 Ton</strong></li>
+    </ul>
+    
+    <div class="formula">
+        X向極限需求 Vux = qu × By × (Lx_cantilever - d) <br>
+        Vux = 5.10 × 12.0 × ((4.5 - 1.2)/2 - 1.4) = 5.10 × 12.0 × 0.25 = <strong>15.3 Ton</strong><br><br>
+        Y向極限需求 Vuy = qu × Bx × (Ly_cantilever - d) <br>
+        Vuy = 5.10 × 4.5 × ((12.0 - 1.2)/2 - 1.4) = 5.10 × 4.5 × 4.0 = <strong>91.8 Ton</strong>
+    </div>
+    <p>檢核：φVcx (1266.6 t) &gt; Vux (15.3 t) 且 φVcy (475.0 t) &gt; Vuy (91.8 t)，<span class="success">梁式剪力安全 (O.K.)</span>。</p>
+
+    <h3>六、主筋設計 (配筋優化)</h3>
+    <p>臨界斷面：取柱面處為抗彎設計臨界斷面。因 150cm 厚度提供極大有效深度，抗彎需求鋼筋量完全由溫度與乾縮之「最小鋼筋量規範」(0.0018bh) 所控制。為節省成本，將原設計之雙向 #8@10cm 優化放寬為 <strong>雙向 #8@15cm</strong>。</p>
+    <table>
+        <tr>
+            <th>方向</th>
+            <th>極限彎矩 Mu (t-m)</th>
+            <th>需求鋼筋量 As_req (cm²)</th>
+            <th>優化配置 (#8@15cm) 鋼筋量 (cm²)</th>
+            <th>檢核</th>
+        </tr>
+        <tr>
+            <td>X 向</td>
+            <td>83.3</td>
+            <td>324.0 (受最小鋼筋量控制)</td>
+            <td>405.6</td>
+            <td><span class="success">O.K.</span></td>
+        </tr>
+        <tr>
+            <td>Y 向</td>
+            <td>334.6</td>
+            <td>121.5 (受最小鋼筋量控制)</td>
+            <td>152.1</td>
+            <td><span class="success">O.K.</span></td>
+        </tr>
+    </table>
+    <p class="note">註：改採 #8@15cm 後，不但依然完全滿足法規最小鋼筋量 (As_req) 需求，鋼筋總用量及綁紮工時更直接下降約 <strong>33%</strong>。</p>
+
+    <h3>七、承壓強度檢驗</h3>
+    <p>檢驗柱傳遞載重於基腳板時，混凝土之承壓強度是否足夠。</p>
+    <div class="formula">
+        設計承壓強度 Pd = φ × 0.85f'c × A1 × √(A2/A1) ≤ 2 × φ(0.85f'c × A1)<br>
+        A1 = 14400 cm² (假設支承面積)<br>
+        Pd = 0.70 × 0.85 × 280 × 14400 × 2 / 1000 = <strong>4798.1 Ton</strong>
+    </div>
+    <p>檢核：Pd (4798.1 t) &gt; Pu (275.13 t)，<span class="success">承壓強度足夠 (O.K.)</span>。</p>
+
 
     <h2>4.4 室外基礎座抗傾倒檢核</h2>
     <p>設備鎖固於基礎上，檢核整體基礎於地震力作用下是否傾倒。傾倒由短邊控制。抗傾倒力矩 (MR) 需大於傾倒力矩 (M₀) 的 1.5 倍。</p>
@@ -189,11 +250,11 @@
     <h2>綜合優化結論與工程建議</h2>
     <p>經過重新計算驗證，將原設計 2.5m 的戶外基礎座深度<strong>縮減至 1.5m (150cm)</strong> 是完全可行且結構安全的：</p>
     <ol>
-        <li><strong>承載力無虞：</strong> 基礎減輕後，對土壤的下壓承載力需求降至 4.65 t/m²，遠低於容許值 10 t/m²，沉陷風險更低。</li>
-        <li><strong>抗剪力極大：</strong> 即使縮薄至 150cm，貫穿剪力強度仍有 2,195 噸，面對僅約 260 噸的剪力需求，安全餘裕達 8 倍以上。</li>
+        <li><strong>承載力無虞：</strong> 基礎減輕後，對土壤的下壓承載力需求降至 4.65 t/m²，遠低於容許值 10 t/m²。</li>
+        <li><strong>結構配筋最佳化：</strong> 在縮減深度至 150cm 後，各項結構指標之強度仍遠超極限載重需求。將主筋由 #8@10cm 放寬為 <strong>#8@15cm</strong>，完美貼合最小鋼筋量規範，消除原先的過度設計。</li>
         <li><strong>抗傾倒及格：</strong> 受惠於基礎變薄使得整體設施重心下降，抗傾倒安全係數 (FS) 仍高達 2.09，遠大於法規要求的 1.5。</li>
     </ol>
-    <p class="highlight">【成本效益】採用 1.5m 新方案，可直接減少約 40% 的土方開挖量、廢土清運費以及混凝土/鋼筋等材料費用，大幅提升本案土木工程之經濟性。</p>
+    <p class="highlight">【成本效益】採用 1.5m 深度與 #8@15cm 配筋新方案，不僅可直接減少約 40% 的土方開挖與混凝土費用，還能省下約 33% 的鋼筋材料費與綁紮人工成本，達成土木工程成本的最佳化。</p>
 
 </div>
 

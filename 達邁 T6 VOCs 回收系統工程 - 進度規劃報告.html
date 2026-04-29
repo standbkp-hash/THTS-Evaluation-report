@@ -31,9 +31,7 @@
         const { useState, useMemo, useEffect } = React;
 
         // 手動建立 SVG Icon 元件以取代原本的 Lucide React import
-        // 因為在純 HTML 環境中，直接使用 lucide-react 比較複雜，這裡我們直接用 SVG 替代
         const Icon = ({ name, size = 24, className = "" }) => {
-            // 這是一個簡單的 Wrapper，我們會在元件渲染後使用 Lucide 的原生 JS API 替換它
             return <i data-lucide={name} width={size} height={size} className={className}></i>;
         };
 
@@ -47,7 +45,6 @@
                 }
             });
 
-            // --- 以下為您原本的資料與邏輯 ---
             // 採購數據彙整
             const procurementData = [
                 { id: 1, item: "白鐵透浦皮帶式風機", vendor: "質昌企業", date: "2026-06-15", status: "已訂購", type: "設備" },
@@ -68,7 +65,7 @@
                 { name: "專案啟動與設計確認", start: "2026-01-12", end: "2026-04-30", color: "bg-blue-500", icon: "info" },
                 { name: "設備發包與工廠製作", start: "2026-02-01", end: "2026-08-15", color: "bg-indigo-500", icon: "package" },
                 { name: "基礎座與管道預埋工程", start: "2026-05-15", end: "2026-07-15", color: "bg-amber-500", icon: "layers" },
-                { name: "現場工程監工與安全管理", start: "2026-05-01", end: "2026-11-30", color: "bg-orange-500", icon: "hard-hat" }, // 使用 hard-hat 替代 construction
+                { name: "現場工程監工與安全管理", start: "2026-05-01", end: "2026-11-30", color: "bg-orange-500", icon: "hard-hat" },
                 { name: "關鍵設備進場吊裝 (洗滌塔)", start: "2026-08-17", end: "2026-08-31", color: "bg-red-600", icon: "truck" },
                 { name: "風管安裝與系統配管", start: "2026-09-01", end: "2026-10-31", color: "bg-emerald-500", icon: "arrow-right" },
                 { name: "電氣控系統接線與測試", start: "2026-10-15", end: "2026-11-30", color: "bg-purple-500", icon: "clock" },
@@ -80,7 +77,8 @@
                 { id: 2, name: "2. 洗滌塔系統安裝工程", start: "2026-08-17", end: "2026-09-15", color: "bg-red-500" },
                 { id: 3, name: "3. 濃縮塔系統安裝工程", start: "2026-08-25", end: "2026-09-20", color: "bg-rose-500" },
                 { id: 4, name: "4. 冷凝器/除霧器安裝工程", start: "2026-09-01", end: "2026-09-30", color: "bg-cyan-500" },
-                { id: 5, name: "5. 其他設備安裝定位 (風機/風箱)", start: "2026-08-15", end: "2026-09-10", color: "bg-indigo-500" },
+                { id: 10, name: "★ HINO熱交換器安裝工程 (業主外包)", start: "2026-09-15", end: "2026-10-15", color: "bg-pink-600" },
+                { id: 5, name: "5. 其他設備安裝定位 (風車/風箱)", start: "2026-08-15", end: "2026-09-10", color: "bg-indigo-500" },
                 { id: 6, name: "6. 大型風管配管/煙囪架台安裝工程", start: "2026-09-05", end: "2026-10-31", color: "bg-emerald-500" },
                 { id: 7, name: "7. 小型管線/公用系統配管工程", start: "2026-09-15", end: "2026-10-31", color: "bg-teal-500" },
                 { id: 8, name: "8. 儀電及動力系統配線安裝工程", start: "2026-10-01", end: "2026-11-20", color: "bg-purple-600" },
@@ -348,7 +346,7 @@
                             <div className="flex border-b-2 border-slate-300 relative bg-white">
                                 {/* Sticky Column */}
                                 <div className="w-[320px] shrink-0 sticky left-0 bg-slate-100 border-r border-slate-300 z-20 p-4 font-bold text-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] flex items-end">
-                                施工展開項目 (9大分類)
+                                施工展開項目 (含業主外包)
                                 </div>
                                 {/* Timeline Headers */}
                                 <div className="flex-1 flex relative bg-slate-50">
@@ -386,8 +384,8 @@
                                 {detailedTasks.map((task) => (
                                     <div key={task.id} className="flex border-b border-slate-100 group hover:bg-blue-50/30 transition-colors relative">
                                     {/* Sticky Task Name */}
-                                    <div className="w-[320px] shrink-0 sticky left-0 bg-white group-hover:bg-blue-50/30 z-20 border-r border-slate-200 p-3 flex items-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.03)]">
-                                        <span className="text-sm font-bold text-slate-700">{task.name}</span>
+                                    <div className={`w-[320px] shrink-0 sticky left-0 group-hover:bg-blue-50/30 z-20 border-r border-slate-200 p-3 flex items-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.03)] ${task.id === 10 ? 'bg-pink-50' : 'bg-white'}`}>
+                                        <span className={`text-sm font-bold ${task.id === 10 ? 'text-pink-700' : 'text-slate-700'}`}>{task.name}</span>
                                     </div>
                                     
                                     {/* Task Timeline area */}
@@ -417,6 +415,16 @@
                         </section>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-pink-50 p-4 rounded-lg border border-pink-200 col-span-1 md:col-span-3">
+                            <h4 className="font-bold text-pink-800 text-sm mb-2 flex items-center gap-2">
+                                <Icon name="alert-circle" size="16" /> 業主外包介面協調：HINO熱交換器安裝工程 (09/15 - 10/15)
+                            </h4>
+                            <p className="text-xs text-pink-700 leading-relaxed">
+                                此工項為業主另外發包（不在我方施工範圍），但現場工程需互相搭配協調：<br/>
+                                1. <span className="font-bold">風機進場與暫放：</span>風車必須在 HINO 熱交換器進場安裝前（9/15 之前）完成 move in，於廠房內部尋找不干擾外包工作的空間進行暫放。<br/>
+                                2. <span className="font-bold">大型風管配管：</span>大型風管配管工程必須配合 HINO，待其完工退場後（10/15 之後）才能開始該區塊的後續對接作業。
+                            </p>
+                        </div>
                         <div className="bg-red-50 p-4 rounded-lg border border-red-100">
                             <h4 className="font-bold text-red-800 text-sm mb-2">最高衝突點：8月下旬 ~ 9月下旬</h4>
                             <p className="text-xs text-red-700 leading-relaxed">

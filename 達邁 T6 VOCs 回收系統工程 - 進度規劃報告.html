@@ -1,0 +1,541 @@
+import React, { useState, useMemo } from 'react';
+import { 
+  Calendar, 
+  Package, 
+  Truck, 
+  Construction, 
+  AlertTriangle, 
+  CheckCircle2, 
+  ChevronRight, 
+  Clock, 
+  Info,
+  Layers,
+  ArrowRight,
+  List
+} from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('core-gantt');
+
+  // 採購數據彙整
+  const procurementData = [
+    { id: 1, item: "白鐵透浦皮帶式風機", vendor: "質昌企業", date: "2026-06-15", status: "已訂購", type: "設備" },
+    { id: 2, item: "離心式泵浦 (SKH25-14H)", vendor: "三錦機器", date: "2026-07-31", status: "已訂購", type: "設備" },
+    { id: 3, item: "金屬無軸封泵 (MP421)", vendor: "匯竑工程", date: "2026-07-31", status: "已訂購", type: "設備" },
+    { id: 4, item: "臥式端吸同軸泵 (20HP)", vendor: "永大抽水機", date: "2026-07-31", status: "規劃中", type: "設備" },
+    { id: 12, item: "纖維床除霧器 (24支)", vendor: "首克英 (SOCEMO)", date: "2026-08-15", status: "已訂購", type: "核心" },
+    { id: 5, item: "廢氣洗滌設備及吊運安裝", vendor: "高科實業", date: "2026-08-17", status: "已訂購", type: "核心" },
+    { id: 10, item: "塔槽內件/噴嘴/格柵板", vendor: "鴻鈞機電", date: "2026-08-31", status: "已訂購", type: "材料" },
+    { id: 6, item: "洗滌塔填料", vendor: "優尼肯", date: "2026-08-31", status: "已訂購", type: "材料" },
+    { id: 7, item: "Water Cooler (VHE-620)", vendor: "聚熱企業", date: "2026-08-31", status: "已訂購", type: "設備" },
+    { id: 8, item: "風箱/風管製作與安裝", vendor: "智和", date: "2026-08-17", status: "已發包", type: "工程" },
+    { id: 11, item: "附屬管路與系統安裝工程", vendor: "墩祐工業", date: "2026-09-15", status: "已發包", type: "工程" },
+    { id: 9, item: "控制盤/電纜線材", vendor: "東溢興業", date: "2026-05-30", status: "已訂購", type: "材料" },
+  ];
+
+  // 施工進度安排 (主頁週次使用)
+  const scheduleStages = [
+    { name: "專案啟動與設計確認", start: "2026-01-12", end: "2026-04-30", color: "bg-blue-500", icon: <Info size={16}/> },
+    { name: "設備發包與工廠製作", start: "2026-02-01", end: "2026-08-15", color: "bg-indigo-500", icon: <Package size={16}/> },
+    { name: "基礎座與管道預埋工程", start: "2026-05-15", end: "2026-07-15", color: "bg-amber-500", icon: <Layers size={16}/> },
+    { name: "現場工程監工與安全管理", start: "2026-05-01", end: "2026-11-30", color: "bg-orange-500", icon: <Construction size={16}/> },
+    { name: "關鍵設備進場吊裝 (洗滌塔)", start: "2026-08-17", end: "2026-08-31", color: "bg-red-600", icon: <Truck size={16}/> },
+    { name: "風管安裝與系統配管", start: "2026-09-01", end: "2026-10-31", color: "bg-emerald-500", icon: <ArrowRight size={16}/> },
+    { name: "電氣控系統接線與測試", start: "2026-10-15", end: "2026-11-30", color: "bg-purple-500", icon: <Clock size={16}/> },
+    { name: "系統試車與驗收資料交付", start: "2026-12-01", end: "2027-02-28", color: "bg-gray-500", icon: <CheckCircle2 size={16}/> },
+  ];
+
+  // 核心施工排程項目 (2026-05-01 ~ 2026-11-30)
+  const detailedTasks = [
+    { id: 1, name: "1. 土木施工 (基礎開挖與室內外基座)", start: "2026-05-15", end: "2026-07-15", color: "bg-amber-600" },
+    { id: 2, name: "2. 洗滌塔系統安裝工程", start: "2026-08-17", end: "2026-09-15", color: "bg-red-500" },
+    { id: 3, name: "3. 濃縮塔系統安裝工程", start: "2026-08-25", end: "2026-09-20", color: "bg-rose-500" },
+    { id: 4, name: "4. 冷凝器/除霧器安裝工程", start: "2026-09-01", end: "2026-09-30", color: "bg-cyan-500" },
+    { id: 5, name: "5. 其他設備安裝定位 (風機/風箱)", start: "2026-08-15", end: "2026-09-10", color: "bg-indigo-500" },
+    { id: 6, name: "6. 大型風管配管/煙囪架台安裝工程", start: "2026-09-05", end: "2026-10-31", color: "bg-emerald-500" },
+    { id: 7, name: "7. 小型管線/公用系統配管工程", start: "2026-09-15", end: "2026-10-31", color: "bg-teal-500" },
+    { id: 8, name: "8. 儀電及動力系統配線安裝工程", start: "2026-10-01", end: "2026-11-20", color: "bg-purple-600" },
+    { id: 9, name: "9. 保溫工程", start: "2026-11-01", end: "2026-11-30", color: "bg-orange-500" },
+  ];
+
+  // 主頁總時程甘特圖時間軸運算 (2026/01 ~ 2027/02)
+  const { timelineData, totalWeeks, projectStartMs, totalDurationMs } = useMemo(() => {
+    const start = new Date('2026-01-05T00:00:00'); 
+    const end = new Date('2027-03-07T00:00:00'); 
+    const data = [];
+    let curr = new Date(start);
+    let weeksCount = 0;
+
+    while (curr < end) {
+      const y = curr.getFullYear();
+      const m = curr.getMonth() + 1;
+      const d = curr.getDate();
+
+      let monthObj = data.find(item => item.year === y && item.month === m);
+      if (!monthObj) {
+        monthObj = { year: y, month: m, weeks: [] };
+        data.push(monthObj);
+      }
+      monthObj.weeks.push(d);
+      weeksCount++;
+      curr.setDate(curr.getDate() + 7);
+    }
+    return {
+      timelineData: data,
+      totalWeeks: weeksCount,
+      projectStartMs: start.getTime(),
+      totalDurationMs: weeksCount * 7 * 24 * 60 * 60 * 1000
+    };
+  }, []);
+
+  const getWeeklyLeftPos = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00').getTime();
+    return ((date - projectStartMs) / totalDurationMs) * 100;
+  };
+
+  const getWeeklyWidth = (startStr, endStr) => {
+    const start = new Date(startStr + 'T00:00:00').getTime();
+    const end = new Date(endStr + 'T00:00:00').getTime() + (24 * 60 * 60 * 1000); 
+    return ((end - start) / totalDurationMs) * 100;
+  };
+
+  // 核心施工排程甘特圖時間軸運算 (2026/05 ~ 2026/11)
+  const { coreTimelineData, totalCoreWeeks, coreStartMs, coreTotalDurationMs } = useMemo(() => {
+    // 尋找 2026-05 第一個星期一之前作為起點 (2026/04/27 是星期一)
+    const start = new Date('2026-04-27T00:00:00'); 
+    // 終點設於 2026-11 月底過後的週日 (確保包含 11/30)
+    const end = new Date('2026-12-07T00:00:00'); 
+    
+    const data = [];
+    let curr = new Date(start);
+    let weeksCount = 0;
+
+    while (curr < end) {
+      const y = curr.getFullYear();
+      const m = curr.getMonth() + 1;
+      const d = curr.getDate(); // 該週星期一的日期
+
+      let monthObj = data.find(item => item.year === y && item.month === m);
+      if (!monthObj) {
+        monthObj = { year: y, month: m, weeks: [] };
+        data.push(monthObj);
+      }
+      monthObj.weeks.push(d);
+      weeksCount++;
+      // 加 7 天進入下一週
+      curr.setDate(curr.getDate() + 7);
+    }
+    
+    return {
+      coreTimelineData: data,
+      totalCoreWeeks: weeksCount,
+      coreStartMs: start.getTime(),
+      coreTotalDurationMs: weeksCount * 7 * 24 * 60 * 60 * 1000
+    };
+  }, []);
+
+  const getCoreLeftPos = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00').getTime();
+    return ((date - coreStartMs) / coreTotalDurationMs) * 100;
+  };
+
+  const getCoreWidth = (startStr, endStr) => {
+    const start = new Date(startStr + 'T00:00:00').getTime();
+    const end = new Date(endStr + 'T00:00:00').getTime() + (24 * 60 * 60 * 1000); 
+    return ((end - start) / coreTotalDurationMs) * 100;
+  };
+
+  const ImpactCard = ({ title, content, type }) => (
+    <div className={`p-4 rounded-lg border-l-4 ${type === 'warning' ? 'bg-yellow-50 border-yellow-400' : 'bg-blue-50 border-blue-400'} mb-4`}>
+      <div className="flex items-center mb-2">
+        {type === 'warning' ? <AlertTriangle className="text-yellow-600 mr-2" size={20}/> : <Info className="text-blue-600 mr-2" size={20}/>}
+        <h4 className="font-bold text-gray-800">{title}</h4>
+      </div>
+      <p className="text-sm text-gray-600 leading-relaxed">{content}</p>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 overflow-x-hidden">
+      {/* Header */}
+      <header className="bg-slate-800 text-white p-6 shadow-lg">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center">
+              <Construction className="mr-3 text-orange-400" />
+              達邁 T6 VOCs 回收系統工程 - 進度規劃報告
+            </h1>
+            <p className="text-slate-400 mt-1">專案編號: H20026C003 | 更新日期: 2026-04-29</p>
+          </div>
+          <div className="flex gap-4">
+            <div className="bg-slate-700 p-3 rounded-lg text-center">
+              <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">專案啟動</div>
+              <div className="font-mono text-sm">2026-01-12</div>
+            </div>
+            <div className="bg-slate-700 p-3 rounded-lg text-center border-l-2 border-orange-500">
+              <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">預計驗收</div>
+              <div className="font-mono text-sm">2027-02-28</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <nav className="bg-white border-b sticky top-0 z-30 shadow-sm overflow-x-auto">
+        <div className="max-w-7xl mx-auto flex w-max md:w-full">
+          {[
+            { id: 'summary', label: '總時程 (週展開)', icon: <Calendar size={18}/> },
+            { id: 'core-gantt', label: '核心施工排程 (週展開)', icon: <List size={18}/> },
+            { id: 'procurement', label: '採購與物料進場', icon: <Package size={18}/> },
+            { id: 'impact', label: '連鎖影響分析', icon: <AlertTriangle size={18}/> }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-5 py-4 flex items-center gap-2 font-medium transition-all whitespace-nowrap ${
+                activeTab === tab.id ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:bg-slate-50'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto p-4 md:p-6">
+        
+        {/* Summary Tab (Gantt Chart - Weekly Dynamic) */}
+        {activeTab === 'summary' && (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            <section className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
+                 <h3 className="text-lg font-bold flex items-center text-slate-800">
+                   <Calendar className="mr-2 text-blue-600" /> 2026-2027 專案甘特圖
+                 </h3>
+                 <div className="text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium">
+                   表頭數字代表該週 <span className="font-bold text-slate-700">星期一</span> 的日期
+                 </div>
+              </div>
+              
+              <div className="overflow-x-auto pb-4 custom-scrollbar">
+                <div className="min-w-[1300px] bg-white rounded-lg border border-slate-200">
+                  {/* Gantt Header */}
+                  <div className="flex border-b-2 border-slate-300">
+                    <div className="w-64 shrink-0 bg-slate-50 p-3 font-bold text-slate-700 border-r border-slate-200 flex items-end shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] z-20">
+                      工程與階段項目
+                    </div>
+                    <div className="flex-1 flex relative bg-slate-50">
+                      {timelineData.map((m, i) => (
+                        <div key={`${m.year}-${m.month}`} style={{ width: `${(m.weeks.length / totalWeeks) * 100}%` }} className="border-r border-slate-300 pt-2 flex flex-col justify-between">
+                          <div className="text-center font-bold text-slate-700 text-[13px]">
+                            {m.month === 1 ? `${m.year}年 ${m.month}月` : `${m.month}月`}
+                          </div>
+                          <div className="flex text-[11px] text-slate-500 font-bold border-t border-slate-200 mt-1">
+                            {m.weeks.map((weekLabel, wi) => (
+                              <div key={wi} style={{ width: `${(1 / m.weeks.length) * 100}%` }} className={`text-center py-1 ${wi < m.weeks.length - 1 ? 'border-r border-slate-200' : ''}`}>
+                                {weekLabel}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Gantt Body */}
+                  <div className="relative">
+                    {/* Background Grid Lines */}
+                    <div className="absolute inset-0 flex pointer-events-none z-0">
+                      <div className="w-64 shrink-0 border-r border-slate-200 bg-white"></div>
+                      <div className="flex-1 flex">
+                        {timelineData.flatMap(m => m.weeks).map((_, i) => (
+                          <div key={i} style={{ width: `${(1 / totalWeeks) * 100}%` }} className="border-r border-slate-100 border-dashed"></div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Gantt Rows */}
+                    <div className="relative z-10 py-3 space-y-3">
+                      {scheduleStages.map((stage, idx) => (
+                        <div key={idx} className="flex items-center group hover:bg-slate-50/80 transition-colors relative">
+                          <div className="w-64 shrink-0 pl-4 pr-3 py-2 flex items-center gap-3 border-r border-slate-200 bg-white group-hover:bg-slate-50/80 z-20">
+                            <span className={`flex items-center justify-center w-5 h-5 rounded-full text-white ${stage.color} shrink-0`}>
+                              {React.cloneElement(stage.icon, { size: 12 })}
+                            </span>
+                            <span className="text-sm font-bold text-slate-700 truncate" title={stage.name}>
+                              {stage.name}
+                            </span>
+                          </div>
+                          <div className="flex-1 relative h-10">
+                            <div
+                              className={`absolute top-1 bottom-1 rounded shadow-sm opacity-90 group-hover:opacity-100 transition-all flex items-center px-2 cursor-pointer overflow-hidden ${stage.color}`}
+                              style={{
+                                left: `${getWeeklyLeftPos(stage.start)}%`,
+                                width: `${getWeeklyWidth(stage.start, stage.end)}%`,
+                                minWidth: '4px'
+                              }}
+                            >
+                              {getWeeklyWidth(stage.start, stage.end) > 10 && (
+                                <span className="text-[11px] text-white font-mono whitespace-nowrap drop-shadow-sm select-none">
+                                  {stage.start.substring(5).replace('-','/')} ~ {stage.end.substring(5).replace('-','/')}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* Core Daily/Weekly Gantt Tab */}
+        {activeTab === 'core-gantt' && (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-6 rounded-xl shadow-md text-white flex flex-col md:flex-row justify-between items-center gap-4">
+              <div>
+                <h3 className="text-xl font-bold flex items-center gap-2 mb-1">
+                  <Clock className="text-orange-400" /> 現場核心施工期 (2026/05 - 2026/11)
+                </h3>
+                <p className="text-slate-300 text-sm">此階段為各工種進場高峰，請使用下方橫向捲軸檢視當週各細部工項銜接狀態。</p>
+              </div>
+              <div className="bg-slate-900/50 px-4 py-2 rounded-lg text-sm border border-slate-600 flex items-center gap-2">
+                 <ArrowRight size={16} className="text-orange-400 animate-pulse"/>
+                 <span>支援左右滑動拖曳</span>
+              </div>
+            </div>
+
+            <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="flex justify-end p-2 bg-slate-50 border-b border-slate-200">
+                 <div className="text-xs text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 font-medium">
+                   表頭數字代表該週 <span className="font-bold text-slate-700">星期一</span> 的日期
+                 </div>
+              </div>
+              <div className="overflow-x-auto pb-4 custom-scrollbar">
+                <div className="min-w-[1200px] bg-white">
+                  
+                  {/* Gantt Header */}
+                  <div className="flex border-b-2 border-slate-300 relative bg-white">
+                    {/* Sticky Column */}
+                    <div className="w-[320px] shrink-0 sticky left-0 bg-slate-100 border-r border-slate-300 z-20 p-4 font-bold text-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] flex items-end">
+                      施工展開項目 (9大分類)
+                    </div>
+                    {/* Timeline Headers */}
+                    <div className="flex-1 flex relative bg-slate-50">
+                      {coreTimelineData.map((m, i) => (
+                        <div key={`${m.year}-${m.month}`} style={{ width: `${(m.weeks.length / totalCoreWeeks) * 100}%` }} className="border-r border-slate-300 pt-2 flex flex-col justify-between">
+                          <div className="text-center font-bold text-slate-700 text-[13px]">
+                            {m.month}月
+                          </div>
+                          <div className="flex text-[11px] text-slate-500 font-bold border-t border-slate-200 mt-1">
+                            {m.weeks.map((weekLabel, wi) => (
+                              <div key={wi} style={{ width: `${(1 / m.weeks.length) * 100}%` }} className={`text-center py-1 ${wi < m.weeks.length - 1 ? 'border-r border-slate-200' : ''}`}>
+                                {weekLabel}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Body Rows */}
+                  <div className="relative">
+                     {/* Background Grid */}
+                     <div className="absolute inset-0 flex pointer-events-none z-0">
+                        <div className="w-[320px] shrink-0 border-r border-slate-200 bg-white"></div>
+                        <div className="flex-1 flex">
+                          {coreTimelineData.flatMap(m => m.weeks).map((_, i) => (
+                            <div key={i} style={{ width: `${(1 / totalCoreWeeks) * 100}%` }} className="border-r border-slate-100 border-dashed"></div>
+                          ))}
+                        </div>
+                     </div>
+
+                     {/* Task Data Rows */}
+                     <div className="relative z-10">
+                       {detailedTasks.map((task) => (
+                         <div key={task.id} className="flex border-b border-slate-100 group hover:bg-blue-50/30 transition-colors relative">
+                           {/* Sticky Task Name */}
+                           <div className="w-[320px] shrink-0 sticky left-0 bg-white group-hover:bg-blue-50/30 z-20 border-r border-slate-200 p-3 flex items-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.03)]">
+                              <span className="text-sm font-bold text-slate-700">{task.name}</span>
+                           </div>
+                           
+                           {/* Task Timeline area */}
+                           <div className="flex-1 relative h-14">
+                              <div
+                                className={`absolute top-2 bottom-2 rounded-md shadow-sm flex items-center px-3 overflow-hidden cursor-pointer hover:brightness-110 transition-all ${task.color}`}
+                                style={{
+                                  left: `${getCoreLeftPos(task.start)}%`,
+                                  width: `${getCoreWidth(task.start, task.end)}%`,
+                                  minWidth: '4px'
+                                }}
+                                title={`${task.name}\n${task.start} ~ ${task.end}`}
+                              >
+                                {getCoreWidth(task.start, task.end) > 8 && (
+                                 <span className="text-xs text-white whitespace-nowrap font-medium select-none drop-shadow-sm">
+                                   {task.start.slice(5).replace('-','/')} ~ {task.end.slice(5).replace('-','/')}
+                                 </span>
+                                )}
+                              </div>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+               <div className="bg-red-50 p-4 rounded-lg border border-red-100">
+                  <h4 className="font-bold text-red-800 text-sm mb-2">最高衝突點：8月下旬 ~ 9月下旬</h4>
+                  <p className="text-xs text-red-700 leading-relaxed">
+                     洗滌塔、濃縮塔定位後，風機設備、大型風管與公用管線將在同一區間內交錯進場。此階段需嚴格管控吊車動線與高空作業範圍。
+                  </p>
+               </div>
+               <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <h4 className="font-bold text-blue-800 text-sm mb-2">機電進場時機：10月初</h4>
+                  <p className="text-xs text-blue-700 leading-relaxed">
+                     待大型風管與主體管線初步對接後，儀電與動力系統才具備最佳的佈線空間，避免線槽受到大型構件安裝時的碰撞。
+                  </p>
+               </div>
+               <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <h4 className="font-bold text-orange-800 text-sm mb-2">收尾作業：11月</h4>
+                  <p className="text-xs text-orange-700 leading-relaxed">
+                     保溫工程安排於所有管線試壓、儀電拉線完成後執行，作為 12 月系統試車驗收前的最後一道現場作業。
+                  </p>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Procurement Tab */}
+        {activeTab === 'procurement' && (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
+                <h3 className="font-bold flex items-center gap-2">
+                  <Truck size={20} className="text-orange-500" />
+                  物料到貨追蹤清單
+                </h3>
+                <span className="text-xs text-slate-500 font-medium uppercase italic">依據 PDF 採購單彙整</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                      <th className="px-6 py-3 font-semibold">項目 / 規格</th>
+                      <th className="px-6 py-3 font-semibold">供應商</th>
+                      <th className="px-6 py-3 font-semibold text-center">預計進場日</th>
+                      <th className="px-6 py-3 font-semibold">狀態</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {procurementData.map(item => (
+                      <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-slate-800 text-sm">{item.item}</div>
+                          <div className="text-xs text-slate-500">{item.type}</div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-600">{item.vendor}</td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`font-mono text-sm px-2 py-1 rounded ${
+                            item.date.includes('06') || item.date.includes('07') ? 'bg-green-100 text-green-800' : 
+                            item.date.includes('08') ? 'bg-red-50 text-red-700 font-bold' : 'bg-slate-100 text-slate-700'
+                          }`}>
+                            {item.date}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-1">
+                            <span className={`w-2 h-2 rounded-full ${item.status === '已訂購' || item.status === '已發包' ? 'bg-green-500' : 'bg-blue-400 animate-pulse'}`}></span>
+                            <span className="text-xs font-medium">{item.status}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Impact Tab */}
+        {activeTab === 'impact' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
+            <section className="space-y-4">
+              <h3 className="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex items-center gap-2">
+                <Layers className="text-blue-500" /> 工項銜接與依賴關係
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="p-5 bg-white border border-slate-200 rounded-xl relative shadow-sm">
+                  <div className="absolute -left-3 top-6 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                  <h4 className="font-bold text-blue-700 mb-1 ml-4">基礎座與進場動線</h4>
+                  <p className="text-sm text-slate-600 ml-4">
+                    5月至7月必須完成現場基礎座灌漿及地坪補強，並確認吊車吊掛動線。若基礎座未準時交付，8月的塔體進場將面臨無法定位的困境。
+                  </p>
+                </div>
+
+                <div className="p-5 bg-white border border-slate-200 rounded-xl relative shadow-sm">
+                  <div className="absolute -left-3 top-6 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                  <h4 className="font-bold text-indigo-700 mb-1 ml-4">核心設備與附屬工程的齊套性</h4>
+                  <p className="text-sm text-slate-600 ml-4">
+                    洗滌塔 (08.17) 定位後，內部需安裝首克英與鴻鈞的內件，外部則由智和對接風箱、墩祐進行系統大管配管，是空間干涉最多的階段。
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <h3 className="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex items-center gap-2">
+                <AlertTriangle className="text-orange-500" /> 風險與應變規劃
+              </h3>
+
+              <ImpactCard 
+                title="洗滌塔填料與內件延遲 (優尼肯/鴻鈞 08.31)" 
+                content="填料與內件在塔體進場兩週後才交貨。這雖然不影響塔體初期定位，但會導致洗滌塔無法進行內部充填與封蓋，延誤水路試循環作業。應確保 9 月初有足夠人手快速完成充填。"
+                type="warning"
+              />
+
+              <div className="bg-slate-800 p-6 rounded-xl text-white shadow-md mt-6">
+                <h4 className="font-bold text-orange-400 mb-3 flex items-center gap-2">
+                   <Clock size={18} /> 緊迫工項提醒
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2 text-sm">
+                    <ChevronRight size={16} className="text-slate-400 shrink-0 mt-0.5" />
+                    <span>質昌風機 (06.15) 到貨後應立即進行入廠檢驗並暫存室內妥善包覆。</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <ChevronRight size={16} className="text-slate-400 shrink-0 mt-0.5" />
+                    <span>9月至10月需密集安排 智和(風管)、墩祐(配管) 與 東溢(電控) 進行每日動線交叉作業協調。</span>
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        )}
+      </main>
+      
+      {/* Footer */}
+      <footer className="max-w-7xl mx-auto p-6 text-center text-slate-400 text-xs mt-12 mb-8 border-t">
+        此報告由 理海技研 工程管理系統 自動生成 | 僅供內部專案討論使用
+      </footer>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar { height: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      `}} />
+    </div>
+  );
+};
+
+export default App;

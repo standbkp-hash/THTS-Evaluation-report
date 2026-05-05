@@ -117,7 +117,7 @@
         </tr>
         <tr>
             <th>設計參數更新</th>
-            <td>立柱間距 1.8m×2.4m、精確分段橫樑、護籠爬梯、欄杆細節</td>
+            <td>立柱間距 1.8m×2.4m、精確分段橫樑、交錯式護籠爬梯、欄杆細節</td>
             <th>工程地點</th>
             <td>台灣</td>
         </tr>
@@ -137,7 +137,7 @@
             <ul>
                 <li><strong>檢修平台：</strong>位於 EL+6m, 11m, 16m, 21m。</li>
                 <li><strong>安全欄杆：</strong>6m, 11m, 16m 平台設 1.1m 高欄杆；21m 平台往上延伸至 22.2m 設 1.2m 高欄杆。欄杆範圍為 1.8m 單面與兩側 0.6m，呈ㄇ字型 (總長 3m)。</li>
-                <li><strong>爬梯：</strong>設置垂直爬梯，並<strong>包含安全護籠</strong>。</li>
+                <li><strong>爬梯：</strong>設置內部垂直爬梯，採每段平台<strong>左右交錯</strong>設計，並<strong>包含安全護籠</strong>。</li>
             </ul>
         </li>
         <li><strong>鋼構選材：</strong>主立柱、橫向支撐樑、斜撐、建物連接樑，<strong>全數統一採用 SUS304 C型鋼 100 × 50 × 5 mm</strong>。</li>
@@ -234,10 +234,25 @@
             <line x1="280" y1="300" x2="160" y2="237.5" stroke="#34495e" stroke-width="2.5" />
             <line x1="160" y1="237.5" x2="280" y2="175" stroke="#34495e" stroke-width="2.5" />
 
-            <!-- Ladder with Cage (Full height overlap) -->
-            <rect x="230" y="175" width="25" height="525" fill="#f39c12" opacity="0.3" stroke="#e67e22" /> <!-- Cage Area -->
-            <line x1="242.5" y1="175" x2="242.5" y2="700" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" /> <!-- Ladder Core -->
-            <text x="215" y="600" font-size="11" fill="#d35400" transform="rotate(-90 215 600)">含護籠爬梯</text>
+            <!-- Ladder with Cage (Staggered per platform) -->
+            <!-- 0-6m (Y: 700 to 550) - Left Side -->
+            <rect x="180" y="550" width="25" height="150" fill="#f39c12" opacity="0.4" stroke="#e67e22" />
+            <line x1="192.5" y1="550" x2="192.5" y2="700" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+            
+            <!-- 6-11m (Y: 550 to 425) - Right Side -->
+            <rect x="235" y="425" width="25" height="125" fill="#f39c12" opacity="0.4" stroke="#e67e22" />
+            <line x1="247.5" y1="425" x2="247.5" y2="550" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+            
+            <!-- 11-16m (Y: 425 to 300) - Left Side -->
+            <rect x="180" y="300" width="25" height="125" fill="#f39c12" opacity="0.4" stroke="#e67e22" />
+            <line x1="192.5" y1="300" x2="192.5" y2="425" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+            
+            <!-- 16-21m (Y: 300 to 175) - Right Side -->
+            <rect x="235" y="175" width="25" height="125" fill="#f39c12" opacity="0.4" stroke="#e67e22" />
+            <line x1="247.5" y1="175" x2="247.5" y2="300" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+
+            <text x="220" y="490" font-size="11" fill="#d35400" text-anchor="middle">交錯式</text>
+            <text x="220" y="505" font-size="11" fill="#d35400" text-anchor="middle">護籠爬梯</text>
 
             <!-- Dimension Annotations -->
             <line x1="140" y1="700" x2="140" y2="550" stroke="#7f8c8d" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)" />
@@ -338,8 +353,8 @@
         </tr>
         <tr>
             <td><strong>人員高空作業安全</strong></td>
-            <td>護籠 + ㄇ字型欄杆</td>
-            <td>將鋼柱延伸至 22.2m 形成 21m 平台的天然圍欄支柱，並配置標準 1.1m/1.2m 欄杆與護籠爬梯，完美符合高空作業法規。</td>
+            <td>交錯式護籠爬梯 + ㄇ字型欄杆</td>
+            <td>將鋼柱延伸至 22.2m 形成 21m 平台的天然圍欄支柱，並配置每層交錯的護籠爬梯，能有效防止人員長距離直墜，完美符合高空作業安全法規。</td>
         </tr>
     </table>
     

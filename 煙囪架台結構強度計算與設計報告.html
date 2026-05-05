@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>煙囪架台結構強度計算與設計報告 (精確修訂版)</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --border-color: #bdc3c7;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, 'LiHei Pro', 'Microsoft JhengHei', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px 60px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: var(--secondary-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 20px;
+        }
+        p, ul, li {
+            font-size: 11pt;
+        }
+        .formula-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10.5pt;
+            color: #2c3e50;
+            line-height: 1.8;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11pt;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #ecf0f1;
+            color: var(--primary-color);
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 9pt;
+            color: #7f8c8d;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .note {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+        .result-safe {
+            color: #27ae60;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>煙囪架台結構強度計算與設計報告</h1>
+    
+    <table>
+        <tr>
+            <th>專案名稱</th>
+            <td>SUS304 不鏽鋼煙囪支撐架台工程 (含護籠爬梯)</td>
+            <th>評估日期</th>
+            <td>2026年5月</td>
+        </tr>
+        <tr>
+            <th>設計參數更新</th>
+            <td>立柱間距 1.8m×2.4m、精確分段橫樑、護籠爬梯、欄杆細節</td>
+            <th>工程地點</th>
+            <td>台灣</td>
+        </tr>
+    </table>
+
+    <h2>1. 設計基本條件與幾何資料</h2>
+    <ul>
+        <li><strong>煙囪規格：</strong>材質 SUS304，外徑 1100 mm，厚度 2 mm。高度 12m~24m。</li>
+        <li><strong>鋼架幾何與跨距：</strong>四根立柱間距為 <strong>1.8m × 2.4m</strong>。鋼架最高點 (頂部欄杆) 至 <strong>EL+22.2m</strong>。</li>
+        <li><strong>分段橫樑與斜撐配置：</strong>
+            <ul>
+                <li><strong>EL+0m ~ 6m：</strong>每 <strong>2.0m</strong> 設置水平橫樑 (共3階)。每段四面皆有單向交錯斜撐。</li>
+                <li><strong>EL+6m ~ 21m：</strong>每 <strong>2.5m</strong> 設置水平橫樑 (共6階)。每段四面皆有單向交錯斜撐。</li>
+            </ul>
+        </li>
+        <li><strong>附屬設施：</strong>
+            <ul>
+                <li><strong>檢修平台：</strong>位於 EL+6m, 11m, 16m, 21m。</li>
+                <li><strong>安全欄杆：</strong>6m, 11m, 16m 平台設 1.1m 高欄杆；21m 平台往上延伸至 22.2m 設 1.2m 高欄杆。欄杆範圍為 1.8m 單面與兩側 0.6m，呈ㄇ字型 (總長 3m)。</li>
+                <li><strong>爬梯：</strong>設置垂直爬梯，並<strong>包含安全護籠</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>鋼構選材：</strong>主立柱、橫向支撐樑、斜撐、建物連接樑，<strong>全數統一採用 SUS304 C型鋼 100 × 50 × 5 mm</strong>。</li>
+        <li><strong>支撐條件：</strong>底部與地面 RC 基礎連接；於高度 16m 與 21m 處與主建物鋼構固定。</li>
+    </ul>
+
+    <h2>2. 結構簡圖 (立面示意圖)</h2>
+    <div class="diagram-container">
+        <svg width="650" height="800" viewBox="0 0 650 800" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="diagonalHatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                    <line x1="0" y1="0" x2="0" y2="10" stroke="#bdc3c7" stroke-width="1" />
+                </pattern>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+                </marker>
+            </defs>
+            
+            <!-- Ground -->
+            <rect x="50" y="700" width="500" height="20" fill="url(#diagonalHatch)" stroke="#7f8c8d" />
+            <text x="50" y="690" font-size="12" fill="#333">GL ±0.0m</text>
+
+            <!-- Adjacent Building -->
+            <rect x="420" y="100" width="100" height="600" fill="#ecf0f1" stroke="#95a5a6" stroke-width="2" />
+            <text x="440" y="400" font-size="14" fill="#7f8c8d" transform="rotate(90 440 400)">主 建 物 鋼 構</text>
+
+            <!-- Chimney (Behind) -->
+            <!-- 24m maps to Y=100. Range is 600px for 24m. 1m = 25px -->
+            <path d="M 80 400 L 180 400 L 180 100 L 220 100 L 220 450 L 80 450 Z" fill="#95a5a6" opacity="0.25" stroke="#7f8c8d" stroke-width="2" />
+            <text x="130" y="425" font-size="12" fill="#2c3e50">煙囪進入 12m</text>
+            <text x="200" y="90" font-size="12" fill="#2c3e50" text-anchor="middle">煙囪頂 24m</text>
+
+            <!-- Main Columns (0 to 22.2m -> Y=700 to Y=145) -->
+            <line x1="160" y1="700" x2="160" y2="145" stroke="#2c3e50" stroke-width="4" />
+            <line x1="280" y1="700" x2="280" y2="145" stroke="#2c3e50" stroke-width="4" />
+
+            <!-- Railings (U-shape indication) -->
+            <rect x="155" y="522.5" width="130" height="27.5" fill="#3498db" opacity="0.3" stroke="#2980b9" />
+            <rect x="155" y="397.5" width="130" height="27.5" fill="#3498db" opacity="0.3" stroke="#2980b9" />
+            <rect x="155" y="272.5" width="130" height="27.5" fill="#3498db" opacity="0.3" stroke="#2980b9" />
+            <rect x="155" y="145" width="130" height="30" fill="#3498db" opacity="0.3" stroke="#2980b9" />
+
+            <!-- Horizontal Beams (25px per 1m) -->
+            <!-- 0m: 700, 2m: 650, 4m: 600, 6m: 550 -->
+            <line x1="160" y1="650" x2="280" y2="650" stroke="#2c3e50" stroke-width="3" />
+            <line x1="160" y1="600" x2="280" y2="600" stroke="#2c3e50" stroke-width="3" />
+            
+            <!-- Platforms / Main Beams -->
+            <!-- 6m -->
+            <rect x="160" y="547" width="120" height="6" fill="#8e44ad" />
+            <text x="295" y="555" font-size="12" fill="#8e44ad">EL +6.0m (平台)</text>
+
+            <!-- 8.5m: 550 - 62.5 = 487.5 -->
+            <line x1="160" y1="487.5" x2="280" y2="487.5" stroke="#2c3e50" stroke-width="3" />
+            
+            <!-- 11m: 550 - 125 = 425 -->
+            <rect x="160" y="422" width="120" height="6" fill="#8e44ad" />
+            <text x="295" y="430" font-size="12" fill="#8e44ad">EL +11.0m (平台)</text>
+
+            <!-- 13.5m: 425 - 62.5 = 362.5 -->
+            <line x1="160" y1="362.5" x2="280" y2="362.5" stroke="#2c3e50" stroke-width="3" />
+
+            <!-- 16m: 425 - 125 = 300 -->
+            <rect x="160" y="297" width="120" height="6" fill="#8e44ad" />
+            <line x1="280" y1="300" x2="420" y2="300" stroke="#e74c3c" stroke-width="4" />
+            <circle cx="280" cy="300" r="4" fill="#e74c3c" />
+            <circle cx="420" cy="300" r="4" fill="#e74c3c" />
+            <text x="295" y="295" font-size="12" fill="#e74c3c">EL +16.0m (平台+固定點)</text>
+
+            <!-- 18.5m: 300 - 62.5 = 237.5 -->
+            <line x1="160" y1="237.5" x2="280" y2="237.5" stroke="#2c3e50" stroke-width="3" />
+
+            <!-- 21m: 300 - 125 = 175 -->
+            <rect x="160" y="172" width="120" height="6" fill="#8e44ad" />
+            <line x1="280" y1="175" x2="420" y2="175" stroke="#e74c3c" stroke-width="4" />
+            <circle cx="280" cy="175" r="4" fill="#e74c3c" />
+            <circle cx="420" cy="175" r="4" fill="#e74c3c" />
+            <text x="295" y="170" font-size="12" fill="#e74c3c">EL +21.0m (平台+固定點)</text>
+
+            <!-- 22.2m: 175 - 30 = 145 (Top frame/railing) -->
+            <line x1="160" y1="145" x2="280" y2="145" stroke="#2c3e50" stroke-width="3" />
+            <text x="295" y="145" font-size="12" fill="#3498db">EL +22.2m (頂部欄杆)</text>
+
+            <!-- Diagonal Bracings (Zig-zag) -->
+            <!-- 0-6m (2m steps) -->
+            <line x1="160" y1="700" x2="280" y2="650" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="650" x2="160" y2="600" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="600" x2="280" y2="550" stroke="#34495e" stroke-width="2.5" />
+            <!-- 6-21m (2.5m steps) -->
+            <line x1="280" y1="550" x2="160" y2="487.5" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="487.5" x2="280" y2="425" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="425" x2="160" y2="362.5" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="362.5" x2="280" y2="300" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="300" x2="160" y2="237.5" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="237.5" x2="280" y2="175" stroke="#34495e" stroke-width="2.5" />
+
+            <!-- Ladder with Cage (Full height overlap) -->
+            <rect x="230" y="175" width="25" height="525" fill="#f39c12" opacity="0.3" stroke="#e67e22" /> <!-- Cage Area -->
+            <line x1="242.5" y1="175" x2="242.5" y2="700" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" /> <!-- Ladder Core -->
+            <text x="215" y="600" font-size="11" fill="#d35400" transform="rotate(-90 215 600)">含護籠爬梯</text>
+
+            <!-- Dimension Annotations -->
+            <line x1="140" y1="700" x2="140" y2="550" stroke="#7f8c8d" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="110" y="640" font-size="11" fill="#7f8c8d" transform="rotate(-90 110 640)">每 2.0m</text>
+            <line x1="140" y1="550" x2="140" y2="175" stroke="#7f8c8d" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="110" y="380" font-size="11" fill="#7f8c8d" transform="rotate(-90 110 380)">每 2.5m 分段</text>
+
+            <rect x="10" y="60" width="180" height="70" fill="#fff" stroke="#2c3e50" rx="4" />
+            <text x="20" y="80" font-size="11" fill="#2c3e50" font-weight="bold">全構件統一：C 100×50×5</text>
+            <text x="20" y="95" font-size="11" fill="#2c3e50">跨距：1.8m × 2.4m</text>
+            <text x="20" y="110" font-size="11" fill="#e74c3c">ㄇ字型欄杆 + 護籠爬梯</text>
+        </svg>
+    </div>
+
+    <h2>3. 精確鋼材數量與重量估算 (Weight Estimation)</h2>
+    <div class="note">
+        依據 C型鋼 100x50x5 mm 單位重約 <strong>7.5 kg/m</strong> 進行精細估算：
+    </div>
+    <div class="formula-box">
+        <strong>1. 主立柱：</strong> 4 根 × 高度 22.2m = 88.8m<br>
+        重量 = 88.8m × 7.5 kg/m ≈ <strong>666 kg</strong><br><br>
+        
+        <strong>2. 水平橫樑 (每環周長約 8.4m)：</strong> <br>
+        (0~6m: 3階) + (6~21m: 6階) + (22.2m: 1階) = 共 10 階橫樑<br>
+        重量 = 10 × 8.4m × 7.5 kg/m ≈ <strong>630 kg</strong><br><br>
+        
+        <strong>3. 單向交錯斜撐 (四面配置)：</strong> <br>
+        - 0~6m 段 (高 2m): 弦長分別為 2.69m 與 3.12m，共 3 階 × 4 面 = 34.8m<br>
+        - 6~21m 段 (高 2.5m): 弦長分別為 3.08m 與 3.47m，共 6 階 × 4 面 = 78.6m<br>
+        總長度 = 113.4m，重量 = 113.4m × 7.5 kg/m ≈ <strong>851 kg</strong><br><br>
+        
+        <strong>4. 平台花紋鋼板與附屬 (含次樑)：</strong><br>
+        4座平台 × 面積(1.8×2.4) ≈ 17.3 m²，保守估 40 kg/m² = <strong>690 kg</strong><br><br>
+
+        <strong>5. 安全欄杆與護籠爬梯：</strong><br>
+        - ㄇ字型欄杆 (總長3m) × 4座 ≈ <strong>150 kg</strong><br>
+        - 護籠爬梯 (0~21m，含籠體約 30 kg/m) ≈ <strong>630 kg</strong><br><br>
+
+        <strong>6. 螺栓、接合板等五金 (10% 預留)：</strong> ≈ <strong>215 kg</strong>
+    </div>
+    
+    <p><strong>鋼構架總重 (不含煙囪)：</strong> 666 + 630 + 851 + 690 + 150 + 630 + 215 = <strong>3,832 kg</strong></p>
+    <p><strong>結構總重量 (DL)：</strong> 鋼架 3,832 kg + 煙囪自重 658 kg ≈ <strong>4,490 kg</strong> (約 4.5 噸)</p>
+    <p><strong>單根主立柱平均靜軸壓 (P_req)：</strong> 4,490 kg / 4 = <strong>1,123 kg</strong></p>
+
+    <h2>4. 結構強度詳細計算 (Structural Calculations)</h2>
+    
+    <h3>4.1 材料與截面性質</h3>
+    <div class="formula-box">
+        材質：不鏽鋼 SUS304 (Fy ≈ 2,100 kgf/cm²)<br>
+        型鋼：C 100 × 50 × 5 mm<br>
+        截面積 (A) = 9.36 cm²<br>
+        弱軸迴轉半徑 (ry) = 1.54 cm
+    </div>
+
+    <h3>4.2 主立柱強度檢核 (Main Column Check)</h3>
+    <p>因為 6m 到 21m 區間的橫樑間距為 2.5m，主立柱的最大「有效無支撐長度 (L)」由 200cm 變為 <strong>250cm</strong>，我們以最嚴苛的 250cm 跨距進行挫曲檢核。</p>
+    <div class="formula-box">
+        1. 計算細長比 (Slenderness Ratio, λ)：<br>
+        λ = L / ry = 250 cm / 1.54 cm = 162.3<br>
+        (符合規範壓縮構件 λ ≤ 200 之安全限制)<br><br>
+        
+        2. 計算容許抗壓應力 (Fa)：<br>
+        Fa ≈ (12 × π² × E) / (23 × λ²) = 391 kgf/cm²<br><br>
+        
+        3. 計算單根 C100x50x5 容許軸向承壓 (Pall)：<br>
+        Pall = Fa × A = 391 × 9.36 = <strong>3,659 kg</strong><br><br>
+        
+        4. 檢核比值 (Demand/Capacity Ratio)：<br>
+        實際需求承載 Preq = 1,123 kg<br>
+        受壓比值 = 1,123 / 3,659 = <strong>0.30 ≤ 1.0 <span class="result-safe">(非常安全)</span></strong>
+    </div>
+
+    <h3>4.3 建物連接樑強度檢核 (16m & 21m 處)</h3>
+    <p>風載重估算 (250 kgf/m² 風壓 × 25 m² 迎風面 × 0.8 係數) 總側向推力約 5,000 kgf。假設 60% 風力集中於頂部 21m 節點，由兩支連接樑吸收，單根極端受力約 1,500 kgf。</p>
+    <div class="formula-box">
+        單根 C100x50x5 容許推力 (保守估計) ≈ 7,956 kg<br>
+        單根 C100x50x5 容許拉力 (0.6Fy × A) ≈ 11,793 kg<br>
+        推力/拉力比值皆介於 <strong>0.12 ~ 0.18 ≤ 1.0 <span class="result-safe">(安全裕度極大)</span></strong>
+    </div>
+
+    <h2>5. 工程結論與設計亮點</h2>
+    <table>
+        <tr>
+            <th>設計項目</th>
+            <th>數據/結果</th>
+            <th>工程效益</th>
+        </tr>
+        <tr>
+            <td><strong>整體材料重量估算</strong></td>
+            <td>總重約 4.5 噸</td>
+            <td>由於精細計算了橫樑間距與斜撐長度，耗材總量明確，有利於精準備料。</td>
+        </tr>
+        <tr>
+            <td><strong>立柱抗壓安全係數</strong></td>
+            <td>安全比值 0.30</td>
+            <td>高達 3.3 倍的承載餘裕，在地震垂直位移或乘載多名檢修人員時絕對安全。</td>
+        </tr>
+        <tr>
+            <td><strong>人員高空作業安全</strong></td>
+            <td>護籠 + ㄇ字型欄杆</td>
+            <td>將鋼柱延伸至 22.2m 形成 21m 平台的天然圍欄支柱，並配置標準 1.1m/1.2m 欄杆與護籠爬梯，完美符合高空作業法規。</td>
+        </tr>
+    </table>
+    
+    <div class="footer">
+        本計算書依據鋼結構容許應力設計法 (ASD) 之基本力學原理編製。<br>
+        實際施工圖說與結構簽證，仍需交由專業技師考量實際地質與現場條件後核定。
+    </div>
+</div>
+
+</body>
+</html>

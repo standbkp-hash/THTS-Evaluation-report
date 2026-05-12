@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無勾框 (Hookless) 與傳統框 (Hooked) 綜合評估報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        /* Custom styles for diagram drawing */
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .rim-profile {
+            width: 280px;
+            height: 320px;
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+        .rim-profile:hover {
+            transform: translateY(-5px);
+        }
+        .rim-svg {
+            width: 100%;
+            height: 100%;
+        }
+        /* Highlight specific text */
+        .alert-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+<div class="max-w-5xl mx-auto px-4 py-8 sm:py-12">
+    <header class="text-center mb-16 relative">
+        <div class="absolute inset-0 -z-10 flex items-center justify-center opacity-5">
+            <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/></svg>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
+            無勾框 (Hookless) <br class="hidden sm:block">與 傳統框 (Hooked)
+            <span class="block text-2xl md:text-3xl mt-4 text-blue-600 font-bold">綜合評估報告</span>
+        </h1>
+        <p class="text-xl text-slate-600 max-w-2xl mx-auto font-medium">基於 ETRTO 國際標準規範與第三方客觀評測的深入分析，釐清升級與使用迷思。</p>
+    </header>
+
+    <main class="space-y-16">
+        <!-- Section 1: Introduction & Profile -->
+        <section class="bg-white rounded-3xl shadow-sm p-6 md:p-10 border border-slate-200">
+            <h2 class="text-3xl font-bold text-slate-800 mb-8 flex items-center border-b border-slate-100 pb-4">
+                <span class="bg-blue-100 text-blue-600 rounded-full p-2 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </span>
+                1. 結構特徵與基本介紹
+            </h2>
+            <div class="prose max-w-none text-slate-600 text-lg mb-8 leading-relaxed">
+                <p>無勾框（Hookless 或 Tubeless Straight Side, TSS）與傳統框最大的差異在於「輪圈側壁頂端」的設計。無勾框移除了用來卡住外胎的倒勾結構，使內壁呈現完全垂直的平整狀態。外胎的固定主要仰賴輪圈精準的公差與胎唇本身的強度張力。</p>
+            </div>
+
+            <div class="diagram-container">
+                <!-- Hooked Rim SVG -->
+                <div class="rim-profile flex flex-col items-center border border-slate-100">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700 bg-slate-100 px-5 py-2 rounded-full w-full text-center tracking-wide">傳統有勾框 (Hooked)</h3>
+                    <svg class="rim-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tire Background -->
+                        <path d="M10,20 C10,0 90,0 90,20 C90,40 80,60 75,70 L25,70 C20,60 10,40 10,20 Z" fill="#f1f5f9"/>
+                        <!-- Tire contour -->
+                        <path d="M10,20 C10,0 90,0 90,20 C90,40 80,60 75,70" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="4,2"/>
+                        <path d="M10,20 C10,40 20,60 25,70" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="4,2"/>
+                        <!-- Bead core -->
+                        <circle cx="23" cy="72" r="4.5" fill="#1e293b"/>
+                        <circle cx="77" cy="72" r="4.5" fill="#1e293b"/>
+                        <!-- Rim Body with Hook -->
+                        <path d="M20,110 L20,70 C20,65 25,60 30,65 C33,68 30,75 25,80" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+                        <path d="M80,110 L80,70 C80,65 75,60 70,65 C67,68 70,75 75,80" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+                        <path d="M20,110 Q50,120 80,110" fill="none" stroke="#0f172a" stroke-width="5"/>
+                        <!-- Annotations for Hook -->
+                        <circle cx="30" cy="65" r="9" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2"/>
+                        <line x1="38" y1="65" x2="52" y2="65" stroke="#ef4444" stroke-width="2"/>
+                        <text x="55" y="69" font-size="11" fill="#ef4444" font-weight="bold">倒勾卡住</text>
+                    </svg>
+                </div>
+                
+                <!-- Hookless Rim SVG -->
+                <div class="rim-profile flex flex-col items-center border border-slate-100">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700 bg-slate-100 px-5 py-2 rounded-full w-full text-center tracking-wide">無勾框 (Hookless)</h3>
+                    <svg class="rim-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tire Background -->
+                        <path d="M12,20 C12,0 88,0 88,20 C88,45 80,60 78,75 L22,75 C20,60 12,45 12,20 Z" fill="#f0fdf4"/>
+                        <!-- Tire contour (smoother transition) -->
+                        <path d="M12,20 C12,0 88,0 88,20 C88,45 80,60 78,75" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="4,2"/>
+                        <path d="M12,20 C12,45 20,60 22,75" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="4,2"/>
+                        <!-- Bead core (Stiffer for hookless) -->
+                        <rect x="18" y="66" width="6" height="14" rx="2" fill="#1e293b"/>
+                        <rect x="76" y="66" width="6" height="14" rx="2" fill="#1e293b"/>
+                        <!-- Rim Body straight side (Thicker wall) -->
+                        <path d="M20,110 L20,65" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M80,110 L80,65" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M20,110 Q50,120 80,110" fill="none" stroke="#0f172a" stroke-width="6"/>
+                         <!-- Annotations for Straight Wall -->
+                         <circle cx="20" cy="65" r="9" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="2"/>
+                         <line x1="28" y1="65" x2="42" y2="65" stroke="#22c55e" stroke-width="2"/>
+                         <text x="45" y="69" font-size="11" fill="#22c55e" font-weight="bold">平整直壁</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <strong class="text-slate-800 text-lg flex items-center mb-3">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                        無勾框主要優勢
+                    </strong>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="text-green-500 mr-2 mt-0.5">•</span> <div>製造工藝單純，減少碳纖維彎折，<span class="text-blue-700 font-semibold">顯著提升抗衝擊強度</span>與防裂框能力。</div></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-2 mt-0.5">•</span> <div>省去倒勾結構的樹脂與碳布材料，達到實質的<span class="text-blue-700 font-semibold">輕量化</span>效果。</div></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-2 mt-0.5">•</span> <div>胎框過渡更平順呈現水滴型，提供更佳的<span class="text-blue-700 font-semibold">空氣力學</span>表現。</div></li>
+                    </ul>
+                </div>
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <strong class="text-slate-800 text-lg flex items-center mb-3">
+                        <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"></path></svg>
+                        無勾框使用限制
+                    </strong>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="text-red-500 mr-2 mt-0.5">•</span> <div>極嚴格的<span class="text-red-600 font-bold">胎壓限制 (最高 73 PSI / 5.0 Bar)</span>，絕不可超壓。</div></li>
+                        <li class="flex items-start"><span class="text-red-500 mr-2 mt-0.5">•</span> <div>外胎<span class="text-red-600 font-bold">相容性要求高</span>，必須選用 ETRTO 認證或輪組廠表列相容之型號。</div></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Performance Comparison -->
+        <section class="bg-white rounded-3xl shadow-sm p-6 md:p-10 border border-slate-200 overflow-hidden">
+            <h2 class="text-3xl font-bold text-slate-800 mb-8 flex items-center border-b border-slate-100 pb-4">
+                <span class="bg-indigo-100 text-indigo-600 rounded-full p-2 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </span>
+                2. 騎乘指標客觀比較
+            </h2>
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-700 text-base border-b-2 border-slate-200">
+                            <th class="p-5 font-bold w-1/5">騎乘指標</th>
+                            <th class="p-5 font-bold w-1/6 text-center">傳統有勾框</th>
+                            <th class="p-5 font-bold w-1/6 text-center">無勾框 (TSS)</th>
+                            <th class="p-5 font-bold w-auto">客觀評價與差異分析</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tr class="hover:bg-blue-50/50 transition-colors">
+                            <td class="p-5 font-semibold flex items-center"><svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg> 空力學</td>
+                            <td class="p-5 text-center text-slate-500">良</td>
+                            <td class="p-5 text-center text-blue-600 font-bold text-lg bg-blue-50/30">優</td>
+                            <td class="p-5 text-sm leading-relaxed">無勾框胎框過渡平順，減少亂流。風洞實測在側風環境下能節省約 1-2 瓦特。</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/50 transition-colors">
+                            <td class="p-5 font-semibold flex items-center"><svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg> 重量</td>
+                            <td class="p-5 text-center text-slate-500">中</td>
+                            <td class="p-5 text-center text-blue-600 font-bold text-lg bg-blue-50/30">優</td>
+                            <td class="p-5 text-sm leading-relaxed">無倒勾設計減少輪圈邊緣材料用量，有效降低最外圍的重量與轉動慣量。</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/50 transition-colors">
+                            <td class="p-5 font-semibold flex items-center"><svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 抗衝擊性</td>
+                            <td class="p-5 text-center text-slate-500">中</td>
+                            <td class="p-5 text-center text-blue-600 font-bold text-lg bg-blue-50/30">優</td>
+                            <td class="p-5 text-sm leading-relaxed">側壁結構厚實且碳纖維未經彎折，防裂框能力顯著優於傳統框。</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/50 transition-colors">
+                            <td class="p-5 font-semibold flex items-center"><svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 滾動阻力</td>
+                            <td class="p-5 text-center text-slate-500">優 <span class="text-xs block">(平坦高壓)</span></td>
+                            <td class="p-5 text-center text-blue-600 font-bold text-lg bg-blue-50/30">優 <span class="text-xs font-normal block">(真實路面)</span></td>
+                            <td class="p-5 text-sm leading-relaxed">傳統框可打高壓，在室內賽道滾阻較低。無勾框強制低壓寬胎，在真實柏油路面實測滾阻反而更低。</td>
+                        </tr>
+                        <tr class="bg-red-50 hover:bg-red-100/50 transition-colors border-t-2 border-red-100">
+                            <td class="p-5 font-bold text-red-700 flex items-center"><svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> 系統安全性</td>
+                            <td class="p-5 text-center font-bold text-slate-700">極優 <span class="text-xs block font-normal">(高容錯)</span></td>
+                            <td class="p-5 text-center text-amber-600 font-bold text-lg bg-red-50/30">良 <span class="text-xs block font-normal">(需嚴格守規)</span></td>
+                            <td class="p-5 text-sm text-red-800 leading-relaxed font-medium">無勾框容錯率低。若超壓 (>73 PSI) 或用錯外胎，有瞬間脫胎引發嚴重意外的風險。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3: Inner Tube Usage -->
+        <section class="bg-white rounded-3xl shadow-sm p-6 md:p-10 border border-slate-200">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center border-b border-slate-100 pb-4">
+                <span class="bg-orange-100 text-orange-600 rounded-full p-2 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </span>
+                3. 無勾框裝載「內胎」使用分析
+            </h2>
+            <div class="bg-slate-50 border-l-4 border-slate-400 p-5 mb-8 rounded-r-xl">
+                <p class="text-slate-700 text-lg leading-relaxed m-0">
+                    許多車友因為厭惡無內胎系統補胎液的異味與清理不便，最終選擇在無勾框內裝回 TPU 或一般內胎。<strong>此舉在技術上是可行的，但伴隨著極為嚴格的安全限制。</strong>
+                </p>
+            </div>
+
+            <div class="alert-box shadow-md mb-12 relative overflow-hidden border border-red-200">
+                <h3 class="text-xl font-bold text-red-800 mb-5 flex items-center">
+                    <svg class="w-7 h-7 mr-3 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    裝載內胎的絕對安全限制
+                </h3>
+                <ul class="space-y-4 text-red-900 relative z-10">
+                    <li class="flex items-start bg-white/70 p-4 rounded-lg border border-red-100">
+                        <span class="text-red-600 mr-4 text-2xl flex-shrink-0 leading-none">❌</span>
+                        <div>
+                            <strong class="font-bold text-lg block text-red-800 mb-1">絕對禁止：使用傳統非 TLR 外胎 (Clincher)</strong>
+                            <span class="text-sm leading-snug">傳統外胎胎唇會延展，無勾框沒有倒勾可擋。充氣後會直接滑出輪框造成爆胎，<strong>即使裡面塞了內胎也一樣危險！</strong></span>
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-white/70 p-4 rounded-lg border border-red-100">
+                        <span class="text-green-600 mr-4 text-2xl flex-shrink-0 leading-none">✅</span>
+                        <div>
+                            <strong class="font-bold text-lg block text-green-800 mb-1">必須使用：TLR / TLE / TR 無內胎相容外胎</strong>
+                            <span class="text-sm leading-snug">即使決定裝內胎，也必須購買具備低延展性胎唇的 TLR 外胎，確保能緊緊卡在無勾平整側壁上。</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-white/70 p-4 rounded-lg border border-red-100">
+                        <span class="text-orange-600 mr-4 text-2xl flex-shrink-0 leading-none">⚠️</span>
+                        <div>
+                            <strong class="font-bold text-lg block text-orange-800 mb-1">胎壓限制不變：最高 73 PSI (5.0 Bar)</strong>
+                            <span class="text-sm leading-snug">胎壓限制是「輪圈結構」的規範，與是否裝內胎無關。打超過這個壓力同樣會導致外胎炸脫。</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <h3 class="text-2xl font-bold text-slate-800 mb-8 text-center bg-slate-50 py-3 rounded-xl border border-slate-200">折衷方案分析 (無勾框 + TLR外胎 + TPU內胎)</h3>
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Pros -->
+                <div class="bg-gradient-to-b from-green-50 to-white rounded-2xl p-6 border-2 border-green-100 shadow-sm h-full">
+                    <h4 class="text-xl font-bold text-green-800 mb-6 flex items-center border-b-2 border-green-200 pb-3">
+                        優點 (為何選擇裝內胎)
+                    </h4>
+                    <ul class="space-y-4 text-slate-700">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2 mt-0.5">•</span>
+                            <div><strong>維護極簡化：</strong>擺脫補胎液的異味與定期補充的麻煩，不需清殘膠。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2 mt-0.5">•</span>
+                            <div><strong>路邊救援確定性極高：</strong>遇到大破洞，換內胎是標準流程，能快速重返騎乘。</div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Cons -->
+                <div class="bg-gradient-to-b from-orange-50 to-white rounded-2xl p-6 border-2 border-orange-100 shadow-sm h-full">
+                    <h4 class="text-xl font-bold text-orange-800 mb-6 flex items-center border-b-2 border-orange-200 pb-3">
+                        缺點 (付出的代價)
+                    </h4>
+                    <ul class="space-y-4 text-slate-700">
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-0.5">•</span>
+                            <div><strong>防刺能力下降：</strong>失去補胎液自動修復細微刺孔的功能。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-0.5">•</span>
+                            <div><strong>失去輕量化與增加滾阻：</strong>TLR外胎加內胎會增加重量與內外胎間的摩擦阻力。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-0.5">•</span>
+                            <div><strong>蛇咬風險重現：</strong>無勾規定低壓，高速撞坑洞極易夾破內胎，抵銷了原本無內胎防蛇咬的優勢。</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-3xl shadow-xl p-8 md:p-12 text-center">
+            <h3 class="text-3xl md:text-4xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-emerald-300">總結建議</h3>
+            <div class="w-24 h-1 bg-gradient-to-r from-blue-400 to-emerald-400 mx-auto mb-8 rounded-full"></div>
+            <p class="text-lg md:text-xl text-slate-200 max-w-3xl mx-auto leading-relaxed font-light">
+                若您極度厭惡補胎液，在無勾框上 <strong class="text-white font-bold border-b-2 border-emerald-400 pb-1 mx-1">使用 TLR 外胎 搭配 TPU 輕量內胎</strong> 是一個兼顧保養便利與維修確定感的合理折衷方案。<br><br>
+                但請務必死守 <span class="inline-block bg-red-500/20 text-red-300 px-3 py-1 rounded-md font-bold mx-1 border border-red-500/30">73 PSI</span> 胎壓上限。切記：<br>
+                <span class="block mt-6 text-2xl font-bold text-red-400">永遠不可將「傳統非 TLR 外胎」裝上無勾框。</span>
+            </p>
+        </section>
+    </main>
+    
+    <footer class="mt-20 pt-8 border-t border-slate-200 text-center flex flex-col items-center justify-center">
+        <p class="text-slate-500 text-sm mb-2">報告彙整製作：基於客觀第三方媒體評測與 ETRTO (European Tyre and Rim Technical Organisation) 規範整理。</p>
+    </footer>
+</div>
+
+</body>
+</html>

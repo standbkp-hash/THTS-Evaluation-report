@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>煙囪支撐架台結構計算需求書</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #2980b9;
+            --highlight: #e8f4fd;
+            --text-color: #333;
+            --border-color: #bdc3c7;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, 'LiHei Pro', 'Microsoft JhengHei', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            background: white;
+            padding: 50px 70px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .header p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 14px;
+        }
+        .purpose-box {
+            background-color: var(--highlight);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 0 4px 4px 0;
+        }
+        .purpose-box strong {
+            color: var(--accent-color);
+        }
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 40px;
+            font-size: 20px;
+        }
+        ul {
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        li > ul {
+            margin-top: 8px;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background-color: #fafafa;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+        }
+        .diagram-caption {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        .req-list {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px 30px;
+            margin-top: 20px;
+        }
+        .req-list li {
+            margin-bottom: 15px;
+        }
+        .req-list strong {
+            color: var(--primary-color);
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        @media print {
+            body { background-color: white; }
+            .container { box-shadow: none; margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>煙囪支撐架台結構計算需求書</h1>
+        <p>SUS304 不鏽鋼煙囪支撐架台工程 - 結構技師委託計算依據</p>
+    </div>
+
+    <div class="purpose-box">
+        <strong>文件目的：</strong> 本文件旨在提供「SUS304 不鏽鋼煙囪支撐架台工程」之初步設計參數與結構配置規劃，作為委託專業結構技師進行電腦軟體建模、結構強度計算分析及正式簽證之依據。
+    </div>
+
+    <h2>一、 專案概述</h2>
+    <ul>
+        <li><strong>專案名稱：</strong> SUS304 不鏽鋼煙囪支撐架台工程</li>
+        <li><strong>工程地點：</strong> 台灣 新竹縣竹北市（請技師特別考量在地風區及地形地貌係數）</li>
+        <li><strong>主體設備：</strong> SUS304 不鏽鋼排氣煙囪（外徑 1100 mm，管壁厚度 2 mm）。煙囪自離地標高 EL+12.0m 處水平進入鋼架，轉垂直向上延伸至 EL+24.0m。</li>
+    </ul>
+
+    <h2>二、 結構配置簡圖</h2>
+    <div class="diagram-container">
+        <!-- 整合設計簡圖 SVG -->
+        <svg width="650" height="800" viewBox="0 0 650 800" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="diagonalHatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                    <line x1="0" y1="0" x2="0" y2="10" stroke="#bdc3c7" stroke-width="1" />
+                </pattern>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+                </marker>
+            </defs>
+            
+            <rect x="50" y="700" width="500" height="20" fill="url(#diagonalHatch)" stroke="#7f8c8d" />
+            <text x="50" y="690" font-size="12" fill="#333">GL ±0.0m</text>
+
+            <!-- Adjacent Building -->
+            <rect x="420" y="100" width="100" height="600" fill="#ecf0f1" stroke="#95a5a6" stroke-width="2" />
+            <text x="440" y="400" font-size="14" fill="#7f8c8d" transform="rotate(90 440 400)">主 建 物 鋼 構</text>
+
+            <!-- Chimney -->
+            <path d="M 80 400 L 180 400 L 180 100 L 220 100 L 220 450 L 80 450 Z" fill="#95a5a6" opacity="0.25" stroke="#7f8c8d" stroke-width="2" />
+
+            <!-- Main Columns -->
+            <line x1="160" y1="700" x2="160" y2="145" stroke="#2c3e50" stroke-width="4" />
+            <line x1="280" y1="700" x2="280" y2="145" stroke="#2c3e50" stroke-width="4" />
+
+            <!-- Horizontal Beams & Platforms -->
+            <!-- 0m: 700, 2m: 650, 4m: 600 -->
+            <line x1="160" y1="650" x2="280" y2="650" stroke="#2c3e50" stroke-width="3" />
+            <line x1="160" y1="600" x2="280" y2="600" stroke="#2c3e50" stroke-width="3" />
+            <rect x="160" y="547" width="120" height="6" fill="#8e44ad" /> <!-- 6m -->
+            <line x1="160" y1="487.5" x2="280" y2="487.5" stroke="#2c3e50" stroke-width="3" /> <!-- 8.5m -->
+            <rect x="160" y="422" width="120" height="6" fill="#8e44ad" /> <!-- 11m -->
+            <line x1="160" y1="362.5" x2="280" y2="362.5" stroke="#2c3e50" stroke-width="3" /> <!-- 13.5m -->
+            <rect x="160" y="297" width="120" height="6" fill="#8e44ad" /> <!-- 16m -->
+            <line x1="160" y1="237.5" x2="280" y2="237.5" stroke="#2c3e50" stroke-width="3" /> <!-- 18.5m -->
+            <rect x="160" y="172" width="120" height="6" fill="#8e44ad" /> <!-- 21m -->
+            <line x1="160" y1="145" x2="280" y2="145" stroke="#2c3e50" stroke-width="3" /> <!-- 22.2m -->
+
+            <!-- Connections points (8m, 13m, 18m) -->
+            <!-- 8m: 700 - 8*25 = 500 -->
+            <line x1="280" y1="500" x2="420" y2="500" stroke="#e74c3c" stroke-width="4" stroke-dasharray="4,2"/>
+            <circle cx="280" cy="500" r="4" fill="#e74c3c" />
+            <text x="295" y="495" font-size="11" fill="#e74c3c" font-weight="bold">固定點 EL +8.0m</text>
+
+            <!-- 13m: 700 - 13*25 = 375 -->
+            <line x1="280" y1="375" x2="420" y2="375" stroke="#e74c3c" stroke-width="4" stroke-dasharray="4,2"/>
+            <circle cx="280" cy="375" r="4" fill="#e74c3c" />
+            <text x="295" y="370" font-size="11" fill="#e74c3c" font-weight="bold">固定點 EL +13.0m</text>
+
+            <!-- 18m: 700 - 18*25 = 250 -->
+            <line x1="280" y1="250" x2="420" y2="250" stroke="#e74c3c" stroke-width="4" stroke-dasharray="4,2"/>
+            <circle cx="280" cy="250" r="4" fill="#e74c3c" />
+            <text x="295" y="245" font-size="11" fill="#e74c3c" font-weight="bold">固定點 EL +18.0m</text>
+
+            <!-- Diagonal Bracings (Zig-zag) -->
+            <line x1="160" y1="700" x2="280" y2="650" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="650" x2="160" y2="600" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="600" x2="280" y2="550" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="550" x2="160" y2="487.5" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="487.5" x2="280" y2="425" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="425" x2="160" y2="362.5" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="362.5" x2="280" y2="300" stroke="#34495e" stroke-width="2.5" />
+            <line x1="280" y1="300" x2="160" y2="237.5" stroke="#34495e" stroke-width="2.5" />
+            <line x1="160" y1="237.5" x2="280" y2="175" stroke="#34495e" stroke-width="2.5" />
+
+            <!-- Ladder -->
+            <rect x="180" y="550" width="20" height="150" fill="#f39c12" opacity="0.4" />
+            <line x1="190" y1="550" x2="190" y2="700" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+            <rect x="240" y="425" width="20" height="125" fill="#f39c12" opacity="0.4" />
+            <line x1="250" y1="425" x2="250" y2="550" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+            <rect x="180" y="300" width="20" height="125" fill="#f39c12" opacity="0.4" />
+            <line x1="190" y1="300" x2="190" y2="425" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+            <rect x="240" y="175" width="20" height="125" fill="#f39c12" opacity="0.4" />
+            <line x1="250" y1="175" x2="250" y2="300" stroke="#d35400" stroke-width="2" stroke-dasharray="3,3" />
+
+            <!-- Labels -->
+            <text x="200" y="90" font-size="12" fill="#2c3e50" text-anchor="middle">煙囪頂 24.0m</text>
+            <text x="295" y="145" font-size="12" fill="#3498db">頂部欄杆 EL +22.2m</text>
+            <rect x="10" y="60" width="180" height="85" fill="#fff" stroke="#2c3e50" rx="4" />
+            <text x="20" y="80" font-size="11" fill="#2c3e50" font-weight="bold">全構件統一：C 100×50×5</text>
+            <text x="20" y="95" font-size="11" fill="#2c3e50">跨距：1.8m × 2.4m</text>
+            <text x="20" y="110" font-size="11" fill="#e74c3c">固定點：8m, 13m, 18m</text>
+            <text x="20" y="125" font-size="11" fill="#d35400">交錯護籠爬梯、單向斜撐</text>
+        </svg>
+        <div class="diagram-caption">圖一：結構配置立面簡圖（包含分段高程與連接點指示）</div>
+    </div>
+
+    <h2>三、 結構系統與幾何配置</h2>
+    <ul>
+        <li><strong>系統形式：</strong> 立體鋼構桁架塔（含內部交錯式護籠爬梯與檢修平台）。</li>
+        <li><strong>平面跨距：</strong> 1.8m × 2.4m（四根主立柱）。</li>
+        <li><strong>結構高度：</strong> 鋼架主體由地面 GL±0.0m 立起，鋼架立柱最高點至 EL+22.2m。</li>
+        <li><strong>分段橫樑與斜撐配置：</strong>
+            <ul>
+                <li><strong>EL+0.0m ~ EL+6.0m 區段：</strong> 每 2.0m 設置一階水平橫樑，共 3 階。四面皆配置「單向交錯斜撐（Zig-zag）」。</li>
+                <li><strong>EL+6.0m ~ EL+21.0m 區段：</strong> 每 2.5m 設置一階水平橫樑，共 6 階。四面皆配置「單向交錯斜撐（Zig-zag）」。</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>四、 構件材質與預定斷面尺寸</h2>
+    <p>為求備料單純與施工便利，目前全構件規劃統一採用單一規格之型鋼，請技師依此規格進行檢核：</p>
+    <ul>
+        <li><strong>鋼構材質：</strong> 全部採用 SUS304 不鏽鋼。</li>
+        <li><strong>預定斷面：</strong>
+            <ul>
+                <li>主立柱：C型鋼 100 × 50 × 5 mm</li>
+                <li>水平橫樑：C型鋼 100 × 50 × 5 mm</li>
+                <li>單向斜撐：C型鋼 100 × 50 × 5 mm</li>
+                <li>建物連接樑：C型鋼 100 × 50 × 5 mm</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>五、 邊界條件與特殊載重考量</h2>
+    <ul>
+        <li><strong>底部支撐 (Base)：</strong> 固定於地面 RC 基礎。</li>
+        <li><strong>側向連接點 (與相鄰主建物鋼構連接)：</strong><br>
+            鋼架規劃於以下三個標高處，以水平橫樑與緊鄰之主建物鋼構進行固定，以抵抗水平風力剪力：
+            <ol>
+                <li>第一連接點：EL+8.0m</li>
+                <li>第二連接點：EL+13.0m</li>
+                <li>第三連接點：EL+18.0m</li>
+            </ol>
+        </li>
+        <li><strong>熱膨脹對策考量 (Thermal Expansion)：</strong><br>
+            煙囪管體受熱會有向上膨脹之需求。預計於煙囪進入點（約 EL+12.0m 或鄰近橫樑）設置「固定支撐（Anchor）」承受管體靜載重；其上方（如 EL+16m, EL+21m 等高程）之抱箍應設計為「滑動支撐（Sliding Guide）」，僅限制水平位移，容許管體垂直滑動。
+        </li>
+    </ul>
+
+    <h2>六、 附屬設施 (活載重與受風面積考量)</h2>
+    <ul>
+        <li><strong>檢修平台：</strong> 共設置 4 處，分別位於 EL+6.0m, EL+11.0m, EL+16.0m, EL+21.0m。鋪設花紋鋼板。</li>
+        <li><strong>內部爬梯：</strong> 設置於鋼架內部，採「每層平台左右交錯」之垂直爬梯，並全段配置安全護籠。</li>
+        <li><strong>安全欄杆：</strong> 於各平台設置 ㄇ字型欄杆（範圍：單面 1.8m + 兩側各 0.6m）。EL+6m~16m 平台欄杆高度 1.1m；EL+21m 平台配合鋼架延伸至 EL+22.2m 作為 1.2m 高之頂部欄杆立柱。</li>
+    </ul>
+
+    <h2>七、 委託技師需計算與產出之項目</h2>
+    <p>請技師依據上述條件，結合建築物耐風/耐震設計規範，提供以下檢核與計算內容：</p>
+    
+    <div class="req-list">
+        <ul>
+            <li><strong>1. 整體結構分析：</strong> <br>建立 3D 分析模型，考量新竹地區風載重（配合附屬設施迎風面積）、地震力及靜載重組合。</li>
+            <li><strong>2. 主構件強度檢核：</strong> <br>檢核 C100×50×5 mm 型鋼在各受力部位（立柱抗壓挫曲、橫樑抗彎、斜撐抗拉壓、連接樑推拉力）之應力比是否符合規範。若有局部不符，請提出升級建議。</li>
+            <li><strong>3. 相對位移評估：</strong> <br>檢核架台在 EL+8m, 13m, 18m 與主建物連接點處，面對主建物層間位移時的受力狀態，並提供接頭形式建議（如剛性銲接或長條孔螺栓滑動接頭）。</li>
+            <li><strong>4. 基座與錨栓設計：</strong> <br>計算主立柱底部之最大反力（軸力、剪力、彎矩），並提供 RC 基礎塊建議尺寸、基座鋼板（Base Plate）厚度及化學錨栓規格配置。</li>
+            <li><strong>5. 接點檢核：</strong> <br>提供典型節點（如 C型鋼交錯斜撐接點、連接建物之接頭）之銲道尺寸或螺栓數量建議。</li>
+            <li><strong>6. 正式計算書：</strong> <br>出具完整之結構計算書報告（含簽證）。</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

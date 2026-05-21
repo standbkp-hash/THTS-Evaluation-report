@@ -5,93 +5,333 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>風管保溫面積速算小工具</title>
     <style>
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #34495E;
+            --accent-color: #3498DB;
+            --highlight-color: #C0392B;
+            --bg-color: #F4F7F6;
+            --card-bg: #FFFFFF;
+            --result-bg: #EBF5FB;
+        }
+
         body {
-            font-family: "Microsoft JhengHei", Arial, sans-serif;
-            background-color: #f4f7f6;
+            font-family: "Microsoft JhengHei", "PingFang TC", "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
             color: #333;
             line-height: 1.6;
             padding: 20px;
-            max-width: 800px;
-            margin: auto;
+            margin: 0;
         }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         h1 {
             text-align: center;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 15px;
             margin-bottom: 30px;
+            font-size: 24px;
         }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         .calc-card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border-left: 5px solid #34495e;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--secondary-color);
+            transition: transform 0.2s ease;
         }
+
+        .calc-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
         .calc-card h2 {
             margin-top: 0;
-            color: #2c3e50;
-            font-size: 1.2em;
-        }
-        .input-group {
+            color: var(--primary-color);
+            font-size: 18px;
+            margin-bottom: 20px;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .calc-card h2::before {
+            content: "■";
+            color: var(--accent-color);
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-        .input-box {
-            flex: 1;
-            min-width: 120px;
+
+        /* 針對只有一個輸入框的特殊處理 */
+        .single-input {
+            grid-template-columns: 1fr;
         }
-        label {
+
+        .input-box label {
             display: block;
-            font-size: 0.9em;
+            font-size: 14px;
             color: #555;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
         }
-        input[type="number"] {
+
+        .input-box input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
+            padding: 10px;
+            border: 1px solid #D5D8DC;
+            border-radius: 6px;
+            font-size: 16px;
             box-sizing: border-box;
+            transition: border-color 0.2s;
+            background-color: #FAFAFA;
         }
-        input[type="number"]:focus {
-            border-color: #3498db;
+
+        .input-box input:focus {
+            border-color: var(--accent-color);
             outline: none;
+            background-color: #FFF;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
         }
+
         .result-box {
-            background-color: #e8f4f8;
-            padding: 10px 15px;
-            border-radius: 4px;
+            background-color: var(--result-bg);
+            padding: 15px;
+            border-radius: 6px;
             text-align: right;
-            font-size: 1.1em;
-            color: #2980b9;
+            font-size: 16px;
+            color: var(--secondary-color);
             font-weight: bold;
+            border: 1px solid #D6EAF8;
         }
+
         .result-box span {
-            font-size: 1.5em;
-            color: #c0392b;
+            font-size: 24px;
+            color: var(--highlight-color);
+            margin: 0 5px;
+        }
+
+        .formula-note {
+            font-size: 12px;
+            color: #7F8C8D;
+            margin-top: 10px;
+            text-align: right;
         }
     </style>
 </head>
 <body>
 
-    <h1>風管保溫面積速算小工具</h1>
+    <div class="container">
+        <h1>風管保溫/保冷面積速算小工具</h1>
 
-    <div class="calc-card">
-        <h2>1. 直管表面積 (不含兩端)</h2>
-        <div class="input-group">
-            <div class="input-box">
-                <label>長度 L (m)</label>
-                <input type="number" id="st_L" placeholder="請輸入長度" oninput="calcStraight()">
+        <div class="grid-layout">
+            
+            <!-- 1. 直管 -->
+            <div class="calc-card">
+                <h2>1. 直管表面積 (不含兩端)</h2>
+                <div class="input-group">
+                    <div class="input-box">
+                        <label>直徑 D (m)</label>
+                        <input type="number" id="st_D" placeholder="例: 1.2" min="0" step="0.01">
+                    </div>
+                    <div class="input-box">
+                        <label>長度 L (m)</label>
+                        <input type="number" id="st_L" placeholder="例: 5.0" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="result-box">
+                    面積： <span id="st_Result">0.00</span> m²
+                </div>
+                <div class="formula-note">公式: π × D × L</div>
             </div>
-            <div class="input-box">
-                <label>直徑 D (m)</label>
-                <input type="number" id="st_D" placeholder="請輸入直徑" oninput="calcStraight()">
+
+            <!-- 2. 1.5D 彎頭 -->
+            <div class="calc-card">
+                <h2>2. 90° 1.5D 彎頭 (單個)</h2>
+                <div class="input-group single-input">
+                    <div class="input-box">
+                        <label>直徑 D (m)</label>
+                        <input type="number" id="el_D" placeholder="例: 1.2" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="result-box">
+                    面積： <span id="el_Result">0.00</span> m²
+                </div>
+                <div class="formula-note">公式: 0.75 × π² × D²</div>
             </div>
+
+            <!-- 3. 方轉圓漸縮管 -->
+            <div class="calc-card">
+                <h2>3. 方轉圓漸縮管 (不含兩端)</h2>
+                <div class="input-group">
+                    <div class="input-box">
+                        <label>方口寬 W (m)</label>
+                        <input type="number" id="sq_W" placeholder="例: 1.5" min="0" step="0.01">
+                    </div>
+                    <div class="input-box">
+                        <label>方口高 H (m)</label>
+                        <input type="number" id="sq_H" placeholder="例: 1.0" min="0" step="0.01">
+                    </div>
+                    <div class="input-box">
+                        <label>圓口直徑 D (m)</label>
+                        <input type="number" id="sq_D" placeholder="例: 1.2" min="0" step="0.01">
+                    </div>
+                    <div class="input-box">
+                        <label>漸縮長度 L (m)</label>
+                        <input type="number" id="sq_L" placeholder="例: 2.0" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="result-box">
+                    面積： <span id="sq_Result">0.00</span> m²
+                </div>
+                <div class="formula-note">展開法估算 (平均周長 × 斜高)</div>
+            </div>
+
+            <!-- 4. 圓轉圓漸縮管 -->
+            <div class="calc-card">
+                <h2>4. 圓轉圓漸縮管 (截頭圓錐)</h2>
+                <div class="input-group">
+                    <div class="input-box">
+                        <label>大圓直徑 D (m)</label>
+                        <input type="number" id="rd_bigD" placeholder="例: 1.5" min="0" step="0.01">
+                    </div>
+                    <div class="input-box">
+                        <label>小圓直徑 d (m)</label>
+                        <input type="number" id="rd_smallD" placeholder="例: 0.8" min="0" step="0.01">
+                    </div>
+                    <div class="input-box">
+                        <label>漸縮長度 L (m)</label>
+                        <input type="number" id="rd_L" placeholder="例: 1.5" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="result-box">
+                    面積： <span id="rd_Result">0.00</span> m²
+                </div>
+                <div class="formula-note">公式: π × (D+d)/2 × 斜高</div>
+            </div>
+
         </div>
-        <div class="result-box
+    </div>
+
+    <script>
+        const PI = Math.PI;
+
+        // 安全取得數值，若為空或非數字則回傳 0
+        function getVal(id) {
+            let val = parseFloat(document.getElementById(id).value);
+            return isNaN(val) ? 0 : val;
+        }
+
+        // 更新結果顯示畫面
+        function updateResult(id, val) {
+            const el = document.getElementById(id);
+            if (val > 0) {
+                el.innerText = val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                el.innerText = "0.00";
+            }
+        }
+
+        // ==========================================
+        // 1. 直管計算
+        // ==========================================
+        function calcStraight() {
+            let D = getVal("st_D");
+            let L = getVal("st_L");
+            let area = 0;
+            if (D > 0 && L > 0) {
+                area = PI * D * L;
+            }
+            updateResult("st_Result", area);
+        }
+
+        // ==========================================
+        // 2. 1.5D 彎頭計算
+        // ==========================================
+        function calcElbow() {
+            let D = getVal("el_D");
+            let area = 0;
+            if (D > 0) {
+                area = 0.75 * Math.pow(PI, 2) * Math.pow(D, 2);
+            }
+            updateResult("el_Result", area);
+        }
+
+        // ==========================================
+        // 3. 方轉圓漸縮管計算
+        // ==========================================
+        function calcSqToRound() {
+            let W = getVal("sq_W");
+            let H = getVal("sq_H");
+            let D = getVal("sq_D");
+            let L = getVal("sq_L");
+            let area = 0;
+
+            if (W > 0 && H > 0 && D > 0 && L > 0) {
+                let slantHeight = Math.sqrt(Math.pow(L, 2) + Math.pow(((W + H) / 4) - (D / 2), 2));
+                let meanPerimeter = (2 * (W + H) + PI * D) / 2;
+                area = meanPerimeter * slantHeight;
+            }
+            updateResult("sq_Result", area);
+        }
+
+        // ==========================================
+        // 4. 圓轉圓漸縮管計算
+        // ==========================================
+        function calcRoundToRound() {
+            let bigD = getVal("rd_bigD");
+            let smallD = getVal("rd_smallD");
+            let L = getVal("rd_L");
+            let area = 0;
+
+            if (bigD > 0 && smallD > 0 && L > 0) {
+                let slantHeight = Math.sqrt(Math.pow(L, 2) + Math.pow((bigD - smallD) / 2, 2));
+                area = PI * ((bigD + smallD) / 2) * slantHeight;
+            }
+            updateResult("rd_Result", area);
+        }
+
+        // ==========================================
+        // 綁定事件監聽器 (當輸入框有變動時自動觸發計算)
+        // ==========================================
+        document.getElementById("st_D").addEventListener("input", calcStraight);
+        document.getElementById("st_L").addEventListener("input", calcStraight);
+
+        document.getElementById("el_D").addEventListener("input", calcElbow);
+
+        document.getElementById("sq_W").addEventListener("input", calcSqToRound);
+        document.getElementById("sq_H").addEventListener("input", calcSqToRound);
+        document.getElementById("sq_D").addEventListener("input", calcSqToRound);
+        document.getElementById("sq_L").addEventListener("input", calcSqToRound);
+
+        document.getElementById("rd_bigD").addEventListener("input", calcRoundToRound);
+        document.getElementById("rd_smallD").addEventListener("input", calcRoundToRound);
+        document.getElementById("rd_L").addEventListener("input", calcRoundToRound);
+
+    </script>
+</body>
+</html>

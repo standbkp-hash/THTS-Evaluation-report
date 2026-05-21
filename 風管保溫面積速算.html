@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>風管保溫面積速算小工具</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .calc-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 5px solid #34495e;
+        }
+        .calc-card h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .input-box {
+            flex: 1;
+            min-width: 120px;
+        }
+        label {
+            display: block;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        input[type="number"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .result-box {
+            background-color: #e8f4f8;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-align: right;
+            font-size: 1.1em;
+            color: #2980b9;
+            font-weight: bold;
+        }
+        .result-box span {
+            font-size: 1.5em;
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>風管保溫面積速算小工具</h1>
+
+    <div class="calc-card">
+        <h2>1. 直管表面積 (不含兩端)</h2>
+        <div class="input-group">
+            <div class="input-box">
+                <label>長度 L (m)</label>
+                <input type="number" id="st_L" placeholder="請輸入長度" oninput="calcStraight()">
+            </div>
+            <div class="input-box">
+                <label>直徑 D (m)</label>
+                <input type="number" id="st_D" placeholder="請輸入直徑" oninput="calcStraight()">
+            </div>
+        </div>
+        <div class="result-box

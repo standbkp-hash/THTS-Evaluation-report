@@ -38,8 +38,9 @@
                 }
             });
 
+            // 滾動調整：風機交貨日改為 8 月初 (預抓 8/5)
             const procurementData = [
-                { id: 1, item: "白鐵透浦皮帶式風機", vendor: "質昌企業", date: "2026-06-15", status: "已訂購", type: "設備" },
+                { id: 1, item: "白鐵透浦皮帶式風機", vendor: "質昌企業", date: "2026-08-05", status: "已訂購", type: "設備" },
                 { id: 2, item: "離心式泵浦 (SKH25-14H)", vendor: "三錦機器", date: "2026-07-31", status: "已訂購", type: "設備" },
                 { id: 3, item: "金屬無軸封泵 (MP421)", vendor: "匯竑工程", date: "2026-07-31", status: "已訂購", type: "設備" },
                 { id: 4, item: "臥式端吸同軸泵 (20HP)", vendor: "永大抽水機", date: "2026-07-31", status: "規劃中", type: "設備" },
@@ -53,28 +54,28 @@
                 { id: 9, item: "控制盤/電纜線材", vendor: "東溢興業", date: "2026-05-30", status: "已訂購", type: "材料" },
             ];
 
-            // 總時程
+            // 滾動調整：土木工程與監工修正為 6/1 開始
             const scheduleStages = [
                 { name: "專案啟動與設計確認", start: "2026-01-12", end: "2026-04-30", color: "bg-blue-500", icon: "info" },
                 { name: "設備發包與工廠製作", start: "2026-02-01", end: "2026-08-15", color: "bg-indigo-500", icon: "package" },
-                { name: "基礎座與管道預埋工程", start: "2026-05-15", end: "2026-07-15", color: "bg-amber-500", icon: "layers" },
-                { name: "現場工程監工與安全管理", start: "2026-05-15", end: "2026-12-10", color: "bg-orange-500", icon: "hard-hat" },
+                { name: "基礎座與管道預埋工程", start: "2026-06-01", end: "2026-07-15", color: "bg-amber-500", icon: "layers" },
+                { name: "現場工程監工與安全管理", start: "2026-06-01", end: "2026-12-10", color: "bg-orange-500", icon: "hard-hat" },
                 { name: "關鍵設備進場吊裝", start: "2026-07-16", end: "2026-09-30", color: "bg-red-600", icon: "truck" },
                 { name: "風管安裝與系統配管", start: "2026-09-16", end: "2026-11-15", color: "bg-emerald-500", icon: "arrow-right" },
                 { name: "電氣控系統接線與測試", start: "2026-10-20", end: "2026-12-05", color: "bg-purple-500", icon: "clock" },
                 { name: "系統試車與驗收資料交付", start: "2026-12-10", end: "2027-02-28", color: "bg-gray-500", icon: "check-circle-2" },
             ];
 
-            // 核心排程微調：大型風管提前至 9/16，與 HINO 平行施作
+            // 核心排程微調：土木改6/1，風車改8月初配合安裝
             const detailedTasks = [
-                { id: 1, name: "1. 土木施工 (基礎開挖與室內外基座)", start: "2026-05-15", end: "2026-07-15", color: "bg-amber-600" },
-                { id: 2, name: "2. 其他設備安裝定位 (風車/風箱)", start: "2026-07-20", end: "2026-08-15", color: "bg-indigo-500" },
+                { id: 1, name: "1. 土木施工 (基礎開挖與室內外基座)", start: "2026-06-01", end: "2026-07-15", color: "bg-amber-600" },
+                { id: 2, name: "2. 其他設備安裝定位 (風車/風箱)", start: "2026-08-05", end: "2026-08-25", color: "bg-indigo-500" },
                 { id: 3, name: "3. 洗滌塔系統安裝工程", start: "2026-08-01", end: "2026-09-15", color: "bg-red-500" },
                 { id: 5, name: "4. 冷凝器/除霧器安裝工程", start: "2026-08-01", end: "2026-09-15", color: "bg-cyan-500" },
                 { id: 4, name: "5. 濃縮塔系統安裝工程", start: "2026-09-01", end: "2026-09-15", color: "bg-rose-500" },
                 { id: 10, name: "★ HINO熱交換器安裝工程 (業主外包)", start: "2026-09-15", end: "2026-10-15", color: "bg-pink-600" },
                 { id: 7, name: "6. 小型管線/公用系統配管工程", start: "2026-09-16", end: "2026-11-15", color: "bg-teal-500" },
-                { id: 6, name: "7. 大型風管配管/煙囪架台安裝工程 【提前展開】", start: "2026-09-16", end: "2026-11-15", color: "bg-emerald-500" }, // 提前至除霧器後，11/15結束
+                { id: 6, name: "7. 大型風管配管/煙囪架台安裝工程 【提前展開】", start: "2026-09-16", end: "2026-11-15", color: "bg-emerald-500" },
                 { id: 8, name: "8. 儀電及動力系統配線安裝工程", start: "2026-10-20", end: "2026-11-30", color: "bg-purple-600" },
                 { id: 9, name: "9. 保溫工程", start: "2026-11-15", end: "2026-12-10", color: "bg-orange-500" },
             ];
@@ -119,9 +120,9 @@
                 return ((end - start) / totalDurationMs) * 100;
             };
 
-            // 核心施工排程甘特圖時間軸運算
+            // 核心施工排程甘特圖時間軸運算 (配合土木改從5月底開始顯示)
             const { coreTimelineData, totalCoreWeeks, coreStartMs, coreTotalDurationMs } = useMemo(() => {
-                const start = new Date('2026-04-27T00:00:00'); 
+                const start = new Date('2026-05-25T00:00:00'); // 星期一
                 const end = new Date('2026-12-28T00:00:00'); 
                 
                 const data = [];
@@ -181,7 +182,13 @@
                         <Icon name="hard-hat" className="mr-3 text-orange-400" />
                         達邁 T6 VOCs 回收系統工程 - 進度規劃報告
                         </h1>
-                        <p className="text-slate-400 mt-1">專案編號: H20026C003 | 更新日期: 2026-04-30 (管線配置提前版)</p>
+                        <div className="flex items-center gap-3 mt-2">
+                            <p className="text-slate-400">專案編號: H20026C003</p>
+                            <span className="bg-blue-600/30 text-blue-300 border border-blue-500/50 px-2 py-0.5 rounded text-xs font-bold tracking-wide flex items-center gap-1">
+                                <Icon name="refresh-cw" size="12" /> 每週滾動調整
+                            </span>
+                            <p className="text-slate-300 font-medium">更新版本日期: 2026-05-21</p>
+                        </div>
                     </div>
                     <div className="flex gap-4">
                         <div className="bg-slate-700 p-3 rounded-lg text-center">
@@ -316,7 +323,7 @@
                             <h3 className="text-xl font-bold flex items-center gap-2 mb-1">
                             <Icon name="sliders" className="text-orange-400" /> 現場核心施工期 - 排程調度一覽
                             </h3>
-                            <p className="text-slate-300 text-sm">大型風管提早至除霧器安裝完成後(9/16)與 HINO 展開平行施作，確保 11 月中整體管線完工。</p>
+                            <p className="text-slate-300 text-sm">土木基礎改為 6/1 啟動，風車延至 8 月初配合進場，其餘管線平行施作計畫維持滾動監測。</p>
                         </div>
                         <div className="bg-slate-900/50 px-4 py-2 rounded-lg text-sm border border-slate-600 flex items-center gap-2">
                             <Icon name="arrow-right" size="16" className="text-orange-400 animate-pulse" />
@@ -412,7 +419,7 @@
                             </h4>
                             <p className="text-xs text-pink-700 leading-relaxed">
                                 已針對現場空間重新安排協調：<br/>
-                                1. <span className="font-bold">風機提前進場：</span>質昌風機已安排於 <b>7/20 ~ 8/15</b> 進場定位完畢，徹底清空 9 月份的地面影響範圍。<br/>
+                                1. <span className="font-bold">風機配合交期：</span>質昌風機預計 8 月初到貨，將配合土木完工(7/15)後的現場動線直接進行安裝定位，避開 9 月份的地面影響範圍。<br/>
                                 2. <span className="font-bold">大型風管平行施作：</span>鴻碩鋼業的大型風管配管工程將於除霧器完工後 (<b>9/16</b>) 即刻啟動，並在 9/16 ~ 10/15 期間與 HINO 熱交換器安裝存在長達一個月的平行作業期，這段期間<span className="font-bold underline">必須嚴格劃分雙方作業區域及吊車動線，防止高空干涉</span>。
                             </p>
                         </div>
@@ -447,7 +454,7 @@
                             <Icon name="truck" className="text-orange-500" />
                             物料到貨追蹤清單
                             </h3>
-                            <span className="text-xs text-slate-500 font-medium uppercase italic">依據 PDF 採購單彙整</span>
+                            <span className="text-xs text-slate-500 font-medium uppercase italic">依據 PDF 採購單彙整 (每週滾動調整)</span>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
@@ -503,7 +510,7 @@
                             <div className="absolute -left-3 top-6 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
                             <h4 className="font-bold text-blue-700 mb-1 ml-4">基礎座與進場動線</h4>
                             <p className="text-sm text-slate-600 ml-4">
-                                5月至7月必須完成現場基礎座灌漿及地坪補強，並確認吊車吊掛動線。若基礎座未準時交付，8月的塔體進場將面臨無法定位的困境。
+                                6月至7月中旬必須完成現場基礎座灌漿及地坪補強，並確認吊車吊掛動線。若基礎座未於7/15準時交付，將直接影響8月初風機與塔體的進場。
                             </p>
                             </div>
 
@@ -535,7 +542,7 @@
                             <ul className="space-y-3">
                             <li className="flex items-start gap-2 text-sm">
                                 <Icon name="chevron-right" size="16" className="text-slate-400 shrink-0 mt-0.5" />
-                                <span>質昌風機 (06.15) 提前到貨，已安排 7/20 提早進場暫放定位，請提早準備包覆材料。</span>
+                                <span>質昌風機預計於 8 月初 (約08/05) 到貨，需提早確認安裝定位的地面淨空與防護。</span>
                             </li>
                             <li className="flex items-start gap-2 text-sm text-red-200 font-semibold">
                                 <Icon name="chevron-right" size="16" className="text-slate-400 shrink-0 mt-0.5" />

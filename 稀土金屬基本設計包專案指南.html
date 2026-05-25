@@ -11,6 +11,11 @@
         .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
         .tab-inactive { border-bottom: 2px solid transparent; color: #4b5563; }
         .tab-inactive:hover { color: #2563eb; border-bottom: 2px solid #93c5fd; }
+        
+        /* Custom Flowchart Lines */
+        .flow-line-h { height: 2px; background-color: #cbd5e1; width: 100%; position: absolute; top: 50%; z-index: 0; }
+        .flow-arrow-right { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid #cbd5e1; position: absolute; right: -8px; top: calc(50% - 6px); z-index: 1; }
+        .flow-arrow-left { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 8px solid #cbd5e1; position: absolute; left: -8px; top: calc(50% - 6px); z-index: 1; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -21,8 +26,8 @@
             <h1 class="text-3xl font-bold mb-2">稀土金屬提煉與純化基本設計 (BEDP) 專案指南</h1>
             <h2 class="text-xl text-blue-200">Rare Earth Metal Refining & Purification Basic Engineering Design Package Guide</h2>
             <p class="mt-4 text-sm text-blue-100 max-w-3xl">
-                本文件旨在協助制定基本設計包 (BEDP) 委外發包書 (RFP)。內容包含標準設計產出清單、投標廠商資格審查標準，以及啟動設計前需準備的基礎資料清單。<br>
-                This document is designed to assist in preparing the Request for Proposal (RFP) for the Basic Engineering Design Package (BEDP). It includes standard deliverables, vendor qualification criteria, and a checklist of basic data required before initiating the design.
+                本文件旨在協助制定基本設計包 (BEDP) 委外發包書 (RFP)。內容包含標準設計產出清單、投標廠商資格審查標準、基礎資料清單，以及各方合作角色與責任劃分 (SoW)。<br>
+                This document is designed to assist in preparing the Request for Proposal (RFP) for the Basic Engineering Design Package (BEDP). It includes deliverables, evaluation criteria, basic data requirements, and Scope of Work (SoW) matrix.
             </p>
         </div>
     </header>
@@ -31,15 +36,18 @@
     <main class="container mx-auto px-4 md:px-8 py-8">
         
         <!-- Tabs -->
-        <div class="flex flex-col sm:flex-row border-b border-gray-200 mb-8">
-            <button onclick="switchTab('part1')" id="tab-part1" class="tab-active py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center">
-                <i class="fas fa-file-contract mr-2"></i> 第一部分：產出清單與能力審核
+        <div class="flex flex-col sm:flex-row border-b border-gray-200 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <button onclick="switchTab('part1')" id="tab-part1" class="tab-active py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-file-contract mr-2"></i> 第一部分：產出與審核
             </button>
-            <button onclick="switchTab('part2')" id="tab-part2" class="tab-inactive py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center">
-                <i class="fas fa-flask mr-2"></i> 第二部分：客戶應提供資訊清單
+            <button onclick="switchTab('part2')" id="tab-part2" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-flask mr-2"></i> 第二部分：資料清單
             </button>
-            <button onclick="switchTab('part3')" id="tab-part3" class="tab-inactive py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center">
-                <i class="fas fa-project-diagram mr-2"></i> 第三部分：從研發到建廠的關鍵路徑
+            <button onclick="switchTab('part3')" id="tab-part3" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-project-diagram mr-2"></i> 第三部分：專案路徑
+            </button>
+            <button onclick="switchTab('part4')" id="tab-part4" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-users-cog mr-2"></i> 第四部分：角色與分工
             </button>
         </div>
 
@@ -419,6 +427,270 @@
             </div>
         </div>
 
+        <!-- Part 4 Content: SoW -->
+        <div id="content-part4" class="space-y-8 hidden">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 border-b pb-4">合作背景與目標一致化</h3>
+                <p class="text-gray-700 text-sm md:text-base leading-relaxed mt-4">
+                    對於稀土提煉的建廠規劃設計，必須嚴謹地基於實驗數據與科學案例展開。製程放大的每個步驟皆不可省略。為確保專案品質並落實各方責任，本專案採用<strong>「基本設計分流策略」</strong>：將偏向化學原理與模擬的「製程基本設計」由我司(THTS)執行並向前端(Conceptual)靠攏；而偏向設備規範與佈置的「工程基本設計」則由具備統包能力的專業工程公司提前切入。此舉可發揮各方專業最大化，避免重複設計工作。
+                </p>
+            </div>
+
+            <!-- Table: SoW Summary -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-indigo-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-bold text-indigo-900">工作責任劃分摘要總表 (Scope of Work Summary)</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-4 border-b font-semibold w-1/6">角色代碼</th>
+                                <th class="p-4 border-b font-semibold w-1/4">參與方</th>
+                                <th class="p-4 border-b font-semibold w-7/12">主要責任定義 (Engineering Responsibilities)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-gray-600">A</td>
+                                <td class="p-4 font-semibold text-gray-800">ITRI<br><span class="text-sm text-gray-500 font-normal">技術提供方<br>(Technology Licensor)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>技術移交與邊界定義：</strong>交付完整的實驗室數據、反應動力學與分離熱力學等核心 Know-how；明確定義進料規格 (Feedstock Specifications) 與產品允收標準。</li>
+                                        <li><strong>技術可行性背書：</strong>針對化學反應式與分離原理提供科學論證基礎。</li>
+                                        <li><strong>放大瓶頸之實驗迭代：</strong>當製程放大 (Scale-up) 面臨物理限制或模擬無法收斂時，負有重新設計實驗、提供具再現性 (Reproducibility) 之客觀數據以協助突破技術瓶頸之義務。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-teal-600">B</td>
+                                <td class="p-4 font-semibold text-teal-800">THTS (我司)<br><span class="text-sm text-teal-600 font-normal">製程設計與系統整合方<br>(Process Integrator)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>設計基準制定：</strong>擔任研發與工程間的轉譯中樞，判讀實驗數據並確立製程設計基準 (Process Design Basis, PDB)。</li>
+                                        <li><strong>電腦模擬與製程驗證：</strong>執行嚴謹的熱力學物性選型與全廠穩態電腦模擬 (Steady-state Simulation)，驗證技術商業化之可行性。</li>
+                                        <li><strong>前端製程包交付與工程審核：</strong>產出精確的質能平衡表 (H&MB)、製程流程圖 (PFD) 供工程端展開細部作業，並負責審查確認工程公司 (E) 產出之基本設計圖面與規範。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-blue-600">E</td>
+                                <td class="p-4 font-semibold text-blue-800">專業工程公司<br><span class="text-sm text-blue-600 font-normal">前端工程設計方<br>(FEED Contractor)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>實務工程轉化：</strong>基於 THTS 交付之製程參數，提前介入執行偏向實務工程面之基本設計與 FEED。其產出之基本設計結果須經 THTS 確認。</li>
+                                        <li><strong>核心圖面與規範展開：</strong>產出管線與儀表流程圖 (P&ID)、設備/管線/儀表資料表 (Data Sheets)、初步設備佈置圖 (Plot Plan) 及公用系統規劃 (Utilities)。</li>
+                                        <li><strong>建廠成本估算：</strong>產出符合 EPC 發包標準之設計文件，並提供精確之專案預算估算 (Cost Estimate, 精度 +/- 15%)。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-amber-600">O</td>
+                                <td class="p-4 font-semibold text-amber-800">業主 Owner<br><span class="text-sm text-amber-600 font-normal">投資與營運方<br>(Investor / Operator)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>廠址邊界條件與經驗回饋：</strong>於技術端提前參與，提供工程實施所需之場地背景資料 (空間限制、既有公用設施)，並反饋潛在之設備操作實務經驗。</li>
+                                        <li><strong>專案資源挹注：</strong>提供建廠資金、商業決策，並指派業主工程師 (Owner's Engineer) 全程參與階段性設計審查 (如 HAZOP 審查)。</li>
+                                        <li><strong>營運整備：</strong>於設計初期即啟動未來廠區營運與維護 (O&M) 團隊之建置與培訓計畫，為試車接手預做準備。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Interaction Diagram -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">角色工作配合關係圖</h3>
+                
+                <div class="relative max-w-4xl mx-auto p-4 md:p-8 bg-gray-50 border border-gray-200 rounded-xl">
+                    
+                    <!-- Owner Overlay -->
+                    <div class="absolute top-0 left-0 w-full h-full border-4 border-amber-200/50 rounded-xl pointer-events-none"></div>
+                    <div class="absolute -top-3 left-6 bg-amber-100 text-amber-800 font-bold px-4 py-1 rounded text-sm border border-amber-300">
+                        O: 業主 (早期技術參與、提供場地邊界條件與設備操作經驗)
+                    </div>
+
+                    <!-- Flow Container -->
+                    <div class="relative flex flex-col md:flex-row items-center justify-between gap-6 mt-8">
+                        
+                        <!-- Block A: ITRI -->
+                        <div class="z-10 w-full md:w-1/3 bg-white border-2 border-gray-300 rounded-lg p-4 shadow-sm flex flex-col items-center text-center">
+                            <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mb-2">
+                                <i class="fas fa-flask text-gray-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 mb-1">A: ITRI 技術提供者</h4>
+                            <p class="text-xs text-gray-500 mb-3">實驗室 / 模試階段</p>
+                            <div class="text-xs text-gray-700 text-left w-full space-y-1 bg-gray-50 p-2 rounded">
+                                <div>• 化學反應與分離原理</div>
+                                <div>• 實驗室數據與分析</div>
+                                <div>• 原料條件與目標</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow 1 -->
+                        <div class="hidden md:flex relative w-16 h-12 items-center justify-center">
+                            <div class="flow-line-h"></div>
+                            <div class="flow-arrow-right"></div>
+                        </div>
+                        <div class="md:hidden text-gray-400"><i class="fas fa-arrow-down text-xl"></i></div>
+
+                        <!-- Block B: THTS -->
+                        <div class="z-10 w-full md:w-1/3 bg-teal-50 border-2 border-teal-400 rounded-lg p-4 shadow-md flex flex-col items-center text-center transform md:-translate-y-2">
+                            <div class="w-12 h-12 bg-teal-200 rounded-full flex items-center justify-center mb-2">
+                                <i class="fas fa-laptop-code text-teal-800 text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-teal-900 mb-1">B: THTS 我司</h4>
+                            <p class="text-xs text-teal-700 mb-3 font-semibold">製程基本設計 (前傾)</p>
+                            <div class="text-xs text-gray-700 text-left w-full space-y-1 bg-white p-2 rounded border border-teal-100">
+                                <div>• 數據判讀與模擬 (H&MB)</div>
+                                <div>• PFD 與設計基準</div>
+                                <div>• 初步設備與經濟評估</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow 2 (Bi-directional B and E) -->
+                        <div class="hidden md:flex relative w-16 h-16 flex-col items-center justify-center">
+                            <!-- B to E -->
+                            <div class="relative w-full h-4 mb-2">
+                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-blue-300 -translate-y-1/2"></div>
+                                <div class="absolute top-1/2 right-[-4px] -translate-y-1/2 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-blue-300"></div>
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-blue-700 font-semibold whitespace-nowrap">工程轉譯</span>
+                            </div>
+                            <!-- E to B -->
+                            <div class="relative w-full h-4">
+                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-teal-400 border-dashed border-t-[2px] -translate-y-1/2"></div>
+                                <div class="absolute top-1/2 left-[-4px] -translate-y-1/2 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-teal-400"></div>
+                                <span class="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[10px] text-teal-700 font-semibold whitespace-nowrap">設計確認</span>
+                            </div>
+                        </div>
+                        <div class="md:hidden text-gray-400 flex flex-col items-center">
+                            <i class="fas fa-arrow-down text-xl text-blue-300"></i>
+                            <i class="fas fa-arrow-up text-xl text-teal-400 mt-1"></i>
+                        </div>
+
+                        <!-- Block E: Engineering -->
+                        <div class="z-10 w-full md:w-1/3 bg-white border-2 border-blue-300 rounded-lg p-4 shadow-sm flex flex-col items-center text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                                <i class="fas fa-drafting-compass text-blue-700 text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-blue-900 mb-1">E: 專業工程公司</h4>
+                            <p class="text-xs text-blue-600 mb-3">工程基本設計 / FEED</p>
+                            <div class="text-xs text-gray-700 text-left w-full space-y-1 bg-blue-50 p-2 rounded">
+                                <div>• P&ID 與佈置圖</div>
+                                <div>• 詳細設備與管線規範</div>
+                                <div>• 精確預算估算與發包書</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Loop -->
+                    <div class="hidden md:block relative h-16 mt-2">
+                        <!-- Left-pointing arrow connecting THTS back to ITRI -->
+                        <svg class="absolute top-0 left-[16%] w-[34%] h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                            <path d="M 90,0 Q 90,80 50,80 Q 10,80 10,0" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4" />
+                            <polygon points="10,0 5,10 15,10" fill="#ef4444" />
+                        </svg>
+                        <div class="absolute bottom-0 left-[33%] transform -translate-x-1/2 text-xs text-red-500 font-semibold bg-gray-50 px-2">
+                            若放大遇阻/無再現性：退回重啟實驗
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Detailed Explanation -->
+            <div class="bg-blue-50 rounded-lg shadow-sm border border-blue-200 p-6">
+                <h3 class="text-xl font-bold text-blue-900 mb-4"><i class="fas fa-info-circle mr-2"></i> 分工要點詳細說明</h3>
+                
+                <div class="space-y-4 text-sm md:text-base text-gray-800">
+                    <div>
+                        <h4 class="font-bold text-indigo-800">1. 為何採用「基本設計前傾」策略？</h4>
+                        <p class="mt-1 text-gray-700">
+                            在傳統專案中，基本設計（BEDP）通常由單一公司統包。然而，考量我方人力配置及專業聚焦，本指南刻意將「製程」與「工程」解耦。THTS 專注於前段的 Conceptual Design 與 Process Design（物料平衡、模擬、PFD），確保化學反應被正確轉譯；而 FEED 工程公司則提前介入，利用 THTS 的數據直接展開 P&ID、管線佈置與公用系統等重度工程繪圖工作。此作法省去了工程公司在 FEED 階段重新驗證基本設計的重複工作，大幅提升效率。
+                        </p>
+                    </div>
+
+                    <div class="border-t border-blue-200 pt-4">
+                        <h4 class="font-bold text-indigo-800">2. ITRI (技術提供者) 的數據問責機制</h4>
+                        <p class="mt-1 text-gray-700">
+                            「實驗室做得出來，不代表工廠蓋得出來。」若 THTS 在建立電腦模型或進行物性分析時，發現 ITRI 提供的數據出現矛盾、無再現性，或在設備放大（Scale-up）面臨物理限制（如無法達到所需的熱傳面積或攪拌功率），ITRI 必須負起配合重新評估與重新實驗的責任。這確保了所有往下游傳遞的設計基準都是有客觀數據支撐的。
+                        </p>
+                    </div>
+
+                    <div class="border-t border-blue-200 pt-4">
+                        <h4 class="font-bold text-indigo-800">3. 業主 (Owner) 的早期技術參與</h4>
+                        <p class="mt-1 text-gray-700">
+                            業主不能僅扮演商務出資的角色。在基本設計啟動之初，業主必須在技術端提前參與，提供工程實施所需的「場地邊界條件」（如：既有廢水處理廠的餘裕、當地法規的排放上限、廠房可用面積）。同時，業主若具備相似設備的實務操作經驗，應及早反饋給設計團隊，避免選用不符合現場操作習慣的硬體。這些條件將直接約束後續的模擬參數與設備佈置，防範後期重工風險。
+                        </p>
+                    </div>
+
+                    <div class="border-t border-blue-200 pt-4">
+                        <h4 class="font-bold text-indigo-800">4. 製程 (B) 與工程 (E) 的緊密確認機制 (Closed-Loop)</h4>
+                        <p class="mt-1 text-gray-700">
+                            THTS (B) 與工程公司 (E) 的設計工作具備高度依存性。B 負責將研發成果轉譯為工程化參數交付予 E；而 E 基於此展開詳細的工程圖面與設備規範。為確保實務工程設計未偏離原始的製程意圖，工程公司 (E) 產出的所有基本設計結果（含 P&ID、資料表等），皆必須交由 THTS (B) 進行最終審查與確認 (Design Verification)，形成完整的設計閉環控制。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Strategy -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 border-b pb-4"><i class="fas fa-rocket mr-2 text-indigo-600"></i>後續工作展開策略 (Next Steps & Execution Strategy)</h3>
+                <p class="text-gray-700 text-sm md:text-base mb-6">
+                    在確立上述角色分工後，為確保專案能順利由「概念」推進至「實質設計」階段，建議業主於近期啟動以下四大策略性工作安排：
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Card 1 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold mr-3">1</div>
+                            <h4 class="font-bold text-gray-800">簽署商業與智財協議 (NDA & IP)</h4>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            由於製程開發涉及高度機密之稀土提煉配方，需優先完成各方（A, B, E, O）之多方保密協議 (NDA)。此外，需釐清技術授權邊界與專利歸屬，確保 THTS 與工程公司在合法授權下使用 ITRI 數據進行設計。
+                        </p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold mr-3">2</div>
+                            <h4 class="font-bold text-gray-800">建立介面管理計畫 (Interface Matrix)</h4>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            由於本次 BEDP 採用「製程與工程分流」策略，必須建立嚴謹的文件交互矩陣 (Document Control Matrix)。明確定義 THTS 需產出何種精度的 PFD 與數據表，以及工程公司 (E) 接收後的回饋時限，避免設計介面出現斷層。
+                        </p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold mr-3">3</div>
+                            <h4 class="font-bold text-gray-800">制定專案主排程 (Master Schedule)</h4>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            針對前述「製程開發到建廠生命週期」的各階段，展開 Level-2 的專案排程。定義出各階段的關鍵查核點 (Milestones)，特別是「設計基準凍結 (Design Basis Freeze)」與「PFD 凍結」的具體時間點，嚴格管控進度。
+                        </p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold mr-3">4</div>
+                            <h4 class="font-bold text-gray-800">啟動階段性審查 (Stage-Gate Reviews)</h4>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            規劃設計審查會議的時程與參與人員。包含製程概念階段的可行性審查、BEDP 階段的 30%/60%/90% 模型審查，以及關鍵的危害與可操作性分析 (HAZOP)。確保設計變更能在早期被發現，降低後期重工成本。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </main>
 
     <footer class="bg-gray-800 text-gray-300 py-6 text-center text-sm mt-12">
@@ -427,7 +699,7 @@
 
     <script>
         function switchTab(tabId) {
-            const tabs = ['part1', 'part2', 'part3'];
+            const tabs = ['part1', 'part2', 'part3', 'part4'];
             
             tabs.forEach(id => {
                 const content = document.getElementById('content-' + id);
@@ -436,11 +708,11 @@
                 if (id === tabId) {
                     content.classList.remove('hidden');
                     content.classList.add('block');
-                    tab.className = 'tab-active py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center';
+                    tab.className = 'tab-active py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center';
                 } else {
                     content.classList.add('hidden');
                     content.classList.remove('block');
-                    tab.className = 'tab-inactive py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center';
+                    tab.className = 'tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center';
                 }
             });
         }

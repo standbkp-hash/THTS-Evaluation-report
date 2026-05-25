@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>稀土金屬提煉與純化基本設計包 (BEDP) 指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
+        .tab-inactive { border-bottom: 2px solid transparent; color: #4b5563; }
+        .tab-inactive:hover { color: #2563eb; border-bottom: 2px solid #93c5fd; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-8 shadow-md">
+        <div class="container mx-auto px-4 md:px-8">
+            <h1 class="text-3xl font-bold mb-2">稀土金屬提煉與純化基本設計 (BEDP) 專案指南</h1>
+            <h2 class="text-xl text-blue-200">Rare Earth Metal Refining & Purification Basic Engineering Design Package Guide</h2>
+            <p class="mt-4 text-sm text-blue-100 max-w-3xl">
+                本文件旨在協助制定基本設計包 (BEDP) 委外發包書 (RFP)。內容包含標準設計產出清單、投標廠商資格審查標準，以及啟動設計前需準備的基礎資料清單。<br>
+                This document is designed to assist in preparing the Request for Proposal (RFP) for the Basic Engineering Design Package (BEDP). It includes standard deliverables, vendor qualification criteria, and a checklist of basic data required before initiating the design.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 md:px-8 py-8">
+        
+        <!-- Tabs -->
+        <div class="flex flex-col sm:flex-row border-b border-gray-200 mb-8">
+            <button onclick="switchTab('part1')" id="tab-part1" class="tab-active py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-file-contract mr-2"></i> 第一部分：產出清單與能力審核
+            </button>
+            <button onclick="switchTab('part2')" id="tab-part2" class="tab-inactive py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-flask mr-2"></i> 第二部分：客戶應提供資訊清單
+            </button>
+            <button onclick="switchTab('part3')" id="tab-part3" class="tab-inactive py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-project-diagram mr-2"></i> 第三部分：從研發到建廠的關鍵路徑
+            </button>
+        </div>
+
+        <!-- Part 1 Content -->
+        <div id="content-part1" class="space-y-8 block">
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-teal-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-teal-900">1. 製程概念設計 (Conceptual Design) 產出項目清單</h3>
+                    <p class="text-sm text-gray-600 mt-1">此階段為我司協助進行的前期工程，旨在驗證技術路線與商業可行性，為後續 BEDP 奠定堅實基礎。</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-4 border-b font-semibold w-1/3">中文項目名稱</th>
+                                <th class="p-4 border-b font-semibold w-1/3">English Deliverable</th>
+                                <th class="p-4 border-b font-semibold w-1/3">說明 / Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">1. 技術路線評估與選擇</td>
+                                <td class="p-4 font-mono text-sm text-teal-700">Technology Route Selection</td>
+                                <td class="p-4 text-sm">針對不同純化方法（如萃取劑種類、沉澱法）進行優劣勢與經濟性評估。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">2. 方塊流程圖</td>
+                                <td class="p-4 font-mono text-sm text-teal-700">Block Flow Diagram (BFD)</td>
+                                <td class="p-4 text-sm">呈現主要化學反應與物理分離單元的處理順序及物流大方向。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">3. 初步物料平衡表</td>
+                                <td class="p-4 font-mono text-sm text-teal-700">Preliminary Mass Balance</td>
+                                <td class="p-4 text-sm">計算關鍵原料消耗、主要產品產出與廢棄物初步估計量。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">4. 主要設備清單與初估</td>
+                                <td class="p-4 font-mono text-sm text-teal-700">High-level Equipment List</td>
+                                <td class="p-4 text-sm">列出核心反應器與分離槽體，並初步概算其體積或處理量。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">5. 資本與營運成本概估</td>
+                                <td class="p-4 font-mono text-sm text-teal-700">CAPEX & OPEX Estimate</td>
+                                <td class="p-4 text-sm">提供數量級估算 (Order of Magnitude, 精度 +/- 30~50%)，供客戶進行內部財務評估。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+                <div class="bg-blue-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-blue-900">2. 基本設計包 (BEDP) 產出項目清單 / Deliverables of BEDP</h3>
+                    <p class="text-sm text-gray-600 mt-1">要求工程公司於基本設計階段完成並交付的標準技術文件清單，用於銜接後續 FEED 與 EPC。</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-4 border-b font-semibold w-1/3">中文項目名稱</th>
+                                <th class="p-4 border-b font-semibold w-1/3">English Deliverable</th>
+                                <th class="p-4 border-b font-semibold w-1/3">說明 / Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">1. 設計基準與製程說明</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Design Basis & Process Description</td>
+                                <td class="p-4 text-sm">整體專案的產能、原料規格、產品規格，以及化學反應與製程原理的文字說明。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">2. 製程流程圖 (PFD)</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Process Flow Diagram (PFD)</td>
+                                <td class="p-4 text-sm">顯示主要設備、物流走向、操作溫度與壓力的核心流程圖。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">3. 物料與熱量平衡表 (H&MB)</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Heat and Material Balance (H&MB)</td>
+                                <td class="p-4 text-sm">各物流節點的流量、組成成分、相態、溫度、壓力及熱焓等數據 (通常來自模擬軟體)。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">4. 管線與儀表流程圖 (P&ID)</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Piping & Instrumentation Diagram (P&ID)</td>
+                                <td class="p-4 text-sm">包含所有設備、管線尺寸、閥門、儀表及控制迴路的詳細工程圖面 (基本設計階段發行版)。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">5. 主要設備數據表/規格書</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Equipment Data Sheets</td>
+                                <td class="p-4 text-sm">反應器、萃取槽、分離塔、熱交換器、泵浦等設備的尺寸、材質(針對稀土腐蝕性特殊考量)、操作與設計條件。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">6. 儀表與控制邏輯說明</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Process Control Philosophy & Interlock List</td>
+                                <td class="p-4 text-sm">描述工廠自動化控制邏輯、安全連鎖保護機制 (Cause & Effect Matrix)。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">7. 公用設施消耗清單</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Utility Consumption Summary</td>
+                                <td class="p-4 text-sm">正常操作與最大負載下，對水、電、蒸汽、冷卻水、儀表空氣的需求量彙整。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">8. 廢棄物與排放物清單</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Effluent & Emission Summary</td>
+                                <td class="p-4 text-sm">固廢 (如尾礦、廢渣)、廢水、廢氣的排放量與預期成分，供後續環保設計使用。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">9. 初步設備佈置圖</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">Preliminary Plot Plan</td>
+                                <td class="p-4 text-sm">依據設備尺寸與製程重力流/安全間距要求，規劃的初步廠區與車間佈置。</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4">10. 危害性與可操作性分析報告</td>
+                                <td class="p-4 font-mono text-sm text-blue-700">HAZOP Report (Preliminary)</td>
+                                <td class="p-4 text-sm">基於 P&ID 進行的初步工安與風險審查會議紀錄及改善建議清單。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+                <div class="bg-indigo-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-indigo-900">3. 工程公司執行能力審核清單 (發包評估標準) / Capability Evaluation Criteria</h3>
+                    <p class="text-sm text-gray-600 mt-1">寫入 RFP 中的投標廠商資格要求，確保得標者具備將實驗室配方轉化為商業化建廠設計的能力。</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-4 border-b font-semibold w-1/4">評估構面 / Category</th>
+                                <th class="p-4 border-b font-semibold w-3/4">具體審核要求與證明文件 / Specific Requirements & Proof</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-medium text-gray-900">1. 化工製程電腦模擬能力<br><span class="text-sm text-gray-500">Process Simulation Capability</span></td>
+                                <td class="p-4">
+                                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                        <li><span class="font-semibold text-indigo-700">要求：</span>具備使用 Aspen Plus, PRO/II 或 ChemCAD 等專業軟體進行熱量與物料平衡模擬的能力。針對稀土製程，需具備電解質(Electrolyte)或濕法冶金(Hydrometallurgy)模組的使用經驗。</li>
+                                        <li><span class="font-semibold text-indigo-700">要求證明：</span>提供過去執行類似複雜流體或特殊化學反應的模擬報告範例，或模擬軟體原廠授權與工程師認證。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-medium text-gray-900">2. 製程放大與商業化經驗<br><span class="text-sm text-gray-500">Scale-up & Commercialization</span></td>
+                                <td class="p-4">
+                                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                        <li><span class="font-semibold text-indigo-700">要求：</span>具備將客戶「實驗室數據 (Lab-scale)」或「模試廠數據 (Pilot-scale)」放大設計為「商業化量產廠 (Commercial-scale)」的實績。</li>
+                                        <li><span class="font-semibold text-indigo-700">要求證明：</span>列舉至少兩項從授權方(Licensor)或客戶取得技術轉移，並成功產出工藝包的專案實績表。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-medium text-gray-900">3. 特殊材質與防腐蝕設計能力<br><span class="text-sm text-gray-500">Material Selection Expertise</span></td>
+                                <td class="p-4">
+                                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                        <li><span class="font-semibold text-indigo-700">要求：</span>稀土提煉常涉及強酸、強鹼及高腐蝕性溶劑(如HCl, H2SO4, 萃取劑)。廠商需有專職材料工程師，能正確選用特種合金、襯氟(PTFE/PFA)或玻璃內襯設備。</li>
+                                        <li><span class="font-semibold text-indigo-700">要求證明：</span>提供過去處理高腐蝕性流體建廠專案的設備清單或材料選擇報告 (Material Selection Report) 經驗。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-medium text-gray-900">4. FEED 與 EPC 銜接經驗<br><span class="text-sm text-gray-500">FEED & EPC Interface Experience</span></td>
+                                <td class="p-4">
+                                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                        <li><span class="font-semibold text-indigo-700">要求：</span>產出的 BEDP 必須符合國際工程標準，確保能無縫移交給後續的細部設計(Detailed Engineering)或統包商(EPC)進行施工。</li>
+                                        <li><span class="font-semibold text-indigo-700">要求證明：</span>提供其標準工程圖框、P&ID 圖例標準 (Legend & Symbols) 範本，及過去協同 EPC 廠商完成建廠的成功案例。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2 Content -->
+        <div id="content-part2" class="space-y-8 hidden">
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h3 class="text-xl font-bold text-green-800 mb-2">專案啟動資料需求 (Client's Design Input)</h3>
+                <p class="text-gray-700">為了讓工程公司能夠順利開展模擬與基本設計，客戶端（製程開發者）必須提供完整且可靠的實驗與配方數據。以下清單可作為客戶內部資料整理的 Check-list。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Box 1 -->
+                <div class="border border-green-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-green-50 px-4 py-3 border-b border-green-200 flex items-center">
+                        <i class="fas fa-bullseye text-green-600 mr-2"></i>
+                        <h4 class="font-bold text-green-900">1. 目標基準 (Target Basis)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">1.1 目標產能 / Target Capacity</p>
+                            <p class="text-sm text-gray-600">預計年產量 (例如：噸/年) 以及設計的年操作時數 (通常為 8,000 小時/年)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">1.2 原料規格 / Raw Material Specifications</p>
+                            <p class="text-sm text-gray-600">稀土礦源或前驅物的詳細化學成分、雜質含量上限、粒度分佈、含水率等。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">1.3 產品規格 / Product Specifications</p>
+                            <p class="text-sm text-gray-600">最終稀土產品的純度要求 (例如 99.99%)、容許雜質清單、物理型態 (粉末、結晶等)。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 2 -->
+                <div class="border border-green-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-green-50 px-4 py-3 border-b border-green-200 flex items-center">
+                        <i class="fas fa-vial text-green-600 mr-2"></i>
+                        <h4 class="font-bold text-green-900">2. 化學與熱力學數據 (Chemistry & Thermodynamics)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">2.1 反應方程式 / Chemical Reactions</p>
+                            <p class="text-sm text-gray-600">主反應與已知副反應的化學方程式，以及反應熱 (放熱或吸熱數據)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">2.2 轉換率與收率 / Conversion & Yield</p>
+                            <p class="text-sm text-gray-600">實驗室測得的單步驟反應轉換率、各分離/萃取步驟的目標金屬回收率 (Recovery rate)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">2.3 特殊物性數據 / Physical Properties</p>
+                            <p class="text-sm text-gray-600">若使用特殊萃取劑或非標準溶劑，需提供其密度、黏度、比熱、沸點與蒸汽壓等數據，供模擬建置使用。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 3 -->
+                <div class="border border-green-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-green-50 px-4 py-3 border-b border-green-200 flex items-center">
+                        <i class="fas fa-cogs text-green-600 mr-2"></i>
+                        <h4 class="font-bold text-green-900">3. 操作條件與流程 (Operating Conditions)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">3.1 實驗室方塊流程圖 / Block Flow Diagram (BFD)</p>
+                            <p class="text-sm text-gray-600">呈現主要處理步驟 (如：浸出 Leaching -> 萃取 Extraction -> 沉澱 Precipitation -> 焙燒 Roasting) 的順序。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">3.2 關鍵操作參數 / Key Operating Parameters</p>
+                            <p class="text-sm text-gray-600">各步驟的最佳操作溫度、壓力範圍、反應停留時間 (Residence time)、pH 值控制要求及攪拌轉速要求。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">3.3 相分離數據 / Phase Separation Data</p>
+                            <p class="text-sm text-gray-600">如液-液萃取中的分相時間 (Settling time)、固-液分離中的過濾速率或沉降速率。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 4 -->
+                <div class="border border-green-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-green-50 px-4 py-3 border-b border-green-200 flex items-center">
+                        <i class="fas fa-shield-alt text-green-600 mr-2"></i>
+                        <h4 class="font-bold text-green-900">4. 環安衛與廠址條件 (EHS & Site Conditions)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">4.1 危害物質清單 / Hazardous Materials Data</p>
+                            <p class="text-sm text-gray-600">製程中涉及化學品的安全資料表 (SDS)，特別標註其毒性、易燃性及高腐蝕性限制。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">4.2 特殊材質經驗 / Material Experience</p>
+                            <p class="text-sm text-gray-600">在實驗室或模試階段發現的不適用材質 (例如：某種溶液會嚴重腐蝕 316L 不鏽鋼)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">4.3 廠址公用設施條件 / Site Utility Available</p>
+                            <p class="text-sm text-gray-600">預定建廠地點可提供的公用設施規格 (如：冷卻水溫度、蒸汽壓力等級、電力電壓頻率等)。若尚未選址則由工程公司假設。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3 Content -->
+        <div id="content-part3" class="space-y-8 hidden">
+            
+            <!-- Warning/Myth Buster Box -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg shadow-sm mb-8">
+                <h3 class="text-xl font-bold text-yellow-800 mb-2">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> 常見迷思：實驗室能做出來，就能直接發包蓋廠？
+                </h3>
+                <p class="text-gray-800 mb-3 text-sm md:text-base">
+                    許多專業的研發人員常誤以為只要在實驗室取得良好的轉換率或純度，就能直接找營造廠或設備商蓋廠。實際上，從「燒杯 (Beaker)」放大到「商業化槽體 (Commercial Tank)」，會面臨<strong>熱傳遞、質傳流體力學、連續操作穩定性及設備腐蝕</strong>等巨大挑戰。
+                </p>
+                <p class="text-gray-800 font-medium text-sm md:text-base">
+                    因此，<strong>概念設計 (Conceptual Design)、基本設計 (BEDP) 與前端工程設計 (FEED)</strong> 是將「實驗室配方」安全且具經濟效益地轉譯為「工程藍圖」不可省略的關鍵橋樑。跳過這些步驟直接進行統包 (EPC)，往往導致嚴重的設計變更、預算超支或甚至試車失敗。
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between border-b pb-4 mb-8">
+                    <h3 class="text-xl font-bold text-gray-900">製程開發到建廠生命週期 / Project Lifecycle</h3>
+                    <p class="text-sm text-indigo-700 font-semibold mt-2 md:mt-0 bg-indigo-50 px-3 py-1 rounded">
+                        <i class="fas fa-info-circle mr-1"></i> 基準估算：年產 1,000 噸稀土金屬試驗/小量產廠（全新製程開發）
+                    </p>
+                </div>
+                
+                <!-- Vertical Timeline -->
+                <div class="relative border-l-4 border-blue-200 ml-4 md:ml-32 space-y-12 py-4">
+                    
+                    <!-- Step 1 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[120px] top-2 w-24 text-right text-sm font-bold text-gray-500 hidden md:block">12~24 個月</div>
+                        <div class="absolute w-10 h-10 bg-gray-400 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-flask text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800">1. 產品與製程開發 (Lab & Pilot) <span class="md:hidden text-sm text-gray-500 ml-2">(12~24 個月)</span></h4>
+                        <p class="text-xs text-gray-500 font-mono mb-2 bg-gray-100 inline-block px-2 py-1 rounded">執行者：研發團隊 (R&D)</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">目標：</strong> 確立全新化學反應途徑、找出最佳配方、驗證產品純度。通常在批次(Batch)實驗室或小型模試廠進行。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">產出：</strong> 基礎化學與熱力學數據、單元操作的初步可行性。</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[120px] top-2 w-24 text-right text-sm font-bold text-blue-600 hidden md:block">3~4 個月</div>
+                        <div class="absolute w-10 h-10 bg-blue-400 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-lightbulb text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-blue-900">2. 製程概念設計 (Process Conceptual Design) <span class="md:hidden text-sm text-blue-600 ml-2">(3~4 個月)</span></h4>
+                        <p class="text-xs text-blue-600 font-mono mb-2 bg-blue-50 inline-block px-2 py-1 rounded">執行者：我司顧問團隊 / 製程工程師</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">目標：</strong> 評估商業化放大的可行性與經濟性。進行初步的製程模擬，選擇最適合的分離與純化技術路線。<strong>因屬全新製程，此階段需與研發團隊密切且反覆地進行討論與驗證。</strong></p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">產出：</strong> 方塊流程圖 (BFD)、初步物料平衡、概估投資成本 (Order of Magnitude Estimate)。</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[120px] top-2 w-24 text-right text-sm font-bold text-blue-700 hidden md:block">4~6 個月</div>
+                        <div class="absolute w-10 h-10 bg-blue-600 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-cogs text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-blue-900">3. 基本設計 (Basic Engineering, BEDP) <span class="text-red-500 text-sm ml-2">★ 核心樞紐</span> <span class="md:hidden text-sm text-blue-700 ml-2">(4~6 個月)</span></h4>
+                        <p class="text-xs text-blue-600 font-mono mb-2 bg-blue-50 inline-block px-2 py-1 rounded">執行者：我司專業製程設計團隊</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">目標：</strong> 將概念轉化為具體的工程參數。完成詳細的軟體模擬，決定所有設備的尺寸、材質及管線流體條件，並確立安全控制邏輯。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">產出：</strong> PFD、P&ID、設備規格書、H&MB (如本網頁第一部分所述)。<br><span class="text-indigo-600 font-semibold">※ 這是將「Know-how」定型為「工程文件」的最關鍵步驟。</span></p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[120px] top-2 w-24 text-right text-sm font-bold text-indigo-700 hidden md:block">2~3 個月</div>
+                        <div class="absolute w-10 h-10 bg-indigo-500 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-file-signature text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-indigo-900">4. 前端工程設計 (FEED) <span class="md:hidden text-sm text-indigo-700 ml-2">(2~3 個月)</span></h4>
+                        <p class="text-xs text-indigo-600 font-mono mb-2 bg-indigo-50 inline-block px-2 py-1 rounded">執行者：專業工程公司 (具備工程顧問 Engineering Consultant 能力)</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">目標：</strong> 基於 BEDP 進一步深化設計，通常為了準確估算建廠總成本 (精度 +/- 10~15%) 並制定統包發包文件。此階段會決定長交期設備 (Long-lead items) 並進行初步 3D 佈置。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">產出：</strong> EPC 發包書 (RFP for EPC)、預算估價單、細化的 P&ID。</p>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[120px] top-2 w-24 text-right text-sm font-bold text-green-700 hidden md:block">10~14 個月</div>
+                        <div class="absolute w-10 h-10 bg-green-600 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-hard-hat text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-green-900">5. 細部設計、採購與建造 (EPC) <span class="md:hidden text-sm text-green-700 ml-2">(10~14 個月)</span></h4>
+                        <p class="text-xs text-green-600 font-mono mb-2 bg-green-50 inline-block px-2 py-1 rounded">執行者：專業工程公司 (具備統包 EPC 能力)</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">目標：</strong> 執行管線等距圖 (Isometric drawings)、土木結構計算、電氣拉線等細部設計。採購所有實體設備與材料，並進駐現場施工與安裝。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">產出：</strong> 一座實體完工的稀土提煉廠 (Mechanical Completion)。</p>
+                    </div>
+
+                    <!-- Step 6 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[120px] top-2 w-24 text-right text-sm font-bold text-green-600 hidden md:block">2~3 個月</div>
+                        <div class="absolute w-10 h-10 bg-green-500 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-check-double text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-green-900">6. 試車與投產 (Commissioning & Start-up) <span class="md:hidden text-sm text-green-600 ml-2">(2~3 個月)</span></h4>
+                        <p class="text-xs text-green-600 font-mono mb-2 bg-green-50 inline-block px-2 py-1 rounded">執行者：我司專業製程設計團隊 (主導) + 客戶操作團隊 (學習) + EPC (機械試車支援)</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">目標：</strong> EPC 廠商通常僅負責前期的機械與水試車 (Mechanical/Water run)。後續核心的化學試車 (Chemical run) 與正式投料，必須由最了解製程條件的我司設計團隊來主導參數調整。客戶團隊需全程參與操作學習以利日後接手。最終驗證產能與純度是否達到 BEDP 設定的性能保證 (Performance Guarantee)。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">產出：</strong> 順利移交營運 (Handover to Operation)。</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-6 text-center text-sm mt-12">
+        <p>此文件專為協助發包工程設計專案 (BEDP / PDP) 而編製。</p>
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            const tabs = ['part1', 'part2', 'part3'];
+            
+            tabs.forEach(id => {
+                const content = document.getElementById('content-' + id);
+                const tab = document.getElementById('tab-' + id);
+                
+                if (id === tabId) {
+                    content.classList.remove('hidden');
+                    content.classList.add('block');
+                    tab.className = 'tab-active py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center';
+                } else {
+                    content.classList.add('hidden');
+                    content.classList.remove('block');
+                    tab.className = 'tab-inactive py-4 px-6 text-lg focus:outline-none transition-colors duration-200 flex items-center justify-center';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

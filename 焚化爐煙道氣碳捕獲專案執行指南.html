@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>焚化爐煙道氣碳捕獲專案執行指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .tab-active { border-bottom: 2px solid #059669; color: #059669; font-weight: 600; }
+        .tab-inactive { border-bottom: 2px solid transparent; color: #4b5563; }
+        .tab-inactive:hover { color: #059669; border-bottom: 2px solid #6ee7b7; }
+        
+        /* Custom Flowchart Lines */
+        .flow-line-h { height: 2px; background-color: #cbd5e1; width: 100%; position: absolute; top: 50%; z-index: 0; }
+        .flow-arrow-right { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid #cbd5e1; position: absolute; right: -8px; top: calc(50% - 6px); z-index: 1; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-emerald-900 text-white py-8 shadow-md">
+        <div class="container mx-auto px-4 md:px-8">
+            <h1 class="text-3xl font-bold mb-2">焚化爐煙道氣碳捕獲專案執行指南</h1>
+            <h2 class="text-xl text-emerald-200">Incinerator Flue Gas Carbon Capture Project Execution Guide</h2>
+            <p class="mt-4 text-sm text-emerald-100 max-w-4xl leading-relaxed">
+                本文件旨在提供各方於焚化爐碳捕獲、利用與封存 (CCUS) 專案啟動與執行時之標準參考。內容依據前端工程規劃 (Front-End Loading, FEL) 階段，涵蓋設計產出清單、業主設計基準需求、專案生命週期，以及各方角色與責任劃分 (SoW)。<br>
+                <span class="font-bold text-yellow-300 mt-2 block">【重要聲明】：本指南所列之工作界定與預估時程為基準框架。隨著各方合作之確立，具體之工作範圍、產出細節與專案時程，將於後續合約協商與專案啟動會議中逐步檢討並確認。</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 md:px-8 py-8">
+        
+        <!-- Tabs -->
+        <div class="flex flex-col sm:flex-row border-b border-gray-200 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <button onclick="switchTab('part1')" id="tab-part1" class="tab-active py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-file-contract mr-2"></i> 第一部分：工程產出與預估 (FEL 1~3)
+            </button>
+            <button onclick="switchTab('part2')" id="tab-part2" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-industry mr-2"></i> 第二部分：設計基準與資料清單
+            </button>
+            <button onclick="switchTab('part3')" id="tab-part3" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-project-diagram mr-2"></i> 第三部分：專案執行路徑
+            </button>
+            <button onclick="switchTab('part4')" id="tab-part4" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-users-cog mr-2"></i> 第四部分：角色與分工
+            </button>
+        </div>
+
+        <!-- Part 1 Content -->
+        <div id="content-part1" class="space-y-8 block">
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-slate-800">專案前端工程規劃 (Front-End Loading, FEL) 產出清單</h3>
+                    <p class="text-sm text-gray-600 mt-1">依據國際專案管理慣例，投資預估與工程設計分為 FEL 1 至 FEL 3 階段，精確度隨工程推進而提升。</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-4 border-b font-semibold w-1/6">階段</th>
+                                <th class="p-4 border-b font-semibold w-1/4">核心產出文件 (Deliverables)</th>
+                                <th class="p-4 border-b font-semibold w-5/12">內容說明 (Description)</th>
+                                <th class="p-4 border-b font-semibold w-1/6">預算精度 (Estimate)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- FEL 1 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-slate-700">FEL 1<br><span class="text-xs text-gray-500 font-normal">專案提案與技術評估<br>(Conceptual Design)</span></td>
+                                <td class="p-4 text-sm font-mono text-emerald-700">
+                                    • Technology Selection Report<br>
+                                    • Block Flow Diagram (BFD)<br>
+                                    • Overall Mass Balance
+                                </td>
+                                <td class="p-4 text-sm">針對焚化爐煙氣特性，評估適用之前處理與碳捕獲技術 (如化學吸收法、吸附法等)。產出方塊流程圖與初步全廠質能平衡，確立專案技術可行性。</td>
+                                <td class="p-4 text-sm font-semibold text-gray-700">數量級估算<br>(Order of Magnitude)<br>± 30% ~ 50%</td>
+                            </tr>
+                            <!-- FEL 2 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-slate-700">FEL 2<br><span class="text-xs text-gray-500 font-normal">基本設計<br>(Basic Eng. / BEDP)</span></td>
+                                <td class="p-4 text-sm font-mono text-emerald-700">
+                                    • Process Flow Diagram (PFD)<br>
+                                    • Heat & Material Balance (H&MB)<br>
+                                    • Major Equipment List & Sizing<br>
+                                    • Utility Consumption Summary
+                                </td>
+                                <td class="p-4 text-sm">藉由製程電腦模擬建立完整熱力學與動力學模型。決定前處理單元 (急冷塔、脫硫/脫酸、深度除塵)、吸收塔、再生塔及壓縮單元之操作條件、尺寸與公用需求 (蒸汽、電力、冷卻水)。</td>
+                                <td class="p-4 text-sm font-semibold text-gray-700">初步估算<br>(Preliminary Estimate)<br>± 20% ~ 30%</td>
+                            </tr>
+                            <!-- FEL 3 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-slate-700">FEL 3<br><span class="text-xs text-gray-500 font-normal">前端工程設計<br>(FEED)</span></td>
+                                <td class="p-4 text-sm font-mono text-emerald-700">
+                                    • Piping & Instrumentation Diagram (P&ID)<br>
+                                    • Equipment Data Sheets<br>
+                                    • Plot Plan (初步設備佈置圖)<br>
+                                    • HAZOP Report
+                                </td>
+                                <td class="p-4 text-sm">將 BEDP 轉化為實務工程圖面。定義管線尺寸、材質防腐蝕規範 (Material Selection)、儀表控制邏輯。產出可用於 EPC 統包發包 (RFP) 之技術規範文件與招標包。</td>
+                                <td class="p-4 text-sm font-semibold text-gray-700">發包預算估算<br>(Control Estimate)<br>± 10% ~ 15%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2 Content -->
+        <div id="content-part2" class="space-y-8 hidden">
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h3 class="text-xl font-bold text-emerald-800 mb-2">設計基準與業主提供資料清單 (Design Basis & Owner's Input)</h3>
+                <p class="text-gray-700 mb-4">碳捕獲專案高度依賴源頭氣體特性。為使基本設計階段能準確選定溶劑並設計前處理系統，業主 (O) 需於專案初期提供以下客觀數據作為設計基準 (Design Basis)。</p>
+
+                <!-- Technical Highlight Box -->
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-amber-900 mb-1"><i class="fas fa-exclamation-circle mr-2"></i>技術核心提示：前處理系統 (Pre-treatment System) 之關鍵性</h4>
+                    <p class="text-sm text-gray-800 leading-relaxed">
+                        焚化爐煙道氣成分具高度複雜性。其含有的高濃度 SOx、NOx、HCl、HF 與飛灰，將導致下游碳捕獲溶劑 (如胺液類) 發生<strong>不可逆之化學降解 (Irreversible Degradation)</strong>。因此，本專案技術範疇中之「前處理技術」(包含急冷、脫酸、深度除塵等單元) 並非附屬設備，而是與捕獲主系統同等重要的<strong>核心技術與成敗關鍵</strong>。前處理系統的設計良率將直接決定溶劑替換頻率 (OPEX)、設備腐蝕率以及全廠運轉的可靠度。
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Box 1 -->
+                <div class="border border-emerald-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-emerald-50 px-4 py-3 border-b border-emerald-200 flex items-center">
+                        <i class="fas fa-smog text-emerald-600 mr-2"></i>
+                        <h4 class="font-bold text-emerald-900">1. 焚化爐煙道氣規格 (Flue Gas Conditions)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">1.1 物理條件 (Physical Conditions)</p>
+                            <p class="text-sm text-gray-600">進入捕獲系統界區 (Battery Limit) 前之煙氣總流量 (Nm³/hr)、溫度 (°C) 及壓力 (mmAq 或 barg)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">1.2 化學組成 (Chemical Composition)</p>
+                            <p class="text-sm text-gray-600">主要成分體積百分比：CO₂, O₂, N₂, H₂O (水分含量)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">1.3 雜質與污染物 (Impurities & Contaminants)</p>
+                            <p class="text-sm text-gray-600">影響前處理設計與胺液劣化之關鍵數據：SOx, NOx, HCl, HF 以及粉塵/飛灰 (Particulate Matter, mg/Nm³) 之最大與常態濃度。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 2 -->
+                <div class="border border-emerald-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-emerald-50 px-4 py-3 border-b border-emerald-200 flex items-center">
+                        <i class="fas fa-bullseye text-emerald-600 mr-2"></i>
+                        <h4 class="font-bold text-emerald-900">2. 專案目標規格 (Target Specifications)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">2.1 碳捕獲率 (CO₂ Capture Rate)</p>
+                            <p class="text-sm text-gray-600">要求之捕獲效率 (如 90% 或 95%) 及目標年操作時數 (Operating Hours/Year)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">2.2 產品二氧化碳規格 (Product CO₂ Specs)</p>
+                            <p class="text-sm text-gray-600">封存或利用端對 CO₂ 的狀態要求 (氣態或液態)、交界區壓力、純度 (如 99.9% 工業級或食品級)，以及水氣、氧氣殘留限制。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 3 -->
+                <div class="border border-emerald-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-emerald-50 px-4 py-3 border-b border-emerald-200 flex items-center">
+                        <i class="fas fa-plug text-emerald-600 mr-2"></i>
+                        <h4 class="font-bold text-emerald-900">3. 廠址公用設施條件 (Site Utilities)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">3.1 蒸汽 (Steam) 可用性</p>
+                            <p class="text-sm text-gray-600">溶劑再生需耗費大量熱能。需提供廠區可用低壓蒸汽 (LP Steam) 之壓力、溫度及最大供應量 (噸/小時)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">3.2 電源與冷卻系統 (Power & Cooling)</p>
+                            <p class="text-sm text-gray-600">冷卻水供應溫度、最大水量，以及壓縮機所需之高低壓電源規格 (Voltage/Frequency)。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 4 -->
+                <div class="border border-emerald-200 rounded-lg overflow-hidden shadow-sm">
+                    <div class="bg-emerald-50 px-4 py-3 border-b border-emerald-200 flex items-center">
+                        <i class="fas fa-map-marked-alt text-emerald-600 mr-2"></i>
+                        <h4 class="font-bold text-emerald-900">4. 廠區空間與環境限制 (Plot & Environmental Restrictions)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">4.1 可用面積 (Available Plot Space)</p>
+                            <p class="text-sm text-gray-600">焚化廠周邊可供新建捕獲設備與壓縮機房之實際長寬尺寸 (附初步平面圖)。</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">4.2 廢水排放限制 (Effluent Limits)</p>
+                            <p class="text-sm text-gray-600">前處理洗滌塔與系統產出廢水之容許排放量及水質規範。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3 Content -->
+        <div id="content-part3" class="space-y-8 hidden">
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between border-b pb-4 mb-8">
+                    <h3 class="text-xl font-bold text-gray-900">碳捕獲專案執行路徑 (Project Lifecycle)</h3>
+                    <p class="text-sm text-emerald-700 font-semibold mt-2 md:mt-0 bg-emerald-50 px-3 py-1 rounded">
+                        <i class="fas fa-clock mr-1"></i> 基準估算：中大型焚化爐碳捕獲專案 (總期程約 30~46 個月)
+                    </p>
+                </div>
+                
+                <!-- Vertical Timeline -->
+                <div class="relative border-l-4 border-emerald-200 ml-4 md:ml-36 space-y-12 py-4">
+                    
+                    <!-- Step 1 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[130px] top-2 w-28 whitespace-nowrap text-right text-sm font-bold text-gray-500 hidden md:block">2 ~ 4 個月</div>
+                        <div class="absolute w-10 h-10 bg-gray-400 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-search text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800">1. 專案提案與技術評選 (Proposal & Tech Selection) <span class="md:hidden text-sm text-gray-500 ml-2">(2~4 個月)</span></h4>
+                        <p class="text-xs text-gray-500 font-mono mb-2 bg-gray-100 inline-block px-2 py-1 rounded">階段：FEL 1</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">工作內容：</strong> 依據焚化爐煙氣條件，評估市面不同之前處理技術與化學吸收溶劑 (如胺液) 或技術授權方 (Licensor)。確立專案邊界與初步經濟性。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">決策點：</strong> 確認技術可行性，選擇授權技術 (若需要)。</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[130px] top-2 w-28 whitespace-nowrap text-right text-sm font-bold text-teal-600 hidden md:block">4 ~ 6 個月</div>
+                        <div class="absolute w-10 h-10 bg-teal-500 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-laptop-code text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-teal-900">2. 基本設計 (Basic Engineering Design) <span class="md:hidden text-sm text-teal-600 ml-2">(4~6 個月)</span></h4>
+                        <p class="text-xs text-teal-600 font-mono mb-2 bg-teal-50 inline-block px-2 py-1 rounded">階段：FEL 2</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">工作內容：</strong> 整合前處理 (脫硫/降溫/除塵)、吸收、再生與壓縮單元。進行質能平衡計算，產出 PFD 與核心設備尺寸，並提供初步預算估價。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">決策點：</strong> 設計基準凍結 (Design Basis Freeze)。</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[130px] top-2 w-28 whitespace-nowrap text-right text-sm font-bold text-blue-600 hidden md:block">4 ~ 6 個月</div>
+                        <div class="absolute w-10 h-10 bg-blue-500 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-drafting-compass text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-blue-900">3. 前端工程設計 (Front-End Engineering Design) <span class="md:hidden text-sm text-blue-600 ml-2">(4~6 個月)</span></h4>
+                        <p class="text-xs text-blue-600 font-mono mb-2 bg-blue-50 inline-block px-2 py-1 rounded">階段：FEL 3</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">工作內容：</strong> 深化基本設計，展開全廠管線與儀表流程圖 (P&ID)、設備防腐蝕材質選定 (如不鏽鋼或襯膠)、佈置圖。產出高精度控制預算。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">決策點：</strong> 完成 EPC 發包招標文件。</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[130px] top-2 w-28 whitespace-nowrap text-right text-sm font-bold text-indigo-700 hidden md:block">2 ~ 3 個月</div>
+                        <div class="absolute w-10 h-10 bg-indigo-500 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-file-signature text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-indigo-900">4. 專案核准與發包 (Project Approval & Bidding) <span class="md:hidden text-sm text-indigo-700 ml-2">(2~3 個月)</span></h4>
+                        <p class="text-xs text-indigo-600 font-mono mb-2 bg-indigo-50 inline-block px-2 py-1 rounded">階段：FID</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">工作內容：</strong> 業主基於 FEL 3 的預算進行最終投資決策 (Final Investment Decision, FID)。核准後進行 EPC 統包商招標、審標與決標。</p>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[130px] top-2 w-28 whitespace-nowrap text-right text-sm font-bold text-emerald-700 hidden md:block">18 ~ 24 個月</div>
+                        <div class="absolute w-10 h-10 bg-emerald-600 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-hard-hat text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-emerald-900">5. 細部設計、採購與建造 (Detail Eng., Procurement, Construction) <span class="md:hidden text-sm text-emerald-700 ml-2">(18~24 個月)</span></h4>
+                        <p class="text-xs text-emerald-600 font-mono mb-2 bg-emerald-50 inline-block px-2 py-1 rounded">階段：EPC</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">工作內容：</strong> 統包商執行管線等距圖 (Isometric drawings)、土木結構、電氣儀表細部設計。採購長交期設備 (壓縮機、塔槽)，並於現場施工。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">決策點：</strong> 達成機械完工 (Mechanical Completion)。</p>
+                    </div>
+
+                    <!-- Step 6 -->
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[130px] top-2 w-28 whitespace-nowrap text-right text-sm font-bold text-emerald-600 hidden md:block">2 ~ 3 個月</div>
+                        <div class="absolute w-10 h-10 bg-emerald-500 rounded-full -left-[22px] flex items-center justify-center text-white border-4 border-white shadow-md">
+                            <i class="fas fa-check-double text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-emerald-900">6. 試車與投產 (Commissioning & Start-up) <span class="md:hidden text-sm text-emerald-600 ml-2">(2~3 個月)</span></h4>
+                        <p class="text-xs text-emerald-600 font-mono mb-2 bg-emerald-50 inline-block px-2 py-1 rounded">階段：Start-up</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong class="text-gray-700">工作內容：</strong> 依序進行冷試車、水試車，導入化學溶劑進行熱試車 (Chemical run)。執行性能測試 (Performance Test Run, PTR) 驗證碳捕獲率與產品純度。</p>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">決策點：</strong> 性能驗證通過，移交業主營運 (Handover)。</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 4 Content: SoW -->
+        <div id="content-part4" class="space-y-8 hidden">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 border-b pb-4">專案角色與工作責任劃分 (Scope of Work)</h3>
+                <p class="text-gray-700 text-sm md:text-base leading-relaxed mt-4">
+                    為確保專案品質與介面順暢，本指南定義五方主要角色。特別將前段設計區分為負責技術整合之「製程基本設計 (B)」與負責建廠實務化之「前端工程設計 (F)」。此舉可確保源頭化學反應與前處理技術精確轉譯，同時提早納入工程建造考量，減少後期變更。
+                </p>
+            </div>
+
+            <!-- Table: SoW Summary -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-bold text-slate-800">工作責任劃分摘要總表</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-4 border-b font-semibold w-1/6">代碼</th>
+                                <th class="p-4 border-b font-semibold w-1/4">參與角色</th>
+                                <th class="p-4 border-b font-semibold w-7/12">主要責任定義 (Responsibilities)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- A -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-gray-600">A</td>
+                                <td class="p-4 font-semibold text-gray-800">技術授權方<br><span class="text-sm text-gray-500 font-normal">(Technology Licensor)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>提供特定碳捕獲溶劑 (Solvent) 之化學配方、降解數據與操作邊界限制。</li>
+                                        <li>提供核心塔槽內部構件 (Column Internals) 之特定設計建議。</li>
+                                        <li>對授權範圍內之製程性能 (如吸收效率、能耗) 提供性能保證 (Performance Guarantee)。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- B -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-teal-600">B</td>
+                                <td class="p-4 font-semibold text-teal-800">製程基本設計方<br><span class="text-sm text-teal-600 font-normal">(Process Integrator)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>擔任技術(A)與工程(F)之轉譯樞紐，確立全廠設計基準 (Process Design Basis)。</li>
+                                        <li>執行全系統 (含前處理、捕獲、壓縮) 之熱力學電腦模擬與質能平衡計算 (H&MB)。</li>
+                                        <li>產出初步流程圖 (PFD)，並負責審查工程方 (F) 產出之設計結果是否偏離製程要求。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- F -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-blue-600">F</td>
+                                <td class="p-4 font-semibold text-blue-800">前端工程設計方<br><span class="text-sm text-blue-600 font-normal">(FEED Contractor)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>基於 (B) 提供之製程參數，執行工程端之實務設計，確保可建性 (Constructability)。</li>
+                                        <li>產出 P&ID、設備/儀表/管線資料表 (Data Sheets)、初步佈置與 HAZOP 分析。</li>
+                                        <li>產出 EPC 發包文件與建廠控制預算 (Control Estimate)。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- E -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-emerald-600">E</td>
+                                <td class="p-4 font-semibold text-emerald-800">統包工程公司<br><span class="text-sm text-emerald-600 font-normal">(EPC Contractor)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>負責得標後之細部設計 (Detailed Engineering)、全球採購與實體建造施工。</li>
+                                        <li>負責機械完工 (Mechanical Completion) 與前期冷水試車。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- O -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 font-bold text-amber-600">O</td>
+                                <td class="p-4 font-semibold text-amber-800">業主<br><span class="text-sm text-amber-600 font-normal">(Owner / Investor)</span></td>
+                                <td class="p-4 text-sm text-gray-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>提供焚化爐煙道氣歷史數據、廠址空間限制與公用設施條件。</li>
+                                        <li>反饋既有廠區類似設備之實務操作經驗，避免設計與操作習慣脫節。</li>
+                                        <li>提供專案資金，並預先建立 O&M 團隊參與試車與接手。</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Interaction Diagram -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">角色工作配合與介面關係圖</h3>
+                
+                <div class="relative max-w-5xl mx-auto p-4 md:p-8 bg-gray-50 border border-gray-200 rounded-xl overflow-x-auto">
+                    
+                    <!-- Owner Overlay -->
+                    <div class="absolute top-0 left-0 w-full h-full border-4 border-amber-200/50 rounded-xl pointer-events-none"></div>
+                    <div class="absolute -top-3 left-6 bg-amber-100 text-amber-800 font-bold px-4 py-1 rounded text-sm border border-amber-300">
+                        O: 業主 (全期參與審查、提供邊界條件、資金與操作回饋)
+                    </div>
+
+                    <!-- Flow Container -->
+                    <div class="relative flex flex-col md:flex-row items-center justify-between gap-4 mt-8 min-w-[700px]">
+                        
+                        <!-- Block A: Licensor -->
+                        <div class="z-10 w-48 bg-white border-2 border-gray-300 rounded-lg p-3 shadow-sm flex flex-col items-center text-center">
+                            <h4 class="font-bold text-gray-800 mb-1">A: 技術授權方</h4>
+                            <div class="text-[11px] text-gray-700 text-left w-full space-y-1 bg-gray-50 p-2 rounded">
+                                <div>• 溶劑化學特性</div>
+                                <div>• 設備關鍵參數限制</div>
+                                <div>• 性能保證數據</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow 1 -->
+                        <div class="relative w-12 h-4">
+                            <div class="absolute top-1/2 left-0 w-full h-[2px] bg-gray-300 -translate-y-1/2"></div>
+                            <div class="absolute top-1/2 right-[-4px] -translate-y-1/2 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[6px] border-l-gray-300"></div>
+                        </div>
+
+                        <!-- Block B: Process Integrator -->
+                        <div class="z-10 w-48 bg-teal-50 border-2 border-teal-400 rounded-lg p-3 shadow-md flex flex-col items-center text-center">
+                            <h4 class="font-bold text-teal-900 mb-1">B: 製程基本設計</h4>
+                            <div class="text-[11px] text-gray-700 text-left w-full space-y-1 bg-white p-2 rounded border border-teal-100">
+                                <div>• 全廠模擬 (H&MB)</div>
+                                <div>• PFD 與設計基準</div>
+                                <div>• 設計審查與確認</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow 2 (Bi-directional B and F) -->
+                        <div class="relative w-16 h-12 flex flex-col items-center justify-center">
+                            <div class="relative w-full h-3 mb-1">
+                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-blue-300 -translate-y-1/2"></div>
+                                <div class="absolute top-1/2 right-[-4px] -translate-y-1/2 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[6px] border-l-blue-300"></div>
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 text-[9px] text-blue-700 font-semibold whitespace-nowrap">移交參數</span>
+                            </div>
+                            <div class="relative w-full h-3">
+                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-teal-400 border-dashed border-t-[2px] -translate-y-1/2"></div>
+                                <div class="absolute top-1/2 left-[-4px] -translate-y-1/2 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-r-[6px] border-r-teal-400"></div>
+                                <span class="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[9px] text-teal-700 font-semibold whitespace-nowrap">設計審查</span>
+                            </div>
+                        </div>
+
+                        <!-- Block F: FEED -->
+                        <div class="z-10 w-48 bg-blue-50 border-2 border-blue-300 rounded-lg p-3 shadow-sm flex flex-col items-center text-center">
+                            <h4 class="font-bold text-blue-900 mb-1">F: 前端工程 (FEED)</h4>
+                            <div class="text-[11px] text-gray-700 text-left w-full space-y-1 bg-white p-2 rounded border border-blue-100">
+                                <div>• P&ID 與佈置</div>
+                                <div>• 設備管線規範書</div>
+                                <div>• 發包文件與預算估算</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow 3 -->
+                        <div class="relative w-12 h-4">
+                            <div class="absolute top-1/2 left-0 w-full h-[2px] bg-emerald-300 -translate-y-1/2"></div>
+                            <div class="absolute top-1/2 right-[-4px] -translate-y-1/2 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[6px] border-l-emerald-300"></div>
+                            <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] text-emerald-700 font-semibold whitespace-nowrap">發包</span>
+                        </div>
+
+                        <!-- Block E: EPC -->
+                        <div class="z-10 w-48 bg-emerald-50 border-2 border-emerald-400 rounded-lg p-3 shadow-sm flex flex-col items-center text-center">
+                            <h4 class="font-bold text-emerald-900 mb-1">E: 統包工程 (EPC)</h4>
+                            <div class="text-[11px] text-gray-700 text-left w-full space-y-1 bg-white p-2 rounded border border-emerald-100">
+                                <div>• 細部設計</div>
+                                <div>• 設備採購與建造</div>
+                                <div>• 機械完工</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Strategy -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 border-b pb-4"><i class="fas fa-rocket mr-2 text-indigo-600"></i>後續工作展開策略 (Next Steps)</h3>
+                <p class="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                    在確立專案初始框架後，建議於近期啟動以下策略性工作。
+                    <mark class="bg-yellow-200 text-gray-900 font-bold px-2 py-1 rounded inline-block mt-1">※ 各項工作的具體細節將在此階段被檢討並固化：</mark>
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-800 mb-2">1. 保密與授權協議 (NDA & Licensing)</h4>
+                        <p class="text-sm text-gray-600">完成各參與方之多方保密協議，並釐清溶劑與捕獲技術之授權界線與性能保證責任劃分。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-800 mb-2">2. 介面管理計畫 (Interface Matrix)</h4>
+                        <p class="text-sm text-gray-600">制定文件交互矩陣，明確定義 B 與 F 之間設計圖面傳遞之版本精度要求與審查回覆時限。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-800 mb-2">3. 專案主排程 (Master Schedule)</h4>
+                        <p class="text-sm text-gray-600">定義 FEL 各階段之關鍵里程碑，特別標定「設計基準凍結」與「P&ID 凍結」之查核時間點。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-800 mb-2">4. 審查機制 (Stage-Gate Reviews)</h4>
+                        <p class="text-sm text-gray-600">排定 30%/60%/90% 設計模型審查與 HAZOP 工安審查會議，確保變更於早期受控。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-800 text-gray-300 py-6 text-center text-sm mt-12">
+        <p>本文件專為焚化爐煙道氣碳捕獲 (CCUS) 專案規劃設計而編製。</p>
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            const tabs = ['part1', 'part2', 'part3', 'part4'];
+            tabs.forEach(id => {
+                const content = document.getElementById('content-' + id);
+                const tab = document.getElementById('tab-' + id);
+                if (id === tabId) {
+                    content.classList.remove('hidden');
+                    content.classList.add('block');
+                    tab.className = 'tab-active py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center';
+                } else {
+                    content.classList.add('hidden');
+                    content.classList.remove('block');
+                    tab.className = 'tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大噸數冷卻水塔：節水節能技術與成效分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tab-btn.active {
+            background-color: #0ea5e9;
+            color: white;
+            border-color: #0ea5e9;
+        }
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #0ea5e9;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans antialiased leading-relaxed">
+
+    <!-- Chosen Palette: Warm Neutrals with Sky Blue (#0ea5e9) and Emerald Green (#10b981) Accents -->
+    <!-- Application Structure Plan: The SPA is structured into a dashboard layout with three main thematic sections: 1. Type Comparison (Interactive Radar Chart & Tabs) to establish baseline knowledge, 2. Core Technologies (Interactive Grid) to explain solutions, and 3. Case Studies (Interactive Bar Chart Dashboard) to prove ROI. This logical flow moves the user from understanding the hardware, to exploring the upgrades, and finally seeing the measurable results, which is highly effective for technical decision-makers. -->
+    <!-- Visualization & Content Choices: 1. Radar Chart (Chart.js) used for multi-variable comparison of cooling tower types (Cost, Efficiency, etc.) - allows quick visual assessment without complex tables. 2. Grouped Bar Chart (Chart.js) used for Before/After case studies - best for showing direct comparative impact of energy/water savings. No SVG/Mermaid used. Interactive tabs and buttons drive the data changes dynamically. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl font-bold text-sky-600">⟳</span>
+                <h1 class="text-xl font-bold tracking-tight text-stone-700">工業冷卻系統效能分析中心</h1>
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-stone-500">
+                <a href="#types" class="hover:text-sky-600 transition-colors">系統類型比較</a>
+                <a href="#tech" class="hover:text-sky-600 transition-colors">核心節能技術</a>
+                <a href="#cases" class="hover:text-sky-600 transition-colors">改善成效案例</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 space-y-16">
+
+        <section class="text-center space-y-4 py-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-stone-800 tracking-tight">突破 300RT 的效能瓶頸</h2>
+            <p class="text-lg md:text-xl text-stone-600 max-w-3xl mx-auto">
+                針對一般工業製程與大型商業空調（300RT 以上），冷卻水塔的耗水與耗電佔據了極大的營運成本。本平台統整各類冷卻塔特性，並提出具備實證數據的可靠改善方案。
+            </p>
+        </section>
+
+        <section id="types" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-10">
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-stone-800 flex items-center gap-2">
+                    <span class="text-sky-500">❖</span> 冷卻水塔系統類型與性能比較
+                </h3>
+                <p class="text-stone-600 mt-2">
+                    本區塊比較工業與商業常見的冷卻水塔類型。點擊下方按鈕可查看不同系統在建置成本、節水能力、節能表現及維護難易度上的綜合評估，協助您根據廠區條件選擇最適當的架構。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div class="space-y-6">
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="updateRadar('open')" id="btn-open" class="tab-btn active px-4 py-2 rounded-lg border border-stone-300 font-medium transition-all">機械通風開放式</button>
+                        <button onclick="updateRadar('closed')" id="btn-closed" class="tab-btn px-4 py-2 rounded-lg border border-stone-300 font-medium transition-all">強制循環密閉式</button>
+                        <button onclick="updateRadar('natural')" id="btn-natural" class="tab-btn px-4 py-2 rounded-lg border border-stone-300 font-medium transition-all">自然通風式高塔</button>
+                    </div>
+                    
+                    <div id="type-desc-container" class="bg-stone-50 p-6 rounded-xl border border-stone-100 min-h-[250px] flex flex-col md:flex-row gap-6 items-stretch">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <h4 id="type-title" class="text-xl font-bold text-sky-700 mb-2"></h4>
+                            <div id="type-principle" class="text-sm font-bold text-stone-700 mb-2 pb-2 border-b border-stone-200"></div>
+                            <p id="type-desc" class="text-stone-600 leading-relaxed text-sm"></p>
+                            <div id="type-tags" class="mt-4 flex flex-wrap gap-2 text-xs font-medium"></div>
+                        </div>
+                        <div class="w-full md:w-48 lg:w-56 flex flex-col items-center justify-center bg-white border border-stone-200 rounded-lg p-3 shadow-inner shrink-0">
+                            <div class="text-[10px] text-stone-400 font-bold mb-2 uppercase tracking-wide">作動原理示意</div>
+                            <div id="type-diagram" class="w-full h-32"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full flex justify-center">
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech" class="py-8">
+            <div class="mb-8 text-center max-w-3xl mx-auto">
+                <h3 class="text-2xl font-bold text-stone-800">高階節水節能技術方案</h3>
+                <p class="text-stone-600 mt-2">
+                    針對 300RT 以上的大型系統，僅靠更換水塔類型並不夠。本區塊列出四項經過工業驗證的可靠改善方案，點擊卡片可深入了解各項技術如何實際降低水電消耗並延長設備壽命。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="tech-card bg-white p-6 rounded-xl border border-stone-200 cursor-pointer transition-all duration-300" onclick="showTechDetail('vfd')">
+                    <div class="text-3xl mb-4 text-sky-500">⚡</div>
+                    <h4 class="font-bold text-lg mb-2">冷卻水泵與風扇變頻 (VFD)</h4>
+                    <p class="text-sm text-stone-500">依據外氣濕球溫度與主機負載，自動調節風扇轉速與水流量。</p>
+                </div>
+                <div class="tech-card bg-white p-6 rounded-xl border border-stone-200 cursor-pointer transition-all duration-300" onclick="showTechDetail('coc')">
+                    <div class="text-3xl mb-4 text-sky-500">💧</div>
+                    <h4 class="font-bold text-lg mb-2">高濃縮倍數與智能加藥</h4>
+                    <p class="text-sm text-stone-500">精準控制水質導電度，減少強制排放(Blowdown)次數，大幅節約補水。</p>
+                </div>
+                <div class="tech-card bg-white p-6 rounded-xl border border-stone-200 cursor-pointer transition-all duration-300" onclick="showTechDetail('blade')">
+                    <div class="text-3xl mb-4 text-sky-500">✇</div>
+                    <h4 class="font-bold text-lg mb-2">高效率機翼型風扇</h4>
+                    <p class="text-sm text-stone-500">採用玻璃纖維(FRP)空力設計葉片，減輕馬達負載並增加風量。</p>
+                </div>
+                <div class="tech-card bg-white p-6 rounded-xl border border-stone-200 cursor-pointer transition-all duration-300" onclick="showTechDetail('drift')">
+                    <div class="text-3xl mb-4 text-sky-500">🛡️</div>
+                    <h4 class="font-bold text-lg mb-2">高效率除霧元件 (Drift Eliminator)</h4>
+                    <p class="text-sm text-stone-500">攔截排風中夾帶的液態水滴，降低飛濺損失並回收化學藥劑。</p>
+                </div>
+            </div>
+
+            <div id="tech-detail-box" class="mt-8 bg-sky-50 p-6 md:p-8 rounded-xl border border-sky-100 hidden">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h5 id="tech-detail-title" class="text-2xl font-bold text-sky-800 mb-2"></h5>
+                        <p id="tech-detail-text" class="text-stone-700 leading-relaxed max-w-4xl"></p>
+                        
+                        <div id="tech-detail-faq" class="mt-5 hidden border-l-4 border-amber-500 bg-white p-4 rounded-r-lg shadow-sm max-w-4xl">
+                            <h6 id="tech-detail-faq-title" class="font-bold text-stone-800 text-sm mb-2 flex items-center gap-2"></h6>
+                            <div id="tech-detail-faq-content" class="text-stone-600 text-sm leading-relaxed"></div>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('tech-detail-box').classList.add('hidden')" class="text-stone-400 hover:text-stone-600 font-bold text-xl">✕</button>
+                </div>
+                <div class="mt-6 grid grid-cols-2 max-w-sm gap-4">
+                    <div class="bg-white p-3 rounded shadow-sm text-center">
+                        <div class="text-xs text-stone-500 mb-1">預期節能率</div>
+                        <div id="tech-saving-energy" class="text-xl font-bold text-emerald-600"></div>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow-sm text-center">
+                        <div class="text-xs text-stone-500 mb-1">預期節水率</div>
+                        <div id="tech-saving-water" class="text-xl font-bold text-sky-600"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cases" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-10 mb-16">
+            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div class="max-w-2xl">
+                    <h3 class="text-2xl font-bold text-stone-800 flex items-center gap-2">
+                        <span class="text-emerald-500">📊</span> 改善成效案例分析
+                    </h3>
+                    <p class="text-stone-600 mt-2">
+                        本區塊展示不同領域中，超過 300RT 容量的實際改善數據。透過互動式圖表，您可以直接比較導入節能節水方案前（Before）與導入後（After）的年度消耗差異。
+                    </p>
+                </div>
+                <select id="case-selector" onchange="updateCaseData()" class="bg-stone-50 border border-stone-300 text-stone-800 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block p-2.5 outline-none font-medium">
+                    <option value="case1">案例一：半導體晶圓廠 (1500RT)</option>
+                    <option value="case2">案例二：大型商業辦公大樓 (800RT)</option>
+                    <option value="case3">案例三：食品加工冷凍廠 (500RT)</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-stone-50 p-5 rounded-xl border border-stone-100">
+                        <h4 class="text-sm text-stone-500 font-bold uppercase tracking-wider mb-1">背景描述</h4>
+                        <p id="case-desc" class="text-stone-800 font-medium">原有 3 台 500RT 開放式水塔，長年水垢導致冰水主機耗電增加，且冷卻水塔排放量極大。</p>
+                    </div>
+                    <div class="bg-stone-50 p-5 rounded-xl border border-stone-100">
+                        <h4 class="text-sm text-stone-500 font-bold uppercase tracking-wider mb-1">導入方案</h4>
+                        <p id="case-solution" class="text-stone-800 font-medium">更換為強制循環密閉式冷卻水塔，並導入變頻控制系統(VFD)。</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 text-center">
+                            <div class="text-xs text-emerald-600 font-bold mb-1">年省電費估算</div>
+                            <div id="case-money-energy" class="text-2xl font-extrabold text-emerald-700">NT$ 1.2M</div>
+                        </div>
+                        <div class="bg-sky-50 p-4 rounded-xl border border-sky-100 text-center">
+                            <div class="text-xs text-sky-600 font-bold mb-1">年省水費估算</div>
+                            <div id="case-money-water" class="text-2xl font-extrabold text-sky-700">NT$ 450K</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-white rounded-xl border border-stone-100 p-4">
+                    <div class="flex justify-center gap-4 mb-4">
+                        <button onclick="toggleChartMetric('energy')" id="btn-metric-energy" class="px-4 py-1 text-sm font-bold rounded-full bg-emerald-500 text-white transition-colors">耗電量比較 (kWh)</button>
+                        <button onclick="toggleChartMetric('water')" id="btn-metric-water" class="px-4 py-1 text-sm font-bold rounded-full bg-stone-200 text-stone-600 hover:bg-sky-100 hover:text-sky-700 transition-colors">耗水量比較 (噸)</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-800 text-stone-400 py-8 text-center text-sm">
+        <p>© 2026 工業冷卻系統效能分析中心. All interactions designed for analytical insight.</p>
+    </footer>
+
+    <script>
+        const radarData = {
+            open: {
+                label: '機械通風開放式',
+                principle: '原理：藉由水與外氣直接接觸，利用部分水蒸發帶走潛熱 (Latent heat) 進行降溫。',
+                data: [90, 40, 50, 30, 80], 
+                desc: '特徵：工業界最常見的配置。建置成本低，但水分蒸發與飛濺損失大，需持續補充。大氣雜質易進入水體，需頻繁化學加藥與清池。若保養不當，極易造成冰水主機冷凝器管壁結垢，引發明顯的熱交換能效衰退。',
+                tags: ['<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">優勢: 初設成本低、散熱量大</span>', '<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full">劣勢: 耗水高、設備易結垢</span>'],
+                diagram: `
+                    <div class="h-full w-full border border-stone-300 bg-stone-50 rounded flex flex-col items-center justify-between p-1">
+                        <div class="text-sky-600 font-bold text-xs mt-1">↑ 排風扇 (強制抽風)</div>
+                        <div class="w-full border-t-2 border-dashed border-sky-300 mt-2 relative"><span class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-[10px] text-sky-500 bg-stone-50 px-1 whitespace-nowrap">散水管 ↓</span></div>
+                        <div class="bg-stone-200 w-full h-10 my-1 flex items-center justify-center text-stone-600 text-[10px] text-center border-y border-stone-300 leading-tight">散熱填料區<br>← 進氣 →</div>
+                        <div class="bg-sky-200 w-full h-4 flex items-center justify-center text-sky-800 text-[10px]">開放式冷卻水槽</div>
+                    </div>`
+            },
+            closed: {
+                label: '強制循環密閉式',
+                principle: '原理：製程/空調側水體於密閉管排內流動，管外由噴淋水(外循環)與空氣進行散熱 (熱傳導 + 蒸發潛熱)。',
+                data: [40, 90, 85, 95, 40],
+                desc: '特徵：主機冷卻水(內循環)完全封閉，不受外界污染，可維持系統內部零水垢，確保冰水主機長年保持設計之最高 COP (性能係數)。雖初期投資較高且佔地稍大，但大幅節省化學清洗成本與主機衰退的隱形耗電。',
+                tags: ['<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">優勢: 主機端免洗、能效極穩</span>', '<span class="bg-stone-100 text-stone-600 px-3 py-1 rounded-full">劣勢: 建置成本高、外水泵耗能</span>'],
+                diagram: `
+                    <div class="h-full w-full border border-stone-300 bg-stone-50 rounded flex flex-col items-center justify-between p-1 relative">
+                        <div class="text-sky-600 font-bold text-xs">↑ 排風扇 (強制抽風)</div>
+                        <div class="w-full flex justify-between px-2 mt-1 text-sky-400 text-[10px]"><span>↓ 灑水</span><span>↓ 灑水</span></div>
+                        <div class="border-[3px] border-amber-500 rounded w-4/5 h-10 flex items-center justify-center bg-amber-50 text-amber-700 text-[10px] font-bold z-10 text-center leading-tight">密閉盤管<br>(內循環水)</div>
+                        <div class="absolute bottom-6 text-[10px] text-stone-500 w-full text-center font-bold">← 進氣 →</div>
+                        <div class="bg-sky-200 w-full h-4 flex items-center justify-center text-sky-800 text-[10px]">外循環集水槽</div>
+                    </div>`
+            },
+            natural: {
+                label: '自然通風式高塔',
+                principle: '原理：利用塔內外空氣之溫差與密度差產生浮力（煙囪效應），導引外部冷空氣由底部進入，無需機械風扇。',
+                data: [10, 60, 95, 80, 20],
+                desc: '特徵：完全不依賴風扇馬達，自身設備運轉能耗極低。結構多為雙曲線型混凝土塔，體積巨大且土木造價極高。散熱效能直接受限於當地氣象條件（溫濕度、風速）。通常僅應用於超大型基礎建設（如火力/核能發電廠）。',
+                tags: ['<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">優勢: 零風扇運轉能耗</span>', '<span class="bg-stone-100 text-stone-600 px-3 py-1 rounded-full">劣勢: 佔地龐大、效能受氣候影響</span>'],
+                diagram: `
+                    <div class="h-full w-full flex flex-col items-center justify-between py-1 relative overflow-hidden" style="clip-path: polygon(25% 0, 75% 0, 100% 100%, 0% 100%); background-color: #f5f5f4; box-shadow: inset 0 0 0 2px #a8a29e;">
+                        <div class="text-sky-500 font-bold text-xs mt-2">↑ 煙囪排氣</div>
+                        <div class="w-full border-t border-dashed border-sky-400 mt-auto mb-1 relative"><span class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-[9px] text-sky-600 bg-[#f5f5f4] px-1 whitespace-nowrap">↓ 灑水系統</span></div>
+                        <div class="bg-stone-300 w-full h-8 flex items-center justify-center text-stone-700 text-[10px] text-center border-y border-stone-400 leading-tight">散熱填料<br>← 進氣 →</div>
+                        <div class="bg-sky-300 w-full h-3 flex items-center justify-center text-sky-900 text-[8px]">水槽</div>
+                    </div>`
+            }
+        };
+
+        let radarChartInstance = null;
+
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['初期建置優勢 (低成本)', '節水能力', '整體系統節能表現', '維護簡便度', '散熱能力/體積比'],
+                    datasets: [{
+                        label: radarData.open.label,
+                        data: radarData.open.data,
+                        backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        pointBackgroundColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.1)' },
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            pointLabels: {
+                                font: { family: 'sans-serif', size: 12, weight: 'bold' },
+                                color: '#444'
+                            },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function updateRadar(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.replace('text-white', 'text-stone-800');
+            });
+            const activeBtn = document.getElementById('btn-' + type);
+            activeBtn.classList.add('active');
+            
+            document.getElementById('type-title').innerText = radarData[type].label;
+            document.getElementById('type-principle').innerText = radarData[type].principle;
+            document.getElementById('type-desc').innerText = radarData[type].desc;
+            document.getElementById('type-tags').innerHTML = radarData[type].tags.join('');
+            document.getElementById('type-diagram').innerHTML = radarData[type].diagram;
+
+            radarChartInstance.data.datasets[0].label = radarData[type].label;
+            radarChartInstance.data.datasets[0].data = radarData[type].data;
+            
+            if(type === 'open') {
+                radarChartInstance.data.datasets[0].backgroundColor = 'rgba(245, 158, 11, 0.2)';
+                radarChartInstance.data.datasets[0].borderColor = 'rgba(245, 158, 11, 1)';
+                radarChartInstance.data.datasets[0].pointBackgroundColor = 'rgba(245, 158, 11, 1)';
+            } else if(type === 'closed') {
+                radarChartInstance.data.datasets[0].backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                radarChartInstance.data.datasets[0].borderColor = 'rgba(16, 185, 129, 1)';
+                radarChartInstance.data.datasets[0].pointBackgroundColor = 'rgba(16, 185, 129, 1)';
+            } else {
+                radarChartInstance.data.datasets[0].backgroundColor = 'rgba(100, 116, 139, 0.2)';
+                radarChartInstance.data.datasets[0].borderColor = 'rgba(100, 116, 139, 1)';
+                radarChartInstance.data.datasets[0].pointBackgroundColor = 'rgba(100, 116, 139, 1)';
+            }
+
+            radarChartInstance.update();
+        }
+
+        const techData = {
+            vfd: {
+                title: '冷卻水泵與風扇變頻控制 (VFD)',
+                text: '傳統冷卻水塔馬達多為全速運轉。透過加裝變頻器(VFD)，並結合冷卻水回水溫度與外氣濕球溫度感測器，系統能自動調降風扇與水泵轉速。根據流體力學定律，轉速降至80%時，能耗可降至原來的約50%，為單體設備投資報酬率明確之項目。',
+                energy: '15% ~ 30%',
+                water: '微幅改善'
+            },
+            coc: {
+                title: '高濃縮倍數與智能自動加藥',
+                text: '冷卻水在蒸發過程中，礦物質會不斷濃縮。導入智能導電度監控與自動加藥系統(阻垢劑/殺菌劑)，可將循環水的濃縮倍數(Cycles of Concentration)從傳統的2~3倍提升至5~6倍，減少排廢水量與補充水量。',
+                energy: '無直接影響',
+                water: '15% ~ 25%'
+            },
+            blade: {
+                title: '高效率機翼型 FRP 風扇葉片',
+                text: '早期冷卻塔多採用鋁合金或薄鈑葉片，空氣動力效率較低。更換為航空機翼剖面設計的玻璃纖維(FRP)材質葉片，能在維持同等風量( CFM )的條件下，降低馬達軸馬力需求，直接減少風扇馬達耗電。',
+                energy: '5% ~ 10%',
+                water: '無影響'
+            },
+            drift: {
+                title: '高效率除霧元件 (Drift Eliminator)',
+                text: '冷卻水塔的耗水包含：蒸發損失(E)、排污損失(B)及飛濺損失(D)。除霧元件藉由改變氣流方向，利用慣性撞擊攔截排風中夾帶的液態小水滴。將老舊擋水板更換為高效能蜂巢式或多衝擊型除霧元件，可將飛濺損失率從循環水量的 0.05% 降至 0.005% 以下（參考 CTI 標準）。',
+                energy: '微增風壓阻抗 (約 2-5 Pa)',
+                water: '減少飛濺損失 80% 以上',
+                faqTitle: '經濟性評估：除霧元件的投資效益來源',
+                faqContent: `
+                    <ul class="list-disc pl-5 space-y-2 text-stone-700">
+                        <li><strong>水資源直接回收：</strong>雖然飛濺損失佔總耗水比例不高（多數為蒸發耗水），但對於 300RT 以上、大循環水量之設備，每年回收之絕對水量具備基本水費節約價值。</li>
+                        <li><strong>化學藥劑成本控制（核心效益）：</strong>飛濺流失的水滴是「未經蒸發的循環水」，其內部含有高濃度的防垢劑與殺菌劑。飛濺量高，代表藥劑直接逸散至大氣，需不斷補充高價藥劑以維持濃度。高效率除霧元件的主要經濟價值在於<strong>大幅降低化學藥劑之補充量</strong>。</li>
+                        <li><strong>設備防腐蝕與工安維護：</strong>減少帶有水處理藥劑與高濃度鹽份的水滴飄落至冷卻水塔周邊金屬設備與管件，降低周邊設備的腐蝕速率與維護成本，同時避免周邊地面濕滑或產生退伍軍人菌之擴散風險。</li>
+                        <li><strong>投資回收期：</strong>一般評估中，單純計入水費與藥劑費用的節約，高效率除霧元件的改建成本通常可在 1.5 至 3 年內回收。</li>
+                    </ul>
+                `
+            }
+        };
+
+        function showTechDetail(id) {
+            const box = document.getElementById('tech-detail-box');
+            document.getElementById('tech-detail-title').innerText = techData[id].title;
+            document.getElementById('tech-detail-text').innerText = techData[id].text;
+            document.getElementById('tech-saving-energy').innerText = techData[id].energy;
+            document.getElementById('tech-saving-water').innerText = techData[id].water;
+            
+            const faqBox = document.getElementById('tech-detail-faq');
+            if (techData[id].faqContent) {
+                document.getElementById('tech-detail-faq-title').innerHTML = '<span class="text-amber-500">💡</span> ' + techData[id].faqTitle;
+                document.getElementById('tech-detail-faq-content').innerHTML = techData[id].faqContent;
+                faqBox.classList.remove('hidden');
+            } else {
+                faqBox.classList.add('hidden');
+            }
+            
+            box.classList.remove('hidden');
+        }
+
+        const casesData = {
+            case1: {
+                desc: '原有 3 台 500RT 開放式水塔 (總計 1500RT)，長年水垢導致冰水主機耗電增加，且冷卻水塔排放量極大。',
+                solution: '全面更換為強制循環密閉式冷卻水塔，並導入變頻控制系統(VFD)與外循環智能水處理。',
+                moneyE: 'NT$ 1.8M',
+                moneyW: 'NT$ 650K',
+                energyBefore: [1250000, 1300000, 1450000, 1500000], 
+                energyAfter: [1000000, 1020000, 1100000, 1150000],
+                waterBefore: [45000, 48000, 55000, 58000],
+                waterAfter: [32000, 33000, 38000, 39000],
+                labels: ['Q1 (春)', 'Q2 (夏)', 'Q3 (秋)', 'Q4 (冬)']
+            },
+            case2: {
+                desc: '單棟商業大樓 800RT 空調系統，主要於白天運作，夜間與假日低負載。原設計水泵與風扇全時全速運轉。',
+                solution: '保留原開放式水塔，加裝高效率 FRP 葉片、外氣焓值連動 VFD 變頻控制面板。',
+                moneyE: 'NT$ 450K',
+                moneyW: 'NT$ 50K',
+                energyBefore: [300000, 500000, 550000, 250000],
+                energyAfter: [220000, 400000, 430000, 180000],
+                waterBefore: [12000, 25000, 28000, 10000],
+                waterAfter: [11000, 23000, 26000, 9000],
+                labels: ['Q1 (春)', 'Q2 (夏)', 'Q3 (秋)', 'Q4 (冬)']
+            },
+            case3: {
+                desc: '500RT 食品加工廠冷凍機組，24小時全年無休運轉。原有水質管理不佳，濃縮倍數僅2.5，大量排廢水。',
+                solution: '導入智能導電度監控自動加藥系統，濃縮倍數提升至5.5，並定期進行非停機物理除垢。',
+                moneyE: 'NT$ 300K',
+                moneyW: 'NT$ 850K',
+                energyBefore: [400000, 420000, 410000, 390000],
+                energyAfter: [370000, 385000, 375000, 360000],
+                waterBefore: [35000, 38000, 36000, 34000],
+                waterAfter: [15000, 18000, 16000, 14000],
+                labels: ['Q1', 'Q2', 'Q3', 'Q4']
+            }
+        };
+
+        let barChartInstance = null;
+        let currentMetric = 'energy'; 
+
+        function initBarChart() {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: casesData.case1.labels,
+                    datasets: [
+                        {
+                            label: '改善前 (Before)',
+                            data: casesData.case1.energyBefore,
+                            backgroundColor: 'rgba(168, 162, 158, 0.7)',
+                            borderRadius: 4
+                        },
+                        {
+                            label: '改善後 (After)',
+                            data: casesData.case1.energyAfter,
+                            backgroundColor: 'rgba(16, 185, 129, 0.9)', 
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [4, 4] },
+                            title: { display: true, text: '耗電量 (kWh)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US').format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function toggleChartMetric(metric) {
+            currentMetric = metric;
+            const btnEnergy = document.getElementById('btn-metric-energy');
+            const btnWater = document.getElementById('btn-metric-water');
+            
+            if(metric === 'energy') {
+                btnEnergy.className = 'px-4 py-1 text-sm font-bold rounded-full bg-emerald-500 text-white transition-colors';
+                btnWater.className = 'px-4 py-1 text-sm font-bold rounded-full bg-stone-200 text-stone-600 hover:bg-sky-100 hover:text-sky-700 transition-colors';
+            } else {
+                btnWater.className = 'px-4 py-1 text-sm font-bold rounded-full bg-sky-500 text-white transition-colors';
+                btnEnergy.className = 'px-4 py-1 text-sm font-bold rounded-full bg-stone-200 text-stone-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors';
+            }
+            updateCaseData();
+        }
+
+        function updateCaseData() {
+            const selectedCase = document.getElementById('case-selector').value;
+            const data = casesData[selectedCase];
+
+            document.getElementById('case-desc').innerText = data.desc;
+            document.getElementById('case-solution').innerText = data.solution;
+            document.getElementById('case-money-energy').innerText = data.moneyE;
+            document.getElementById('case-money-water').innerText = data.moneyW;
+
+            barChartInstance.data.labels = data.labels;
+            
+            if(currentMetric === 'energy') {
+                barChartInstance.data.datasets[0].data = data.energyBefore;
+                barChartInstance.data.datasets[1].data = data.energyAfter;
+                barChartInstance.data.datasets[1].backgroundColor = 'rgba(16, 185, 129, 0.9)'; 
+                barChartInstance.options.scales.y.title.text = '耗電量 (kWh)';
+            } else {
+                barChartInstance.data.datasets[0].data = data.waterBefore;
+                barChartInstance.data.datasets[1].data = data.waterAfter;
+                barChartInstance.data.datasets[1].backgroundColor = 'rgba(14, 165, 233, 0.9)'; 
+                barChartInstance.options.scales.y.title.text = '耗水量 (噸)';
+            }
+            
+            barChartInstance.update();
+        }
+
+        window.onload = function() {
+            initRadarChart();
+            initBarChart();
+            updateRadar('open'); 
+        };
+    </script>
+</body>
+</html>

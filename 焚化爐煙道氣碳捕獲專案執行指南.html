@@ -37,7 +37,7 @@
         <!-- Tabs -->
         <div class="flex flex-col sm:flex-row border-b border-gray-200 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
             <button onclick="switchTab('part1')" id="tab-part1" class="tab-active py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
-                <i class="fas fa-file-contract mr-2"></i> 第一部分：工程產出與預估 (FEL 1~3)
+                <i class="fas fa-file-contract mr-2"></i> 第一部分：設計產出與工程預估 (FEL 1~3)
             </button>
             <button onclick="switchTab('part2')" id="tab-part2" class="tab-inactive py-4 px-6 text-sm md:text-base focus:outline-none transition-colors duration-200 flex items-center justify-center">
                 <i class="fas fa-industry mr-2"></i> 第二部分：設計基準與資料清單
@@ -55,54 +55,80 @@
             
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-xl font-bold text-slate-800">專案前端工程規劃 (Front-End Loading, FEL) 產出清單</h3>
-                    <p class="text-sm text-gray-600 mt-1">依據國際專案管理慣例，投資預估與工程設計分為 FEL 1 至 FEL 3 階段，精確度隨工程推進而提升。</p>
+                    <h3 class="text-xl font-bold text-slate-800">專案前端工程規劃 (Front-End Loading, FEL) 設計產出清單</h3>
+                    <p class="text-sm text-gray-600 mt-1">依據國際專案管理慣例，投資預估與工程設計分為 FEL 1 至 FEL 3 階段，產出文件之精確度與深度隨工程推進而提升。</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-100 text-gray-700">
                                 <th class="p-4 border-b font-semibold w-1/6">階段</th>
-                                <th class="p-4 border-b font-semibold w-1/4">核心產出文件 (Deliverables)</th>
-                                <th class="p-4 border-b font-semibold w-5/12">內容說明 (Description)</th>
+                                <th class="p-4 border-b font-semibold w-1/3">工作重點與內容說明 (Description)</th>
+                                <th class="p-4 border-b font-semibold w-1/3">專業設計產出清單 (Deliverables)</th>
                                 <th class="p-4 border-b font-semibold w-1/6">預算精度 (Estimate)</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             <!-- FEL 1 -->
                             <tr class="hover:bg-gray-50">
-                                <td class="p-4 font-bold text-slate-700">FEL 1<br><span class="text-xs text-gray-500 font-normal">專案提案與技術評估<br>(Conceptual Design)</span></td>
-                                <td class="p-4 text-sm font-mono text-emerald-700">
-                                    • Technology Selection Report<br>
-                                    • Block Flow Diagram (BFD)<br>
-                                    • Overall Mass Balance
+                                <td class="p-4 font-bold text-slate-700 align-top">FEL 1<br><span class="text-xs text-gray-500 font-normal">專案提案與技術評估<br>(Conceptual Design)</span></td>
+                                <td class="p-4 text-sm text-gray-700 align-top leading-relaxed">
+                                    針對焚化爐煙氣特性，評估適用之前處理與碳捕獲技術 (如特定胺液吸收法) 之適用性。工作重點在於確立專案技術可行性、設計邊界 (Battery Limits) 與初步經濟效益。
                                 </td>
-                                <td class="p-4 text-sm">針對焚化爐煙氣特性，評估適用之前處理與碳捕獲技術 (如化學吸收法、吸附法等)。產出方塊流程圖與初步全廠質能平衡，確立專案技術可行性。</td>
-                                <td class="p-4 text-sm font-semibold text-gray-700">數量級估算<br>(Order of Magnitude)<br>± 30% ~ 50%</td>
+                                <td class="p-4 text-sm font-mono text-emerald-700 leading-relaxed align-top">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>概念可行性報告 (Feasibility Report)</li>
+                                        <li>技術評估與選擇報告 (Technology Selection Report)</li>
+                                        <li>方塊流程圖 (Block Flow Diagram, BFD)</li>
+                                        <li>全廠總質能平衡 (Overall Mass Balance)</li>
+                                        <li>初步設備清單 (Preliminary Equipment List)</li>
+                                        <li>廠址空間需求評估 (Plot Area Requirement)</li>
+                                        <li>數量級投資與營運估算 (CAPEX/OPEX Estimate)</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 text-sm font-semibold text-gray-700 align-top">數量級估算<br>(Order of Magnitude)<br>± 30% ~ 50%</td>
                             </tr>
                             <!-- FEL 2 -->
                             <tr class="hover:bg-gray-50">
-                                <td class="p-4 font-bold text-slate-700">FEL 2<br><span class="text-xs text-gray-500 font-normal">基本設計<br>(Basic Eng. / BEDP)</span></td>
-                                <td class="p-4 text-sm font-mono text-emerald-700">
-                                    • Process Flow Diagram (PFD)<br>
-                                    • Heat & Material Balance (H&MB)<br>
-                                    • Major Equipment List & Sizing<br>
-                                    • Utility Consumption Summary
+                                <td class="p-4 font-bold text-slate-700 align-top">FEL 2<br><span class="text-xs text-gray-500 font-normal">基本設計<br>(Basic Eng. / BEDP)</span></td>
+                                <td class="p-4 text-sm text-gray-700 align-top leading-relaxed">
+                                    藉由電腦模擬建立熱力學與動力學模型。除確認基本原理與物性外，核心工作在於確認完整的流程程序，將質能平衡細分至各個單一物流 (Streams)，決定單元設備之型式 (如吸收塔塔內件選擇)，並詳列各單元之公用設施需求 (蒸汽、電力、冷卻水等)。
                                 </td>
-                                <td class="p-4 text-sm">藉由製程電腦模擬建立完整熱力學與動力學模型。決定前處理單元 (急冷塔、脫硫/脫酸、深度除塵)、吸收塔、再生塔及壓縮單元之操作條件、尺寸與公用需求 (蒸汽、電力、冷卻水)。</td>
-                                <td class="p-4 text-sm font-semibold text-gray-700">初步估算<br>(Preliminary Estimate)<br>± 20% ~ 30%</td>
+                                <td class="p-4 text-sm font-mono text-emerald-700 leading-relaxed align-top">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>設計基準書 (Process Design Basis, PDB)</li>
+                                        <li>製程流程圖 (Process Flow Diagram, PFD)</li>
+                                        <li>完整質能平衡表 (Heat & Material Balance, H&MB)</li>
+                                        <li>製程設備清單 (Process Equipment List)</li>
+                                        <li>製程設備資料表-初版 (Equipment Data Sheets)</li>
+                                        <li>公用設施消耗清單 (Utility Consumption Summary)</li>
+                                        <li>廢棄物與排放物清單 (Effluent & Emission Summary)</li>
+                                        <li>初步控制邏輯說明 (Control Logic Description)</li>
+                                        <li>初步設備佈置圖 (Preliminary Plot Plan)</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 text-sm font-semibold text-gray-700 align-top">初步估算<br>(Preliminary Estimate)<br>± 20% ~ 30%</td>
                             </tr>
                             <!-- FEL 3 -->
                             <tr class="hover:bg-gray-50">
-                                <td class="p-4 font-bold text-slate-700">FEL 3<br><span class="text-xs text-gray-500 font-normal">前端工程設計<br>(FEED)</span></td>
-                                <td class="p-4 text-sm font-mono text-emerald-700">
-                                    • Piping & Instrumentation Diagram (P&ID)<br>
-                                    • Equipment Data Sheets<br>
-                                    • Plot Plan (初步設備佈置圖)<br>
-                                    • HAZOP Report
+                                <td class="p-4 font-bold text-slate-700 align-top">FEL 3<br><span class="text-xs text-gray-500 font-normal">前端工程設計<br>(FEED)</span></td>
+                                <td class="p-4 text-sm text-gray-700 align-top leading-relaxed">
+                                    將 BEDP 轉化為實務工程圖面。定義管線尺寸、防腐蝕材質規範 (Material Selection) 與儀表控制邏輯。工作重點為產出可用於 EPC 統包發包 (RFP) 之技術規範文件與建立發包預算 (Control Estimate)。
                                 </td>
-                                <td class="p-4 text-sm">將 BEDP 轉化為實務工程圖面。定義管線尺寸、材質防腐蝕規範 (Material Selection)、儀表控制邏輯。產出可用於 EPC 統包發包 (RFP) 之技術規範文件與招標包。</td>
-                                <td class="p-4 text-sm font-semibold text-gray-700">發包預算估算<br>(Control Estimate)<br>± 10% ~ 15%</td>
+                                <td class="p-4 text-sm font-mono text-emerald-700 leading-relaxed align-top">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>管線與儀表流程圖 (Piping & Instrumentation Diagram, P&ID)</li>
+                                        <li>設備與儀表資料表-發包版 (Final Data Sheets)</li>
+                                        <li>管線與介面清單 (Line List & Tie-in List)</li>
+                                        <li>材質防腐選型圖/報告 (Material Selection Diagram, MSD)</li>
+                                        <li>設備佈置圖-發包版 (Plot Plan / Gen. Arrangement)</li>
+                                        <li>電氣單線圖 (Single Line Diagram, SLD)</li>
+                                        <li>控制系統架構圖 (Control System Architecture)</li>
+                                        <li>危害及可操作性分析報告 (HAZOP / SIL Report)</li>
+                                        <li>EPC統包發包招標書 (RFP / Tender Document)</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 text-sm font-semibold text-gray-700 align-top">發包預算估算<br>(Control Estimate)<br>± 10% ~ 15%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -199,6 +225,27 @@
                         <div>
                             <p class="font-semibold text-gray-800">4.2 廢水排放限制 (Effluent Limits)</p>
                             <p class="text-sm text-gray-600">前處理洗滌塔與系統產出廢水之容許排放量及水質規範。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 5: Technology Applicability -->
+                <div class="border border-emerald-200 rounded-lg overflow-hidden shadow-sm md:col-span-2">
+                    <div class="bg-emerald-50 px-4 py-3 border-b border-emerald-200 flex items-center">
+                        <i class="fas fa-check-circle text-emerald-600 mr-2"></i>
+                        <h4 class="font-bold text-emerald-900">5. 預計採用技術的適用性描述 (Technology Applicability)</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <p class="text-sm text-gray-700">除了基礎數據收集，業主與技術提供方需共同說明擬採用之碳捕獲技術與現有設計基準的契合度，確保技術選擇之客觀性與實務可行性。</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="font-semibold text-gray-800">5.1 煙氣特性與溶劑耐受性 (Flue Gas Matching)</p>
+                                <p class="text-sm text-gray-600">評估所選技術 (如特定胺基吸收劑配方) 在焚化爐特定氧氣濃度、微量重金屬及酸性氣體 (SOx/NOx) 環境下之化學穩定度與預估劣化率。</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">5.2 熱能整合可行性 (Energy Integration)</p>
+                                <p class="text-sm text-gray-600">比對廠區可提供之低壓蒸汽條件與該技術再生所需之熱能要求，客觀評估能源整合之經濟性與實際碳排抵減效益。</p>
+                            </div>
                         </div>
                     </div>
                 </div>

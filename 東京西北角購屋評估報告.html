@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>東京西北角購屋評估報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            scroll-behavior: smooth;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-building-user text-blue-600 text-2xl mr-3"></i>
+                    <span class="font-bold text-xl text-gray-800">東京不動產專案</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#criteria" class="text-gray-600 hover:text-blue-600 font-medium">評估條件</a>
+                    <a href="#map-section" class="text-gray-600 hover:text-blue-600 font-medium">地理與交通</a>
+                    <a href="#regions" class="text-gray-600 hover:text-blue-600 font-medium">區域分析</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-blue-600 font-medium">價格與策略</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="gradient-bg text-white py-20 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M0,100 C20,0 50,0 100,100 Z" fill="currentColor"></path>
+            </svg>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-4xl md:text-5xl font-black mb-6 tracking-tight">東京西北角購屋評估報告</h1>
+            <p class="text-xl md:text-2xl font-light mb-8 max-w-3xl mx-auto opacity-90">
+                針對大眾運輸與自駕需求兼備之家庭，提供北區、練馬、板橋、足立及埼玉南部區域之綜合選址指南。
+            </p>
+            <div class="inline-flex items-center bg-white/20 rounded-full px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                <i class="fa-regular fa-clock mr-2"></i> 評估日期：2026年5月
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <section id="criteria" class="mb-16 scroll-mt-24">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center border-b pb-4">
+                    <i class="fa-solid fa-list-check text-blue-500 mr-3"></i> 目標設定條件
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="flex flex-col">
+                        <span class="text-sm text-gray-500 font-semibold mb-1">房型需求</span>
+                        <span class="text-lg font-bold text-gray-800">3LDK 以上</span>
+                        <span class="text-sm text-gray-600">公寓大樓 (Mansion) 或 獨棟一戶建</span>
+                    </div>
+                    <div class="flex flex-col border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
+                        <span class="text-sm text-gray-500 font-semibold mb-1">停車位</span>
+                        <span class="text-lg font-bold text-gray-800">必須具備</span>
+                        <span class="text-sm text-gray-600">需考量大樓車位租金 vs 一戶建自帶車位</span>
+                    </div>
+                    <div class="flex flex-col border-t lg:border-t-0 lg:border-l border-gray-100 pt-4 lg:pt-0 lg:pl-6">
+                        <span class="text-sm text-gray-500 font-semibold mb-1">交通樞紐</span>
+                        <span class="text-lg font-bold text-gray-800">IC + 鐵道雙網</span>
+                        <span class="text-sm text-gray-600">鄰近高速公路交流道與直達市中心鐵路</span>
+                    </div>
+                    <div class="flex flex-col border-t lg:border-t-0 lg:border-l border-gray-100 pt-4 lg:pt-0 lg:pl-6">
+                        <span class="text-sm text-gray-500 font-semibold mb-1">屋齡與購入</span>
+                        <span class="text-lg font-bold text-gray-800">新成屋 / 6年內</span>
+                        <span class="text-sm text-gray-600">當地仲介或建商自售管道</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="map-section" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fa-solid fa-map-location-dot text-blue-600 mr-4"></i> 地理與交通概覽
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="map-container relative">
+                        <!-- 嵌入 Google Map，定位於赤羽並標示代表性車站 -->
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d103606.59104040986!2d139.66441589417933!3d35.79585750244439!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1szh-TW!2sjp!4v1717145266947!5m2!1szh-TW!2sjp&markers=color:red%7Clabel:A%7C35.777641,139.721203&markers=color:red%7Clabel:B%7C35.753386,139.736021&markers=color:green%7Clabel:C%7C35.738159,139.654060&markers=color:green%7Clabel:D%7C35.758064,139.629396&markers=color:blue%7Clabel:E%7C35.789230,139.660167&markers=color:purple%7Clabel:F%7C35.777322,139.790104&markers=color:yellow%7Clabel:G%7C35.801826,139.717464&markers=color:yellow%7Clabel:H%7C35.807831,139.678071" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-3 flex items-center">
+                        <i class="fa-solid fa-circle-info mr-2"></i> 地圖以東京北區(赤羽)為中心。標記說明請參見右側圖例。
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center">
+                    <h3 class="text-lg font-bold border-b pb-3 mb-4">地圖標記與交通主動脈圖例</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="bg-gray-100 text-gray-600 rounded p-2 mr-3"><i class="fa-solid fa-location-dot"></i></div>
+                            <div>
+                                <span class="font-bold text-gray-800 text-sm block">代表性車站標記</span>
+                                <div class="grid grid-cols-2 gap-x-2 text-xs text-gray-600 mt-1">
+                                    <span class="text-red-600 font-semibold">A: 赤羽 (北區)</span>
+                                    <span class="text-red-600 font-semibold">B: 王子 (北區)</span>
+                                    <span class="text-green-600 font-semibold">C: 練馬 (練馬區)</span>
+                                    <span class="text-green-600 font-semibold">D: 光丘 (練馬區)</span>
+                                    <span class="text-blue-600 font-semibold">E: 高島平 (板橋區)</span>
+                                    <span class="text-purple-600 font-semibold">F: 西新井 (足立區)</span>
+                                    <span class="text-yellow-600 font-semibold">G: 川口 (埼玉)</span>
+                                    <span class="text-yellow-600 font-semibold">H: 戶田公園 (埼玉)</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex items-start border-t border-gray-100 pt-3">
+                            <div class="bg-blue-100 text-blue-600 rounded p-2 mr-3"><i class="fa-solid fa-road"></i></div>
+                            <div>
+                                <span class="font-bold text-gray-800 text-sm block">主要高速公路 (IC)</span>
+                                <span class="text-xs text-gray-600">首都高C2(中央環狀)、首都高5號線、首都高川口線、外環道、關越道</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-green-100 text-green-600 rounded p-2 mr-3"><i class="fa-solid fa-train-subway"></i></div>
+                            <div>
+                                <span class="font-bold text-gray-800 text-sm block">直通都心鐵道</span>
+                                <span class="text-xs text-gray-600">JR(埼京/京濱東北)、地鐵(南北/三田/副都心)、私鐵(西武/東武)</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start mt-6 pt-4 border-t border-gray-100">
+                            <div class="w-full text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <strong>選址策略：</strong> 此區塊完美融合了「東西向外環/C2」與「南北向鐵路/放射狀首都高」的十字交通網，進城或郊遊皆極為便利。
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="regions" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 flex items-center">
+                <i class="fa-solid fa-city text-blue-600 mr-4"></i> 五大行政區詳細分析
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- 北區 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-red-500 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">1. 東京都 北區</h3>
+                        <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded">交通極優</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4 h-10">指標：赤羽站、王子站、浮間舟渡站</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start"><i class="fa-solid fa-car text-gray-400 mt-1 mr-2 w-4"></i><span><strong>公路：</strong>首都高C2(王子北/南IC)、川口線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-train text-gray-400 mt-1 mr-2 w-4"></i><span><strong>鐵道：</strong>JR五線匯集、南北線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-house-chimney text-gray-400 mt-1 mr-2 w-4"></i><span><strong>特色：</strong>轉運樞紐機能最強，房價相對最高。需留意東側平原區防洪。</span></div>
+                    </div>
+                </div>
+
+                <!-- 練馬區 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-green-500 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">2. 東京都 練馬區</h3>
+                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">環境最優</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4 h-10">指標：練馬站、光丘站、大泉學園</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start"><i class="fa-solid fa-car text-gray-400 mt-1 mr-2 w-4"></i><span><strong>公路：</strong>關越道(練馬IC)、外環道(大泉IC)</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-train text-gray-400 mt-1 mr-2 w-4"></i><span><strong>鐵道：</strong>西武線、大江戶線(光丘始發)、有樂町線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-house-chimney text-gray-400 mt-1 mr-2 w-4"></i><span><strong>特色：</strong>武藏野台地地盤極穩固。綠地多，一戶建選擇與品質為23區前段班。</span></div>
+                    </div>
+                </div>
+
+                <!-- 板橋區 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-500 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">3. 東京都 板橋區</h3>
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">均衡發展</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4 h-10">指標：高島平、成增、志村三丁目</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start"><i class="fa-solid fa-car text-gray-400 mt-1 mr-2 w-4"></i><span><strong>公路：</strong>首都高5號池袋線(高島平/中台IC)</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-train text-gray-400 mt-1 mr-2 w-4"></i><span><strong>鐵道：</strong>都營三田線、東武東上線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-house-chimney text-gray-400 mt-1 mr-2 w-4"></i><span><strong>特色：</strong>直達大手町/池袋。地形平坦，重劃區道路寬敞，大樓與一戶建混合。</span></div>
+                    </div>
+                </div>
+
+                <!-- 足立區 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-purple-500 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">4. 東京都 足立區</h3>
+                        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">價格親民</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4 h-10">指標：竹之塚、西新井、江北</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start"><i class="fa-solid fa-car text-gray-400 mt-1 mr-2 w-4"></i><span><strong>公路：</strong>首都高C2、首都高川口線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-train text-gray-400 mt-1 mr-2 w-4"></i><span><strong>鐵道：</strong>東武晴空塔線、日暮里-舍人線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-house-chimney text-gray-400 mt-1 mr-2 w-4"></i><span><strong>特色：</strong>新成屋一戶建多，CP值高。沿河綠地多，但需留意防洪避難指標。</span></div>
+                    </div>
+                </div>
+
+                <!-- 埼玉縣 川口/戶田 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-yellow-500 card-hover xl:col-span-1 md:col-span-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">5. 埼玉縣 川口市/戶田市</h3>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">空間極大化</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4 h-10">指標：川口站、戶田公園站、川口元鄉</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start"><i class="fa-solid fa-car text-gray-400 mt-1 mr-2 w-4"></i><span><strong>公路：</strong>東北道、外環道、首都高5號/川口線</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-train text-gray-400 mt-1 mr-2 w-4"></i><span><strong>鐵道：</strong>JR京濱東北線、JR埼京線、埼玉高速鐵道</span></div>
+                        <div class="flex items-start"><i class="fa-solid fa-house-chimney text-gray-400 mt-1 mr-2 w-4"></i><span><strong>特色：</strong>緊鄰東京的衛星城。相同預算下可獲得最大室內與車庫空間。站前大樓機能極佳。</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="property-type" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 flex items-center">
+                <i class="fa-solid fa-scale-balanced text-blue-600 mr-4"></i> 房型與停車位評估分析
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Mansion -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
+                    <div class="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6 text-blue-600 text-2xl shadow-inner">
+                        <i class="fa-regular fa-building"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">公寓大樓 (Mansion)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-square-parking text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                <strong>車位成本：</strong> 需每月額外支付租金（都內約 ￥2萬-4萬/月；埼玉約 ￥1.2萬-2.5萬/月）。
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-truck-pickup text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                <strong>車輛限制：</strong> 多為機械式車位，對休旅車(SUV)或大型車有嚴格的長、寬、高與載重限制。新屋多需抽籤。
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-shield-halved text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                <strong>財務與優勢：</strong> 結構耐震佳、具備物業管理與全天候垃圾場。需按月繳納管理費與修繕積立金。
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detached House -->
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-8">
+                    <div class="flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-6 text-amber-600 text-2xl shadow-inner">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">獨棟住宅 (一戶建)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-square-parking text-amber-500 mt-1 mr-3"></i>
+                            <div>
+                                <strong>車位成本：</strong> 規劃即含 1-2 個自用平面車位，<strong>完全免除車位月租金</strong>。
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-expand text-amber-500 mt-1 mr-3"></i>
+                            <div>
+                                <strong>空間優勢：</strong> 實質使用面積大（多為2-3層樓），容易滿足 4LDK 需求，無機械車位載重/尺寸限制。
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-screwdriver-wrench text-amber-500 mt-1 mr-3"></i>
+                            <div>
+                                <strong>財務與維護：</strong> 無大樓管理費及修繕積立金負擔。但房屋外牆、屋頂保養需自行規劃維護基金。
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 flex items-center">
+                <i class="fa-solid fa-yen-sign text-blue-600 mr-4"></i> 價格區間與購買途徑
+            </h2>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8 border border-gray-100">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">區域</th>
+                                <th scope="col" class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">總價區間 (3LDK含車位, 屋齡<6年)</th>
+                                <th scope="col" class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">主力優勢</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="hover:bg-blue-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 border-l-4 border-red-500">北區 (赤羽等)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                    大樓：￥7,500萬 – ￥1.2億<br>
+                                    一戶建：￥6,000萬 – ￥8,500萬
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">保值性與交通樞紐地位最高</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 border-l-4 border-green-500">練馬區 (光丘等)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                    大樓：￥7,000萬 – ￥9,500萬<br>
+                                    一戶建：￥5,500萬 – ￥8,000萬
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">地盤穩固、低密度高品質居住區</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 border-l-4 border-blue-500">板橋區 (高島平等)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                    大樓與一戶建均：<br>￥6,500萬 – ￥9,000萬
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">發展成熟、生活機能與交通均衡</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 border-l-4 border-purple-500">足立區 (西新井等)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                    新成一戶建為主：<br>￥5,000萬 – ￥7,500萬
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">東京都內極具性價比的選擇</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 border-l-4 border-yellow-500">埼玉川口/戶田</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                    大樓：￥5,500萬 – ￥8,500萬<br>
+                                    一戶建：￥4,500萬 – ￥6,500萬
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">通勤便利，預算可換取最大空間</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2"><i class="fa-solid fa-handshake text-blue-500 mr-2"></i>實務購買建議</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 text-sm">
+                        <li><strong>建商直購：</strong> 若鎖定大型公寓新案 (如三井、住友) 或建売一戶建，直洽賣主可省下 3% 仲介費。</li>
+                        <li><strong>仲介篩選：</strong> 因「車位+特定交流道」為硬性條件，委託大型仲介透過 REINS 系統篩選 6 年內中古屋最為高效。</li>
+                        <li><strong>車位現況：</strong> 看中古大樓時，務必第一時間請仲介確認管理組合是否還有空車位，以及可容納的車輛尺寸。</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-red-50 p-6 rounded-xl shadow-sm border border-red-100">
+                    <h3 class="text-xl font-bold mb-4 border-b border-red-200 pb-2 text-red-800"><i class="fa-solid fa-triangle-exclamation mr-2"></i>風險查核事項</h3>
+                    <ul class="list-disc list-inside space-y-2 text-red-800 text-sm">
+                        <li><strong>防災地圖 (Hazard Map)：</strong> 北區東側、板橋、足立與埼玉部分區域緊鄰荒川。務必上網調閱該區水患危險度地圖。</li>
+                        <li><strong>地質差異：</strong> 練馬與板橋西部屬穩固的武藏野台地，其他區域多屬低地平原，抗震係數與地盤改良需特別關注。</li>
+                        <li><strong>行政區劃：</strong> 若跨足埼玉縣，地方稅制、醫療補助、學區福利與東京都 23 區有所不同。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-8 text-center text-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-2">&copy; 2026 東京不動產評估報告系統. All Rights Reserved.</p>
+            <p class="opacity-60">此報告僅供初步評估參考，實際價格與物件條件請以當地不動產業者當日資訊為主。</p>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" class="fixed bottom-8 right-8 bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors z-50">
+        <i class="fa-solid fa-arrow-up"></i>
+    </a>
+
+</body>
+</html>

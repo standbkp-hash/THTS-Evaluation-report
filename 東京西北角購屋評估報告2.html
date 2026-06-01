@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 加入地圖引擎 Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
@@ -40,6 +42,33 @@
             height: 100%;
             border: 0;
         }
+        /* 自訂地圖容器與標記樣式 */
+        #custom-map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+        .custom-map-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            border: 2px solid white;
+        }
+        .bg-map-red { background-color: #ef4444; }
+        .bg-map-green { background-color: #22c55e; }
+        .bg-map-blue { background-color: #3b82f6; }
+        .bg-map-purple { background-color: #a855f7; }
+        .bg-map-yellow { background-color: #eab308; color: #713f12; }
     </style>
 </head>
 <body class="antialiased">
@@ -117,11 +146,11 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2">
                     <div class="map-container relative">
-                        <!-- 嵌入 Google Map，定位於赤羽並標示代表性車站 -->
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d103606.59104040986!2d139.66441589417933!3d35.79585750244439!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1szh-TW!2sjp!4v1717145266947!5m2!1szh-TW!2sjp&markers=color:red%7Clabel:A%7C35.777641,139.721203&markers=color:red%7Clabel:B%7C35.753386,139.736021&markers=color:green%7Clabel:C%7C35.738159,139.654060&markers=color:green%7Clabel:D%7C35.758064,139.629396&markers=color:blue%7Clabel:E%7C35.789230,139.660167&markers=color:purple%7Clabel:F%7C35.777322,139.790104&markers=color:yellow%7Clabel:G%7C35.801826,139.717464&markers=color:yellow%7Clabel:H%7C35.807831,139.678071" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <!-- 替換為自訂互動式地圖容器 -->
+                        <div id="custom-map"></div>
                     </div>
                     <p class="text-sm text-gray-500 mt-3 flex items-center">
-                        <i class="fa-solid fa-circle-info mr-2"></i> 地圖以東京北區(赤羽)為中心。標記說明請參見右側圖例。
+                        <i class="fa-solid fa-circle-info mr-2"></i> 地圖以東京北區(赤羽)為中心。點擊地圖上的【標記】或【路線】可查看詳細名稱。
                     </p>
                 </div>
                 
@@ -147,15 +176,15 @@
                         <li class="flex items-start border-t border-gray-100 pt-3">
                             <div class="bg-blue-100 text-blue-600 rounded p-2 mr-3"><i class="fa-solid fa-road"></i></div>
                             <div>
-                                <span class="font-bold text-gray-800 text-sm block">主要高速公路 (IC)</span>
-                                <span class="text-xs text-gray-600">首都高C2(中央環狀)、首都高5號線、首都高川口線、外環道、關越道</span>
+                                <span class="font-bold text-gray-800 text-sm block">主要高速公路 (橘紅實線)</span>
+                                <span class="text-xs text-gray-600">已標示：首都高C2(中央環狀)、首都高5號線</span>
                             </div>
                         </li>
-                        <li class="flex items-start">
+                        <li class="flex items-start border-t border-gray-100 pt-3">
                             <div class="bg-green-100 text-green-600 rounded p-2 mr-3"><i class="fa-solid fa-train-subway"></i></div>
                             <div>
-                                <span class="font-bold text-gray-800 text-sm block">直通都心鐵道</span>
-                                <span class="text-xs text-gray-600">JR(埼京/京濱東北)、地鐵(南北/三田/副都心)、私鐵(西武/東武)</span>
+                                <span class="font-bold text-gray-800 text-sm block">直通都心鐵道 (深藍虛線)</span>
+                                <span class="text-xs text-gray-600">已標示：JR埼京線、JR京濱東北線主要軸線</span>
                             </div>
                         </li>
                         <li class="flex items-start mt-6 pt-4 border-t border-gray-100">
@@ -403,5 +432,71 @@
         <i class="fa-solid fa-arrow-up"></i>
     </a>
 
+    <!-- 加入 Leaflet 腳本與路線/標記繪製邏輯 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化地圖，中心點設定於赤羽與王子之間
+            const map = L.map('custom-map').setView([35.77, 139.69], 12);
+
+            // 使用清爽風格的 Carto 底圖，使自訂的高速公路與鐵路更加明顯
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            // 定義路線樣式
+            const highwayStyle = { color: '#f97316', weight: 6, opacity: 0.85 }; // 橘紅實線 (高速公路)
+            const railwayStyle = { color: '#1e3a8a', weight: 5, opacity: 0.8, dashArray: '8, 8' }; // 深藍虛線 (鐵路)
+
+            // --- 繪製主要高速公路 ---
+            // 首都高5號池袋線 (池袋 -> 板橋 -> 高島平 -> 戶田)
+            L.polyline([
+                [35.728, 139.716], [35.748, 139.709], [35.790, 139.658], [35.819, 139.642]
+            ], highwayStyle).addTo(map).bindPopup('<b>首都高速5號池袋線</b>');
+
+            // 首都高C2 中央環狀線 (板橋 -> 王子 -> 江北 -> 小菅)
+            L.polyline([
+                [35.748, 139.709], [35.753, 139.736], [35.771, 139.761], [35.760, 139.824]
+            ], highwayStyle).addTo(map).bindPopup('<b>首都高速C2中央環狀線</b>');
+
+            // --- 繪製主要鐵路幹線 ---
+            // JR 埼京線 (池袋 -> 板橋 -> 赤羽 -> 戶田公園)
+            L.polyline([
+                [35.730, 139.711], [35.745, 139.719], [35.777, 139.721], [35.807, 139.678], [35.845, 139.647]
+            ], railwayStyle).addTo(map).bindPopup('<b>JR 埼京線</b>');
+
+            // JR 京濱東北線 (田端 -> 王子 -> 赤羽 -> 川口)
+            L.polyline([
+                [35.738, 139.761], [35.753, 139.736], [35.777, 139.721], [35.801, 139.717], [35.858, 139.657]
+            ], railwayStyle).addTo(map).bindPopup('<b>JR 京濱東北線</b>');
+
+
+            // --- 加入區域代表車站標記 ---
+            const locations = [
+                { id: 'A', lat: 35.7776, lng: 139.7212, color: 'bg-map-red', title: '赤羽 (北區)' },
+                { id: 'B', lat: 35.7534, lng: 139.7360, color: 'bg-map-red', title: '王子 (北區)' },
+                { id: 'C', lat: 35.7382, lng: 139.6541, color: 'bg-map-green', title: '練馬 (練馬區)' },
+                { id: 'D', lat: 35.7581, lng: 139.6294, color: 'bg-map-green', title: '光丘 (練馬區)' },
+                { id: 'E', lat: 35.7892, lng: 139.6602, color: 'bg-map-blue', title: '高島平 (板橋區)' },
+                { id: 'F', lat: 35.7773, lng: 139.7901, color: 'bg-map-purple', title: '西新井 (足立區)' },
+                { id: 'G', lat: 35.8018, lng: 139.7175, color: 'bg-map-yellow', title: '川口 (埼玉)' },
+                { id: 'H', lat: 35.8078, lng: 139.6781, color: 'bg-map-yellow', title: '戶田公園 (埼玉)' }
+            ];
+
+            locations.forEach(loc => {
+                const customIcon = L.divIcon({
+                    className: '', // 清除預設樣式
+                    html: `<div class="custom-map-marker ${loc.color}">${loc.id}</div>`,
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13], // 錨點置中
+                    popupAnchor: [0, -13]
+                });
+                L.marker([loc.lat, loc.lng], { icon: customIcon })
+                 .addTo(map)
+                 .bindPopup(`<strong>${loc.id}: ${loc.title}</strong>`);
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>酸鹼性流體設備管道材質選用指引</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const EQUIPMENT_TYPES = [
+            { id: 'liquid_tank', label: '液體儲槽 (Liquid Storage Tank)' },
+            { id: 'gas_tower', label: '氣體塔槽/吸收塔 (Gas Scrubber/Tower)' },
+            { id: 'reactor', label: '批次反應器/附攪拌 (Batch Reactor with Agitator)' },
+            { id: 'liquid_piping', label: '液體輸送管線 (Liquid Piping)' },
+            { id: 'gas_piping', label: '氣體輸送管線/風管 (Gas Ducting/Piping)' },
+            { id: 'pump', label: '液體輸送設備 (Pump)' },
+            { id: 'blower', label: '氣體輸送設備 (Blower/Fan)' }
+        ];
+
+        const CHEMICALS = [
+            { id: 'hno3', label: '硝酸 (HNO3) - 強氧化性酸' },
+            { id: 'h2so4', label: '硫酸 (H2SO4) - 強酸/脫水性' },
+            { id: 'naoh', label: '氫氧化鈉 (NaOH) - 強鹼' },
+            { id: 'water', label: '水 (Water) - H2O' },
+            { id: 'gas_h2s', label: '硫化氫 (H2S) - 腐蝕性氣體' },
+            { id: 'gas_h2', label: '氫氣 (H2) - 高滲透性小分子氣體' },
+            { id: 'gas_nox', label: '氮氧化物 (NOx) - 氧化性氣體' }
+        ];
+
+        function App() {
+            const [equipment, setEquipment] = useState('liquid_tank');
+            const [selectedChemicals, setSelectedChemicals] = useState([]);
+            const [temperature, setTemperature] = useState(40);
+            const [pressure, setPressure] = useState(1);
+
+            const handleChemicalToggle = (id) => {
+                setSelectedChemicals(prev => 
+                    prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+                );
+            };
+
+            const getRecommendations = () => {
+                let recs = {
+                    liner: '標準乙烯基酯 (Standard Vinyl Ester)',
+                    structural: '一般玻璃纖維強化層 (E-Glass + Isophthalic/Vinyl Ester)',
+                    alternative: null, // 用於儲存條件性替代方案
+                    codes: [],
+                    notes: []
+                };
+
+                // --- 基礎化學品影響判定 ---
+                let needsDualLaminate = false;
+                let dlMaterial = [];
+                let needsNovolac = false;
+                let syntheticVeilNeeded = false;
+                let isHighlyCorrosive = false;
+
+                // 判斷是否為純硝酸或以硝酸為主的環境 (無混入高危險的硫酸、強鹼或硫化氫)
+                const isNitricDominant = selectedChemicals.includes('hno3') && 
+                                         !selectedChemicals.includes('h2so4') && 
+                                         !selectedChemicals.includes('naoh') && 
+                                         !selectedChemicals.includes('gas_h2s');
+
+                let useSS304L = false;
+
+                if (selectedChemicals.includes('hno3')) {
+                    isHighlyCorrosive = true;
+                    // 根據《硝酸製程設備材質選用指南》與《Nitric Acid And Stainless Steel》文獻，
+                    // 304L 在 80°C 以下對中低濃度硝酸具備 Excellent 到 Good 的評級。
+                    if (isNitricDominant && temperature <= 80) {
+                        useSS304L = true;
+                        recs.notes.push('【硝酸標準材質】在溫度 80°C 以下的純硝酸環境中，Type 304L 低碳不鏽鋼具備優異的耐腐蝕性，為業界標準選材。文獻指出，304L 在此條件下的抗腐蝕能力普遍優於含鉬的 316L 不鏽鋼。');
+                    } else {
+                        needsDualLaminate = true; dlMaterial.push('PVDF 或 PTFE');
+                        recs.notes.push('【高溫/混酸氧化防護】系統包含硝酸且溫度超過 80°C，或混有其他腐蝕介質。304L 腐蝕率會急遽上升，非金屬結構必須採用含氟聚合物 (PVDF/PTFE) 作為防腐屏障，金屬則須考慮 310L NAG、鋯 (Zirconium) 或金屬襯氟。');
+                    }
+                }
+                
+                if (selectedChemicals.includes('h2so4')) {
+                    needsNovolac = true;
+                    isHighlyCorrosive = true;
+                    if (temperature > 60) { needsDualLaminate = true; dlMaterial.push('ECTFE 或 PFA/PTFE'); }
+                }
+                
+                if (selectedChemicals.includes('naoh')) {
+                    syntheticVeilNeeded = true;
+                    isHighlyCorrosive = true;
+                    recs.notes.push('強鹼會侵蝕玻璃纖維(E-Glass)，若採 FRP，內襯(CBL)必須改用合成纖維氈(Nexus)。');
+                }
+                
+                if (selectedChemicals.includes('gas_nox')) {
+                    needsDualLaminate = true; dlMaterial.push('PVDF 或 ECTFE');
+                    isHighlyCorrosive = true;
+                }
+                
+                if (selectedChemicals.includes('gas_h2') || selectedChemicals.includes('gas_h2s')) {
+                    recs.notes.push('H2/H2S 具高滲透性。為降低滲透率避免脫層，建議使用緻密的熱塑性內襯或金屬襯氟。');
+                    if (pressure > 5) { needsDualLaminate = true; dlMaterial.push('PTFE'); }
+                }
+
+                // --- 絕對邊界條件 (強制轉換材質) ---
+                let usePP = false;
+                let useMetalLined = false;
+                let useGlassLined = false;
+
+                // 1. 搪玻璃適用性極限判定
+                if (temperature >= 100 && (selectedChemicals.includes('hno3') || selectedChemicals.includes('h2so4'))) {
+                    if (['reactor', 'liquid_tank'].includes(equipment)) {
+                        if (!selectedChemicals.includes('naoh')) {
+                            useGlassLined = true;
+                            useSS304L = false; // 高溫極端條件下排除一般 304L
+                        } else {
+                            recs.notes.push('【限制條件】系統中含有 NaOH，高溫強鹼會迅速溶解搪玻璃層，因此排除搪玻璃，強制轉換為金屬襯氟。');
+                            useMetalLined = true;
+                            useSS304L = false;
+                        }
+                    }
+                }
+
+                // 2. 超越非金屬極限 (溫度過高或高壓下之高腐蝕)
+                if (!useGlassLined && !useSS304L && (temperature > 120 || (pressure > 15 && needsDualLaminate))) {
+                    useMetalLined = true;
+                } 
+                // 3. 低端邊界條件 (低溫低壓評估經濟型熱塑性塑料)
+                else if (temperature <= 60 && pressure <= 2 && !needsDualLaminate && !useGlassLined && !useSS304L) {
+                    if (equipment === 'liquid_tank' && selectedChemicals.includes('h2so4')) {
+                        usePP = false;
+                        recs.notes.push('【結構缺陷】純 PP 板材銲接儲槽長時間受靜水壓會產生潛變(Creep)及環境應力開裂風險，不適合做為大型儲槽承壓主體。');
+                    } else {
+                        usePP = true;
+                    }
+                }
+
+                // --- 依設備分類與材質寫入建議 ---
+                if (useSS304L) {
+                    recs.structural = 'Type 304L 低碳不鏽鋼 (Stainless Steel 304L)';
+                    recs.liner = '無 (金屬本體自帶鈍化保護膜)';
+                    
+                    // 加入相關規範
+                    recs.codes.push('ASTM A380 / ASTM A967 (不鏽鋼表面酸洗與鈍化處理規範)');
+                    if (['liquid_tank', 'gas_tower', 'reactor'].includes(equipment)) {
+                        recs.codes.push('API 650 / ASME BPVC Section VIII (金屬儲槽與壓力容器規範)');
+                    } else if (['liquid_piping', 'gas_piping', 'pump', 'blower'].includes(equipment)) {
+                        recs.codes.push('ASME B31.3 (製程管線規範)');
+                    }
+
+                    recs.notes.unshift('【金屬鈍化要求】304L 不鏽鋼依賴表面的富鉻鈍化膜抵抗硝酸腐蝕。設備製造與銲接後，必須依據 ASTM A380/A967 進行嚴格的酸洗鈍化(Pickling and Passivation)，並控制銲接工藝確保未發生晶界敏化(Sensitization)。');
+
+                    // 提供 FRP/Dual Laminate 作為條件性替代方案 (針對氯離子風險或需輕量化)
+                    if (['liquid_tank', 'gas_tower', 'liquid_piping', 'gas_piping'].includes(equipment) && pressure <= 10 && temperature <= 60) {
+                        recs.alternative = {
+                            condition: '若製程冷卻水或環境中可能混入微量氯離子(Chlorides)，或對設備有極致的輕量化需求。',
+                            structural: 'FRP 結構層 (Vinyl Ester)',
+                            liner: 'PVDF 或 PTFE 內襯 (Dual Laminate)',
+                            tradeoff: '【主方案 (304L) 缺陷】304L 在純硝酸中表現優異，但對氯離子極度敏感，極易引發點蝕(Pitting)或應力腐蝕開裂(SCC)。【替代考量】含氟塑料(PVDF/PTFE)對氯離子完全免疫且具輕量化優勢，但存在較高工藝門檻及材料成本。'
+                        };
+                    }
+                }
+                else if (['pump', 'blower'].includes(equipment)) {
+                    // 動態設備 (非 304L 條件下)
+                    if (useMetalLined || pressure > 5 || temperature > 100 || needsDualLaminate) {
+                        recs.structural = '球墨鑄鐵或碳鋼外殼 (Ductile Iron / Carbon Steel)';
+                        recs.liner = needsDualLaminate ? 'PFA / PTFE 氟素塑料內襯 (高壓射出成型)' : '特殊合金 (如 Hastelloy)';
+                        recs.notes.push('【動態設備限制】內部具高流體剪切力。面對強氧化環境無法使用薄層貼合的 FRP Dual Laminate，必須採用金屬外殼配合射出成型之 PFA 內襯。');
+                    } else if (usePP) {
+                        recs.structural = '射出/加工成型純 PP 或 PVDF';
+                        recs.liner = '無 (一體成型單一材質)';
+                    } else {
+                        recs.structural = 'FRP (Vinyl Ester)';
+                        recs.liner = 'FRP 耐蝕樹脂層';
+                    }
+                } else {
+                    // 靜態設備 (反應器、塔、槽、管) (非 304L 條件下)
+                    if (pressure < 0) {
+                        recs.notes.push('【負壓設計】非金屬需加入加強環(Stiffening Rings)以防挫曲(Buckling)。金屬襯氟需評估內襯在真空下的剝離坍塌(Vacuum Collapse)風險。');
+                    } else if (pressure > 10 && !useGlassLined && !useMetalLined) {
+                        recs.structural = '高強度纏繞成型 (Filament Wound GRE/GRP)';
+                        recs.notes.push('【高壓應力】系統應力主要為環向應力(Hoop Stress)，須採用連續纖維纏繞製程。');
+                    } else if (pressure > 2 && pressure <= 10 && !useGlassLined && !useMetalLined) {
+                        recs.structural = '纏繞成型 FRP (Filament Wound GRP)';
+                    }
+
+                    if (useGlassLined) {
+                        recs.structural = '碳鋼外殼 (Carbon Steel)';
+                        recs.liner = '搪玻璃內襯 (Glass Lined / Enamel)';
+                        recs.codes.push('ASME BPVC Section VIII / DIN-EN 28721');
+                        recs.notes.unshift('【極端環境首選】高溫強酸環境下，搪玻璃為防腐且無金屬溶出的首選。須嚴格控制熱衝擊(ΔT)。');
+                    } else if (useMetalLined) {
+                        recs.structural = '碳鋼 (Carbon Steel) 或 不鏽鋼 (Stainless Steel)';
+                        recs.liner = 'PTFE / PFA 等氟素塑料內襯';
+                        if (['liquid_tank', 'reactor', 'gas_tower'].includes(equipment)) recs.codes.push('ASME BPVC Section VIII (壓力容器本體)');
+                        recs.notes.unshift('【極限轉換】條件超越非金屬物理極限，強制採用金屬外殼承壓搭配氟塑料內襯防腐。');
+                    } else if (usePP && !needsDualLaminate) {
+                        recs.structural = '純 PP (Polypropylene) 或 PE (Polyethylene) 結構';
+                        recs.liner = '無 (單一材質)';
+                        recs.notes.unshift('【經濟首選】低溫低壓條件，純熱塑性塑料具備最佳經濟性與充分耐蝕性。');
+                    } else if (needsDualLaminate) {
+                        const uniqueDl = [...new Set(dlMaterial)].join(' / ') || 'PP / PVDF / ECTFE / PTFE';
+                        recs.liner = `Dual Laminate 熱塑性內襯 (${uniqueDl})`;
+                        recs.structural = recs.structural || 'FRP 結構層 (Vinyl Ester + Glass Fiber)';
+                        
+                        if (!recs.codes.includes('ASME RTP-1 (耐腐蝕強化熱固性塑料設備)')) {
+                            recs.codes.push('ASME RTP-1 (耐腐蝕強化熱固性塑料設備)');
+                        }
+                        
+                        // 條件性替代方案 (針對防火與應力要求)
+                        if (['liquid_tank', 'gas_tower', 'liquid_piping', 'gas_piping', 'reactor'].includes(equipment)) {
+                            recs.alternative = {
+                                condition: '若現場存在：(1) 防火安全要求 (Fire-safe) (2) 高機械/外部管線應力 (3) 嚴重震動或地震/風載需求',
+                                structural: '碳鋼外殼 (Carbon Steel)',
+                                liner: 'PTFE / PFA 內襯',
+                                tradeoff: '【主方案 (FRP) 缺陷】FRP 的彈性模數低於鋼材10倍以上，且樹脂具可燃性，難以通過嚴格防火測試。【替代考量】碳鋼襯氟犧牲了外部抗腐能力且重量較高，但能提供絕對的機械剛性與火災下的結構完整性。'
+                            };
+                        }
+                    } else if (needsNovolac) {
+                        recs.liner = syntheticVeilNeeded ? '酚醛環氧乙烯基酯 (Novolac VE) + 合成纖維表面氈' : '酚醛環氧乙烯基酯 (Novolac VE)';
+                        recs.structural = recs.structural || 'FRP 結構層';
+                    } else {
+                        recs.liner = syntheticVeilNeeded ? '乙烯基酯 (Vinyl Ester) + 合成纖維表面氈' : '標準乙烯基酯 (Standard Vinyl Ester)';
+                        recs.structural = recs.structural || 'FRP 結構層';
+                        
+                        // NaOH 環境的條件性替代
+                        if (selectedChemicals.includes('naoh') && ['liquid_tank', 'gas_tower', 'liquid_piping'].includes(equipment)) {
+                            recs.alternative = {
+                                condition: '若現場具備高操作壓力，或製程無法承受因合成纖維氈(Nexus)微小破損導致 FRP 結構層被鹼侵蝕解體的風險。',
+                                structural: '碳鋼外殼 (Carbon Steel)',
+                                liner: 'PTFE (Teflon) 內襯 或 純金屬',
+                                tradeoff: '【主方案 (FRP) 缺陷】FRP 依賴極薄的 Nexus 表面氈防護，一旦刮破，玻璃纖維將被 NaOH 迅速破壞。【替代考量】碳鋼襯氟提供更可靠的物理阻隔，但設備重量與初始成本顯著增加。'
+                            };
+                        }
+                    }
+                }
+
+                // 補齊未指定時的預設規範
+                if (!useSS304L && !useGlassLined && !useMetalLined && recs.codes.length === 0) {
+                    if (['liquid_tank', 'gas_tower'].includes(equipment)) {
+                        recs.codes.push('ASME RTP-1 (耐腐蝕強化熱固性塑料設備)');
+                        recs.codes.push('BS EN 13121-3 或 BS 4994 (玻璃纖維儲槽與容器設計)');
+                    } else if (equipment === 'reactor') {
+                        recs.codes.push('ASME BPVC Section X (FRP 壓力容器規範)');
+                    } else if (['liquid_piping', 'gas_piping'].includes(equipment)) {
+                        recs.codes.push('ASME B31.3 Chapter VII (非金屬與非金屬襯裡製程管線規範)');
+                        recs.codes.push('ISO 14692 (GRP 管線系統設計與安裝)');
+                    } else if (['pump', 'blower'].includes(equipment)) {
+                        recs.codes.push('ASME B73.1 / B73.3 (化工泵浦規範)');
+                    }
+                }
+
+                if (selectedChemicals.length === 0) {
+                    recs.notes.push('請選擇至少一種內容物質，以進行化學相容性評估。');
+                }
+
+                return recs;
+            };
+
+            const recommendations = getRecommendations();
+
+            return (
+                <div className="min-h-screen p-6">
+                    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div className="bg-slate-800 text-white p-6">
+                            <h1 className="text-2xl font-bold">酸鹼性流體設備管道材質選用指引</h1>
+                            <p className="text-sm mt-2 text-slate-300">綜合評估金屬(304L)、FRP、Dual Laminate、襯氟與搪玻璃之應用邊界，提供客觀條件下之首選與限制分析。</p>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row">
+                            {/* Input Section */}
+                            <div className="w-full md:w-1/2 p-6 border-r border-slate-200">
+                                <h2 className="text-lg font-semibold mb-4 text-slate-700 border-b pb-2">操作條件輸入</h2>
+                                
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">1. 設備類型</label>
+                                    <select 
+                                        className="w-full p-2 border border-slate-300 rounded focus:ring-slate-500 focus:border-slate-500"
+                                        value={equipment}
+                                        onChange={(e) => setEquipment(e.target.value)}
+                                    >
+                                        {EQUIPMENT_TYPES.map(eq => (
+                                            <option key={eq.id} value={eq.id}>{eq.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">2. 內容物質 (可複選)</label>
+                                    <div className="space-y-2">
+                                        {CHEMICALS.map(chem => (
+                                            <label key={chem.id} className="flex items-center space-x-2 text-sm text-slate-600">
+                                                <input 
+                                                    type="checkbox" 
+                                                    className="rounded border-slate-300 text-slate-600 focus:ring-slate-500"
+                                                    checked={selectedChemicals.includes(chem.id)}
+                                                    onChange={() => handleChemicalToggle(chem.id)}
+                                                />
+                                                <span>{chem.label}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        3. 操作溫度: {temperature} °C
+                                    </label>
+                                    <input 
+                                        type="range" 
+                                        min="0" max="180" step="5"
+                                        className="w-full"
+                                        value={temperature}
+                                        onChange={(e) => setTemperature(parseInt(e.target.value))}
+                                    />
+                                    <div className="flex justify-between text-xs text-slate-400 mt-1">
+                                        <span>0°C</span><span>常溫</span><span>180°C</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        4. 操作壓力: {pressure} bar(g)
+                                    </label>
+                                    <input 
+                                        type="range" 
+                                        min="-1" max="20" step="0.5"
+                                        className="w-full"
+                                        value={pressure}
+                                        onChange={(e) => setPressure(parseFloat(e.target.value))}
+                                    />
+                                    <div className="flex justify-between text-xs text-slate-400 mt-1">
+                                        <span>-1 (真空)</span><span>常壓</span><span>20 (高壓)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Output Section */}
+                            <div className="w-full md:w-1/2 p-6 bg-slate-50">
+                                <h2 className="text-lg font-semibold mb-4 text-slate-700 border-b pb-2">客觀評估報告</h2>
+                                
+                                <div className="space-y-6">
+                                    {/* 核心推薦方案 */}
+                                    <div className="border-l-4 border-green-500 pl-4 py-1">
+                                        <h3 className="text-sm font-bold text-green-700 uppercase tracking-wider mb-2">首選方案 (基於耐蝕性與經濟性最佳化)</h3>
+                                        <div className="grid grid-cols-1 gap-3 text-sm">
+                                            <div className="bg-white p-3 rounded shadow-sm border border-slate-200">
+                                                <span className="text-slate-500 block text-xs mb-1">防腐內襯層 / 接觸面</span>
+                                                <span className="font-semibold text-slate-800">{recommendations.liner}</span>
+                                            </div>
+                                            <div className="bg-white p-3 rounded shadow-sm border border-slate-200">
+                                                <span className="text-slate-500 block text-xs mb-1">承壓結構層</span>
+                                                <span className="text-slate-800">{recommendations.structural}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 條件替代方案區塊 */}
+                                    {recommendations.alternative && (
+                                        <div className="border-l-4 border-orange-400 bg-orange-50 pl-4 py-3 pr-3 rounded-r">
+                                            <h3 className="text-sm font-bold text-orange-800 uppercase tracking-wider mb-2 flex items-center">
+                                                條件性替代方案
+                                            </h3>
+                                            <p className="text-xs font-semibold text-orange-900 mb-3 bg-orange-200/50 p-2 rounded">
+                                                觸發條件：{recommendations.alternative.condition}
+                                            </p>
+                                            <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                                                <div className="bg-white p-2 rounded border border-orange-200">
+                                                    <span className="text-slate-500 block text-xs">內襯層</span>
+                                                    <span className="font-medium text-slate-800">{recommendations.alternative.liner}</span>
+                                                </div>
+                                                <div className="bg-white p-2 rounded border border-orange-200">
+                                                    <span className="text-slate-500 block text-xs">結構層</span>
+                                                    <span className="text-slate-800">{recommendations.alternative.structural}</span>
+                                                </div>
+                                            </div>
+                                            <p className="text-xs text-slate-700 leading-relaxed">
+                                                {recommendations.alternative.tradeoff}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-6">工程設計限制與考量</h3>
+                                        <div className="mt-2 space-y-2">
+                                            {recommendations.notes.map((note, idx) => (
+                                                <div key={idx} className="p-3 bg-blue-50 border-l-2 border-blue-400 text-sm text-slate-700">
+                                                    {note}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">適用設計規範參照</h3>
+                                        <ul className="mt-2 list-disc list-inside text-xs text-slate-600 space-y-1">
+                                            {recommendations.codes.map((code, idx) => (
+                                                <li key={idx}>{code}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-400">
+                                    註：此評估以物理條件（溫度、壓力）、機械行為極限與化學擴散特性為運算基礎。不包含外部環境因素（如紫外線老化或管線支撐間距）之詳細應力分析。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

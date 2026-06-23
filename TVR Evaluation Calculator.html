@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVR Evaluation Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .input-field { @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm transition-colors; }
+        .input-field:disabled { @apply bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed; }
+        .label-text { @apply block text-sm font-medium text-gray-700 mb-1; }
+        .card { @apply bg-white p-5 rounded-lg shadow border border-gray-200 h-full flex flex-col; }
+        .alert-red { @apply bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 text-sm rounded; }
+        .alert-yellow { @apply bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 text-sm rounded; }
+        .alert-green { @apply bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4 text-sm rounded; }
+        .svg-container { @apply w-full flex justify-center bg-gray-50 rounded-lg border border-gray-200 p-4 overflow-x-auto; }
+        .theory-h3 { @apply text-lg font-bold text-gray-800 mt-6 mb-3 pb-2 border-b border-gray-200; }
+        .theory-p { @apply text-sm text-gray-700 mb-4 leading-relaxed; }
+        .theory-ul { @apply list-disc pl-6 text-sm text-gray-700 space-y-2 mb-4; }
+        .ref-box { @apply bg-slate-50 border border-slate-200 p-4 rounded-md mb-3 text-sm text-gray-700; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        <header class="mb-4">
+            <h1 class="text-2xl font-bold text-gray-900">TVR Evaluation Calculator</h1>
+            <p class="text-sm text-gray-600">Thermal Vapor Recompression evaluation utilizing Isentropic Thermodynamic Model and Empirical Supplier Guidelines.</p>
+        </header>
+
+        <!-- Prominent Toggle Tab Navigation -->
+        <div class="flex p-1 space-x-1 bg-gray-300 rounded-xl mb-6 shadow-inner w-full md:w-fit">
+            <button onclick="switchTab('calculator')" id="btn-calculator" class="w-1/2 md:w-auto px-6 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-blue-700 focus:outline-none transition-all">
+                ⚙️ Calculation Engine
+            </button>
+            <button onclick="switchTab('theory')" id="btn-theory" class="w-1/2 md:w-auto px-6 py-2.5 text-sm font-bold rounded-lg text-gray-600 hover:bg-gray-200 focus:outline-none transition-all">
+                📚 Theory & Guidelines
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: CALCULATOR ENGINE                   -->
+        <!-- ========================================== -->
+        <div id="tab-calculator" class="space-y-6 block">
+            <!-- Dynamic SVG Diagram Section - Single Stage -->
+            <div id="svg_card_single" class="card bg-white" style="display:flex;">
+                <h2 class="text-lg font-semibold border-b pb-2 mb-4">Single-Stage Thermocompressor Flow Diagram</h2>
+                <div class="svg-container relative">
+                    <svg width="860" height="240" viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow-blue1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#3b82f6" /></marker>
+                            <marker id="arrow-red1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#ef4444" /></marker>
+                            <marker id="arrow-green1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#10b981" /></marker>
+                        </defs>
+
+                        <!-- Common Motive Header -->
+                        <path d="M 60,40 L 780,40" fill="none" stroke="#ef4444" stroke-width="4" />
+                        <text x="70" y="30" fill="#ef4444" font-weight="bold" font-size="14">Motive Steam Header</text>
+                        <text x="240" y="30" fill="#1e293b" font-family="monospace" font-size="14">P_m: <tspan id="svg1_pm">--</tspan> kPa | T_m: <tspan id="svg1_tm">--</tspan> °C</text>
+
+                        <!-- Motive Pipe -->
+                        <path d="M 220,40 L 220,130 L 255,130" fill="none" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red1)"/>
+                        <text x="230" y="100" fill="#ef4444" font-family="monospace" font-size="12" font-weight="bold">W_m: <tspan id="svg1_wm">--</tspan> kg/h</text>
+                        
+                        <!-- Suction Pipe -->
+                        <path d="M 280,220 L 280,152" fill="none" stroke="#3b82f6" stroke-width="4" marker-end="url(#arrow-blue1)"/>
+                        <text x="280" y="235" text-anchor="middle" fill="#3b82f6" font-weight="bold" font-size="13">Suction</text>
+                        <text x="120" y="195" fill="#1e293b" font-family="monospace" font-size="12">P_s: <tspan id="svg1_ps">--</tspan> kPa | T_s: <tspan id="svg1_ts">--</tspan> °C</text>
+                        <text x="120" y="215" fill="#3b82f6" font-family="monospace" font-size="12" font-weight="bold">W_s: <tspan id="svg1_ws">--</tspan> kg/h</text>
+                        
+                        <!-- Ejector Body -->
+                        <path d="M 260,110 L 300,110 L 330,125 L 410,125 L 410,135 L 330,135 L 300,150 L 260,150 Z" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+
+                        <!-- Discharge Pipe -->
+                        <path d="M 410,130 L 680,130" fill="none" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-green1)"/>
+                        <text x="690" y="125" fill="#10b981" font-weight="bold" font-size="14">Discharge</text>
+                        <text x="690" y="145" fill="#1e293b" font-family="monospace" font-size="12">P_d: <tspan id="svg1_pd">--</tspan> kPa | T_d: <tspan id="svg1_td">--</tspan> °C</text>
+                        <text x="460" y="120" fill="#10b981" font-family="monospace" font-size="13" font-weight="bold">Total W_d: <tspan id="svg1_wd">--</tspan> kg/h</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Dynamic SVG Diagram Section - Two Stage -->
+            <div id="svg_card_double" class="card bg-white" style="display:none;">
+                <h2 class="text-lg font-semibold border-b pb-2 mb-4">Two-Stage Thermocompressor Flow Diagram</h2>
+                <div class="svg-container relative">
+                    <svg width="860" height="320" viewBox="0 0 860 320" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow-blue2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#3b82f6" /></marker>
+                            <marker id="arrow-red2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#ef4444" /></marker>
+                            <marker id="arrow-green2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#10b981" /></marker>
+                            <marker id="arrow-purple2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0,0 L 10,5 L 0,10 z" fill="#8b5cf6" /></marker>
+                        </defs>
+
+                        <!-- Common Motive Header -->
+                        <path d="M 60,40 L 780,40" fill="none" stroke="#ef4444" stroke-width="4" />
+                        <text x="70" y="30" fill="#ef4444" font-weight="bold" font-size="14">Motive Steam Header</text>
+                        <text x="240" y="30" fill="#1e293b" font-family="monospace" font-size="14">P_m: <tspan id="svg2_pm">--</tspan> kPa | T_m: <tspan id="svg2_tm">--</tspan> °C</text>
+
+                        <!-- Stage 1 Motive Pipe -->
+                        <path d="M 90,40 L 90,150 L 125,150" fill="none" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red2)"/>
+                        <text x="100" y="90" fill="#ef4444" font-family="monospace" font-size="12" font-weight="bold">W_m1: <tspan id="svg2_wm1">--</tspan> kg/h</text>
+                        
+                        <!-- Stage 1 Suction Pipe -->
+                        <path d="M 150,280 L 150,172" fill="none" stroke="#3b82f6" stroke-width="4" marker-end="url(#arrow-blue2)"/>
+                        <text x="150" y="295" text-anchor="middle" fill="#3b82f6" font-weight="bold" font-size="13">Suction</text>
+                        <text x="40" y="230" fill="#1e293b" font-family="monospace" font-size="12">P_s: <tspan id="svg2_ps">--</tspan> kPa | T_s: <tspan id="svg2_ts">--</tspan> °C</text>
+                        <text x="40" y="250" fill="#3b82f6" font-family="monospace" font-size="12" font-weight="bold">W_s: <tspan id="svg2_ws">--</tspan> kg/h</text>
+                        
+                        <!-- Stage 1 Ejector Body -->
+                        <path d="M 130,130 L 170,130 L 200,145 L 260,145 L 260,155 L 200,155 L 170,170 L 130,170 Z" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+
+                        <!-- Interstage Pipe -->
+                        <path d="M 260,150 L 320,150 L 320,240 L 490,240 L 490,172" fill="none" stroke="#8b5cf6" stroke-width="4" marker-end="url(#arrow-purple2)"/>
+                        <text x="405" y="260" text-anchor="middle" fill="#8b5cf6" font-family="monospace" font-size="12" font-weight="bold">Int. P: <tspan id="svg2_pint">--</tspan> kPa | T: <tspan id="svg2_tint">--</tspan> °C</text>
+                        <text x="405" y="280" text-anchor="middle" fill="#8b5cf6" font-family="monospace" font-size="12" font-weight="bold">W_int: <tspan id="svg2_wint">--</tspan> kg/h</text>
+                        
+                        <!-- Stage 2 Motive Pipe -->
+                        <path d="M 430,40 L 430,150 L 465,150" fill="none" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red2)"/>
+                        <text x="440" y="90" fill="#ef4444" font-family="monospace" font-size="12" font-weight="bold">W_m2: <tspan id="svg2_wm2">--</tspan> kg/h</text>
+                        
+                        <!-- Stage 2 Ejector Body -->
+                        <path d="M 470,130 L 510,130 L 540,145 L 600,145 L 600,155 L 540,155 L 510,170 L 470,170 Z" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+
+                        <!-- Discharge Pipe -->
+                        <path d="M 600,150 L 730,150" fill="none" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-green2)"/>
+                        <text x="740" y="145" fill="#10b981" font-weight="bold" font-size="14">Discharge</text>
+                        <text x="740" y="165" fill="#1e293b" font-family="monospace" font-size="12">P_d: <tspan id="svg2_pd">--</tspan> kPa | T_d: <tspan id="svg2_td">--</tspan> °C</text>
+                        <text x="610" y="140" fill="#10b981" font-family="monospace" font-size="13" font-weight="bold">Total W_d: <tspan id="svg2_wd">--</tspan> kg/h</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <!-- Left Column: Inputs -->
+                <div class="xl:col-span-1 space-y-6">
+                    <div class="card">
+                        <h2 class="text-lg font-semibold border-b pb-2 mb-4">1. Operating Conditions</h2>
+                        <p class="text-xs text-gray-500 mb-4">Enter Pressure or Temp to auto-calculate the corresponding saturation value.</p>
+                        
+                        <div class="mb-4 p-3 bg-gray-50 border rounded">
+                            <h3 class="font-medium text-gray-800 text-sm mb-2">Motive Steam (m)</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="label-text">P<sub>m</sub> (kPa abs)</label><input type="number" id="pm" class="input-field" step="1"></div>
+                                <div><label class="label-text">T<sub>m</sub> (°C)</label><input type="number" id="tm" class="input-field" step="0.1"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-3 bg-gray-50 border rounded">
+                            <h3 class="font-medium text-gray-800 text-sm mb-2">Suction Steam (s)</h3>
+                            <div class="grid grid-cols-2 gap-2 mb-2">
+                                <div><label class="label-text">P<sub>s</sub> (kPa abs)</label><input type="number" id="ps" class="input-field" step="0.1"></div>
+                                <div><label class="label-text">T<sub>s</sub> (°C)</label><input type="number" id="ts" class="input-field" step="0.1"></div>
+                            </div>
+                            <div><label class="label-text">Flow Rate W<sub>s</sub> (kg/h)</label><input type="number" id="ws" class="input-field" step="10"></div>
+                        </div>
+
+                        <div class="mb-4 p-3 bg-gray-50 border rounded">
+                            <h3 class="font-medium text-gray-800 text-sm mb-2">Discharge Steam (d)</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="label-text">P<sub>d</sub> (kPa abs)</label><input type="number" id="pd" class="input-field" step="1"></div>
+                                <div><label class="label-text">T<sub>d</sub> (°C)</label><input type="number" id="td" class="input-field" step="0.1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="text-lg font-semibold border-b pb-2 mb-4">2. Thermodynamic Params</h2>
+                        <div class="mb-3">
+                            <div class="flex items-center justify-between mb-3 border-b border-gray-100 pb-2">
+                                <label class="label-text !mb-0 text-gray-800">Isentropic Efficiency (&eta;)</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="auto_eta" checked class="rounded text-blue-600">
+                                    <span class="text-xs text-gray-600">Auto-estimate mapping</span>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <!-- Single Stage Eta -->
+                                <div>
+                                    <label class="text-xs font-medium text-gray-600 block mb-1">Single-Stage TVR</label>
+                                    <div class="flex items-center">
+                                        <span class="text-xs text-gray-500 w-16">&eta;<sub>single</sub></span>
+                                        <input type="number" id="eta_single" class="input-field bg-gray-200 font-mono text-sm py-1" step="0.01" disabled>
+                                    </div>
+                                </div>
+                                <!-- Two Stage Etas -->
+                                <div class="border-t border-gray-100 pt-2">
+                                    <label class="text-xs font-medium text-gray-600 block mb-1">Two-Stage TVR</label>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex items-center w-full">
+                                            <span class="text-xs text-gray-500 w-12">&eta;<sub>1</sub> <span class="scale-75 inline-block">(St.1)</span></span>
+                                            <input type="number" id="eta_2st_1" class="input-field bg-gray-200 font-mono text-sm py-1" step="0.01" disabled>
+                                        </div>
+                                        <div class="flex items-center w-full">
+                                            <span class="text-xs text-gray-500 w-12">&eta;<sub>2</sub> <span class="scale-75 inline-block">(St.2)</span></span>
+                                            <input type="number" id="eta_2st_2" class="input-field bg-gray-200 font-mono text-sm py-1" step="0.01" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-3 leading-tight">Note: Efficiency &eta; correlates inversely with the stage compression ratio (C<sub>r</sub>) and decreases when expansion ratio (E<sub>r</sub>) is low.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Results & Criteria -->
+                <div class="xl:col-span-2 space-y-6 flex flex-col">
+                    
+                    <div id="status_alert">
+                        <div class="alert-yellow">Please input Operating Conditions (P<sub>m</sub>, P<sub>s</sub>, P<sub>d</sub>, W<sub>s</sub>).</div>
+                    </div>
+
+                    <!-- Parameters Summary -->
+                    <div class="card bg-gray-50 border-gray-200 py-4 flex-none">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Total Compression Ratio</div>
+                                <div class="text-xl font-bold text-gray-800 font-mono" id="val_cr">--</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Total Expansion Ratio</div>
+                                <div class="text-xl font-bold text-gray-800 font-mono" id="val_er">--</div>
+                            </div>
+                            <div id="summary_pint_div" class="opacity-50 transition-opacity">
+                                <div class="text-xs text-gray-500 uppercase">Optimal Intermediate Point</div>
+                                <div class="text-xl font-bold text-gray-800 font-mono"><span id="val_pint">--</span> <span class="text-sm font-normal">kPa</span></div>
+                                <div class="text-sm text-gray-600 font-mono mt-1"><span id="val_tint">--</span> °C</div>
+                            </div>
+                            <div id="summary_crst_div" class="opacity-50 transition-opacity">
+                                <div class="text-xs text-gray-500 uppercase">Stage C<sub>r</sub> (2-Stage)</div>
+                                <div class="text-xl font-bold text-gray-800 font-mono" id="val_cr_stage">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculation Results Panels -->
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-grow">
+                        
+                        <!-- Single Stage Results Panel -->
+                        <div id="panel_single_stage" class="card border-t-4 border-t-indigo-500 flex flex-col">
+                            <div class="flex justify-between items-start mb-2 border-b pb-2">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Single-Stage Config</h3>
+                                    <p class="text-xs text-gray-500">Direct compression. Optimal C<sub>r</sub> &le; 4.0.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-around bg-indigo-50 border border-indigo-100 p-3 rounded-lg mb-4">
+                                <div class="text-center">
+                                    <span class="block text-[10px] text-indigo-500 font-bold uppercase tracking-wide">Total Compression (C<sub>r</sub>)</span>
+                                    <span class="text-2xl font-bold text-indigo-800 font-mono" id="res_1st_cr_display">--</span>
+                                </div>
+                                <div class="text-center border-l border-indigo-200 pl-6">
+                                    <span class="block text-[10px] text-indigo-500 font-bold uppercase tracking-wide">Total Expansion (E<sub>r</sub>)</span>
+                                    <span class="text-2xl font-bold text-indigo-800 font-mono" id="res_1st_er_display">--</span>
+                                </div>
+                            </div>
+
+                            <div class="flex-grow space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="text-sm text-gray-600">Model A: Thermodynamic (W<sub>m, th</sub>)</div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="text-3xl font-bold text-indigo-700"><span id="res_1st_th">--</span> <span class="text-lg font-normal text-gray-500">kg/h</span></div>
+                                        <div class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-bold border border-indigo-200" title="Energy Saving Rate (Enthalpy Corrected)">
+                                            ESR: <span id="res_1st_th_esave">--</span>%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="text-sm text-gray-600">Model B: Empirical (W<sub>m, emp</sub>)</div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="text-xl font-bold text-gray-700"><span id="res_1st_emp">--</span> <span class="text-sm font-normal text-gray-500">kg/h</span></div>
+                                        <div class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-bold border border-gray-200" title="Energy Saving Rate (Enthalpy Corrected)">
+                                            ESR: <span id="res_1st_emp_esave">--</span>%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Two Stage Results Panel -->
+                        <div id="panel_two_stage" class="card border-t-4 border-t-emerald-500 flex flex-col" style="display:none;">
+                            <div class="flex justify-between items-start mb-2 border-b pb-2">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Two-Stage Config</h3>
+                                    <p class="text-xs text-gray-500">Series compression without intercondenser.</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 bg-emerald-50 border border-emerald-100 p-2 rounded-lg mb-4 gap-2">
+                                <div class="text-center">
+                                    <span class="block text-[9px] text-emerald-600 font-bold uppercase tracking-wide">Stage C<sub>r</sub></span>
+                                    <span class="text-lg font-bold text-emerald-800 font-mono" id="res_2st_cr_display">--</span>
+                                </div>
+                                <div class="text-center border-l border-emerald-200">
+                                    <span class="block text-[9px] text-emerald-600 font-bold uppercase tracking-wide">Stage 1 E<sub>r</sub></span>
+                                    <span class="text-lg font-bold text-emerald-800 font-mono" id="res_2st_er1_display">--</span>
+                                </div>
+                                <div class="text-center border-l border-emerald-200">
+                                    <span class="block text-[9px] text-emerald-600 font-bold uppercase tracking-wide">Stage 2 E<sub>r</sub></span>
+                                    <span class="text-lg font-bold text-emerald-800 font-mono" id="res_2st_er2_display">--</span>
+                                </div>
+                            </div>
+
+                            <div class="flex-grow space-y-5">
+                                <!-- Model A -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800 bg-gray-100 p-1 rounded">Model A: Thermodynamic</h4>
+                                    <div class="flex justify-between items-end mt-2 px-1">
+                                        <span class="text-xs text-gray-600">Stage 1 (W<sub>m1</sub>)</span>
+                                        <span class="font-mono text-gray-700"><span id="res_2st_th_m1">--</span> kg/h</span>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-1 px-1">
+                                        <span class="text-xs text-gray-600">Stage 2 (W<sub>m2</sub>)</span>
+                                        <span class="font-mono text-gray-700"><span id="res_2st_th_m2">--</span> kg/h</span>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-2 px-1 border-t border-gray-200 pt-1">
+                                        <span class="text-sm font-bold text-gray-800">Total W<sub>m, th</sub></span>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-emerald-700"><span id="res_2st_th_tot">--</span> kg/h</div>
+                                            <div class="text-[11px] text-emerald-600 font-bold" title="Energy Saving Rate (Enthalpy Corrected)">ESR: <span id="res_2st_th_esave">--</span>%</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Model B -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800 bg-gray-100 p-1 rounded">Model B: Empirical</h4>
+                                    <div class="flex justify-between items-end mt-2 px-1">
+                                        <span class="text-xs text-gray-600">Stage 1 (W<sub>m1</sub>)</span>
+                                        <span class="font-mono text-gray-700"><span id="res_2st_emp_m1">--</span> kg/h</span>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-1 px-1">
+                                        <span class="text-xs text-gray-600">Stage 2 (W<sub>m2</sub>)</span>
+                                        <span class="font-mono text-gray-700"><span id="res_2st_emp_m2">--</span> kg/h</span>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-2 px-1 border-t border-gray-200 pt-1">
+                                        <span class="text-sm font-bold text-gray-800">Total W<sub>m, emp</sub></span>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-emerald-700"><span id="res_2st_emp_tot">--</span> kg/h</div>
+                                            <div class="text-[11px] text-gray-500 font-bold" title="Energy Saving Rate (Enthalpy Corrected)">ESR: <span id="res_2st_emp_esave">--</span>%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: THEORY & ENGINEERING GUIDELINES     -->
+        <!-- ========================================== -->
+        <div id="tab-theory" class="hidden">
+            <div class="card border-t-4 border-blue-600">
+                <h2 class="text-xl font-bold text-gray-900 border-b-2 border-gray-100 pb-3 mb-6">TVR 設計理論與工程實務準則 (TVR Design Theory & Guidelines)</h2>
+                
+                <p class="theory-p text-gray-600 italic">本單元提供評估熱蒸汽再壓縮系統 (TVR) 時，所需之熱力學理論基礎、HEI 規範參數，以及國際設備供應商實務選型邊界條件之客觀基準。</p>
+
+                <!-- Section 1 -->
+                <h3 class="theory-h3 text-blue-800">1. 熱力學等熵模型 (Thermodynamic Isentropic Model)</h3>
+                <p class="theory-p">
+                    理論計算遵循能量守恆，並導入等熵效率 (&eta;) 進行修正：
+                </p>
+                <div class="bg-gray-50 p-4 rounded border border-gray-200 font-mono text-sm mb-4 inline-block w-full text-center">
+                    W<sub>m</sub> &times; &Delta;h<sub>m, isen</sub> &times; &eta; = W<sub>s</sub> &times; &Delta;h<sub>s, isen</sub>
+                </div>
+                <ul class="theory-ul">
+                    <li><strong>W<sub>m</sub> / W<sub>s</sub></strong>: 動力蒸氣消耗量 / 引射蒸氣回收量 (kg/h)</li>
+                    <li><strong>&Delta;h<sub>m, isen</sub></strong>: 動力蒸氣自 P<sub>m</sub> 等熵膨脹至 P<sub>s</sub> 之焓降 (kJ/kg)</li>
+                    <li><strong>&Delta;h<sub>s, isen</sub></strong>: 引射蒸氣自 P<sub>s</sub> 等熵壓縮至 P<sub>d</sub> 之焓增 (kJ/kg)</li>
+                    <li><strong>&eta;</strong>: 總合等熵轉換效率 (Isentropic Efficiency)。</li>
+                </ul>
+
+                <!-- Section 2 -->
+                <h3 class="theory-h3 text-blue-800">2. 節能率評估指標 (Energy Saving Rate, ESR)</h3>
+                <p class="theory-p">
+                    設定系統總出口的蒸汽量為「需求量 (W<sub>d</sub>)」，Motive Steam 為「供給量 (W<sub>m</sub>)」，兩者差額即為蒸汽的節省量 (W<sub>s</sub>)。為客觀反映真實能源經濟效益，節能率係以「熱值 (Enthalpy)」進行修正，計算公式如下：
+                </p>
+                <div class="bg-blue-50 p-4 rounded border border-blue-200 font-mono text-sm mb-4 inline-block w-full text-center text-blue-800 font-bold">
+                    ESR = [ (W<sub>d</sub> &times; h<sub>d</sub>) - (W<sub>m</sub> &times; h<sub>m</sub>) ] / (W<sub>d</sub> &times; h<sub>d</sub>) &times; 100%
+                </div>
+                <ul class="theory-ul">
+                    <li>分子為「總需求熱量扣除供給熱量」的淨回收熱值。</li>
+                    <li>分母為「總需求熱量」基準。</li>
+                    <li>若 ESR 為負值，表示該 TVR 配置耗費的高壓熱能已超越產出的中壓熱能，系統不具經濟效益。</li>
+                </ul>
+
+                <!-- Section 3 -->
+                <h3 class="theory-h3 text-blue-800">3. HEI 實務選型與經驗曲線 (HEI Empirical Selection & Curves)</h3>
+                <p class="theory-p">
+                    業界在驗證蒸汽噴射系統時，依循 HEI 標準，主要透過無因次參數建立經驗性能曲線。本計算表之「Model B: Empirical」即基於下方典型曲線之數學擬合。
+                </p>
+                
+                <div class="flex justify-center my-6">
+                    <div class="bg-white border border-gray-300 p-4 rounded-lg shadow-sm">
+                        <h4 class="text-center text-xs font-bold text-gray-600 mb-2">Typical Entrainment Ratio vs Compression Ratio (HEI Reference)</h4>
+                        <svg width="400" height="250" viewBox="0 0 400 250" class="overflow-visible">
+                            <!-- Axes -->
+                            <path d="M 40,200 L 360,200" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-blue1)"/>
+                            <path d="M 40,200 L 40,20" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-blue1)"/>
+                            <text x="200" y="235" text-anchor="middle" font-size="12" fill="#475569" font-weight="bold">Compression Ratio (Cr)</text>
+                            <text x="-110" y="15" transform="rotate(-90)" text-anchor="middle" font-size="12" fill="#475569" font-weight="bold">Entrainment Ratio (Rm = Ws/Wm)</text>
+                            <text x="40" y="215" text-anchor="middle" font-size="10" fill="#64748b">1.0</text>
+                            <text x="120" y="215" text-anchor="middle" font-size="10" fill="#64748b">3.0</text>
+                            <text x="200" y="215" text-anchor="middle" font-size="10" fill="#64748b">5.0</text>
+                            <text x="280" y="215" text-anchor="middle" font-size="10" fill="#64748b">7.0</text>
+                            <text x="360" y="215" text-anchor="middle" font-size="10" fill="#64748b">9.0</text>
+                            <text x="30" y="200" text-anchor="end" font-size="10" fill="#64748b">0.0</text>
+                            <text x="30" y="140" text-anchor="end" font-size="10" fill="#64748b">0.5</text>
+                            <text x="30" y="80" text-anchor="end" font-size="10" fill="#64748b">1.0</text>
+                            <text x="30" y="20" text-anchor="end" font-size="10" fill="#64748b">1.5</text>
+                            <path d="M 60,30 Q 80,110 120,114 T 200,156 T 320,175" fill="none" stroke="#2563eb" stroke-width="3"/>
+                            <path d="M 200,20 L 200,200" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5"/>
+                            <text x="205" y="40" font-size="10" fill="#ef4444">Single-Stage Limit (Cr=5)</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Section 4 -->
+                <h3 class="theory-h3 text-blue-800">4. 供應商設計經驗與邊界限制 (Supplier Boundary Limits)</h3>
+                
+                <h4 class="font-bold text-gray-800 mt-4 mb-2 text-sm">4.1 單段 TVR (Single-Stage) 操作極限</h4>
+                <ul class="theory-ul border-l-2 border-indigo-300">
+                    <li><strong>經濟區間：C<sub>r</sub> &le; 4.0</strong>。等熵效率 (&eta;) 最佳，通常可達 0.28 ~ 0.32。</li>
+                    <li><strong>臨界邊界：4.0 &lt; C<sub>r</sub> &le; 6.0</strong>。等熵效率急遽下滑至 0.15 ~ 0.20。系統對壓力波動極度敏感。</li>
+                    <li><strong>技術限制：C<sub>r</sub> &gt; 6.0</strong>。單段噴射器無法穩定克服過大背壓，屬不可行設計。</li>
+                </ul>
+
+                <h4 class="font-bold text-gray-800 mt-4 mb-2 text-sm">4.2 雙段串聯與質量疊加效應 (Two-Stage Compounding Effect)</h4>
+                <p class="theory-p border-l-2 border-emerald-300 pl-4 py-1 text-sm bg-emerald-50 text-gray-700">
+                    TVR 為回收水蒸汽，<strong>無法使用中間冷凝器</strong>。第一段噴射器消耗的動力蒸氣 (W<sub>m1</sub>)，必須與原始引射蒸氣 (W<sub>s</sub>) 一併進入第二段進行壓縮。即第二段的總負荷為 (W<sub>s</sub> + W<sub>m1</sub>)。為求總耗氣量最小化，工程上通常取幾何平均壓 <code class="bg-white px-1 font-mono">P<sub>int</sub> = &radic;(P<sub>s</sub> &times; P<sub>d</sub>)</code> 作為理論設計點。
+                </p>
+
+                <!-- References Box -->
+                <h3 class="theory-h3 text-blue-800">5. 參考文獻與實證資料查證 (References & Literature)</h3>
+                <div class="ref-box">
+                    <p class="mb-2 font-semibold">以上經驗參數與邊界條件，可參閱以下工業標準與供應商技術公報進行客觀驗證：</p>
+                    <ul class="list-decimal pl-5 space-y-3">
+                        <li>
+                            <strong>HEI (Heat Exchange Institute)</strong><br>
+                            文獻: <i>"Standards for Steam Jet Vacuum Systems"</i><br>
+                            查證重點: 提供蒸汽噴射器性能測試之通用基礎，包含引射比與壓縮比之標準衰退曲線定義。
+                        </li>
+                        <li>
+                            <strong>Graham Corporation</strong><br>
+                            文獻: <i>"Ejector System Troubleshooting & Engineering Data"</i><br>
+                            查證重點: 載明單段噴射器壓縮比 (Compression Ratio) 逾越 6.0 時產生之震波阻滯效應，以及兩段式無冷凝器配置之質量疊加計算原則。
+                        </li>
+                        <li>
+                            <strong>Schutte & Koerting</strong><br>
+                            文獻: <i>"Thermocompressors Technical Bulletin"</i><br>
+                            查證重點: 定義動力蒸氣膨脹比 (Expansion Ratio, E<sub>r</sub>) 的音速門檻與噴嘴幾何設計之工程極限。
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Tab Switching Logic ---
+        function switchTab(tabId) {
+            const tabCalc = document.getElementById('tab-calculator');
+            const tabTheory = document.getElementById('tab-theory');
+            const btnCalc = document.getElementById('btn-calculator');
+            const btnTheory = document.getElementById('btn-theory');
+
+            if (tabId === 'calculator') {
+                tabCalc.style.display = 'block';
+                tabTheory.style.display = 'none';
+                
+                // Set Calc Active styles
+                btnCalc.className = 'w-1/2 md:w-auto px-6 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-blue-700 focus:outline-none transition-all';
+                btnTheory.className = 'w-1/2 md:w-auto px-6 py-2.5 text-sm font-bold rounded-lg text-gray-600 hover:bg-gray-200 focus:outline-none transition-all';
+            } else {
+                tabCalc.style.display = 'none';
+                tabTheory.style.display = 'block';
+                
+                // Set Theory Active styles
+                btnTheory.className = 'w-1/2 md:w-auto px-6 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-blue-700 focus:outline-none transition-all';
+                btnCalc.className = 'w-1/2 md:w-auto px-6 py-2.5 text-sm font-bold rounded-lg text-gray-600 hover:bg-gray-200 focus:outline-none transition-all';
+            }
+        }
+
+        // --- Thermodynamic & Empirical Core Functions ---
+        const A_SAT = 16.3872, B_SAT = 3885.7, C_SAT = 230.17;
+        function calcSatP(T) { return Math.exp(A_SAT - B_SAT / (T + C_SAT)); }
+        function calcSatT(P) { return (B_SAT / (A_SAT - Math.log(P))) - C_SAT; }
+
+        function calcHf(T) { return 4.179 * T + 0.0006 * T * T; }
+        function calcHg(T) { return 2501.6 + 1.906 * T - 0.00193 * T * T; }
+        function calcSf(T) { return 4.179 * Math.log((T + 273.15) / 273.15); }
+        function calcSg(T) { return calcSf(T) + (calcHg(T) - calcHf(T)) / (T + 273.15); }
+        const CP_V = 2.0; 
+
+        function calculateEnthalpyParams(Tm, Ts_suction, Td_discharge) {
+            const h_m1 = calcHg(Tm), s_m1 = calcSg(Tm);
+            const hf_s = calcHf(Ts_suction), hg_s = calcHg(Ts_suction), sf_s = calcSf(Ts_suction), sg_s = calcSg(Ts_suction);
+            let h_m2 = (s_m1 <= sg_s) ? hf_s + ((s_m1 - sf_s) / (sg_s - sf_s)) * (hg_s - hf_s) : hg_s + CP_V * ((Ts_suction + 273.15) * Math.exp((s_m1 - sg_s) / CP_V) - (Ts_suction + 273.15));
+            const dHm = h_m1 - h_m2;
+
+            const h_s1 = calcHg(Ts_suction), s_s1 = calcSg(Ts_suction);
+            const hf_d = calcHf(Td_discharge), hg_d = calcHg(Td_discharge), sf_d = calcSf(Td_discharge), sg_d = calcSg(Td_discharge);
+            let h_s2 = (s_s1 >= sg_d) ? hg_d + CP_V * ((Td_discharge + 273.15) * Math.exp((s_s1 - sg_d) / CP_V) - (Td_discharge + 273.15)) : hf_d + ((s_s1 - sf_d) / (sg_d - sf_d)) * (hg_d - hf_d);
+            const dHs = h_s2 - h_s1;
+            return { dHm, dHs };
+        }
+
+        function getEtaEstimate(Cr, Er) {
+            let eta = 0.32;
+            if (Cr <= 1.5) eta = 0.32;
+            else if (Cr <= 3.0) eta = 0.32 - (Cr - 1.5) * 0.04;
+            else if (Cr <= 5.0) eta = 0.26 - (Cr - 3.0) * 0.055;
+            else eta = Math.max(0.08, 0.15 - (Cr - 5.0) * 0.02);
+
+            if (Er < 20.0) {
+                eta = eta * Math.pow(Math.max(2.0, Er) / 20.0, 0.3);
+            }
+            return eta;
+        }
+
+        function getEmpiricalWm(Ws, Cr, Er) {
+            let Rm = 1.5 / (Cr - 0.9);
+            if (Cr < 1.2) Rm = 5.0;
+            if (Cr > 8.0) Rm = 0.15;
+            
+            if (Er < 20.0) {
+                Rm = Rm * Math.pow(Math.max(2.0, Er) / 20.0, 0.5);
+            }
+            return Ws / Math.max(0.05, Rm);
+        }
+
+        function calcESR(Wm, Ws, Tm, Td) {
+            const Wd = Ws + Wm;
+            const hd = calcHg(Td);
+            const hm = calcHg(Tm);
+            const Q_demand = Wd * hd;
+            const Q_motive = Wm * hm;
+            return ((Q_demand - Q_motive) / Q_demand * 100).toFixed(1);
+        }
+
+        // --- DOM Elements & Events ---
+        const inputs = { 
+            pm: document.getElementById('pm'), tm: document.getElementById('tm'), 
+            ps: document.getElementById('ps'), ts: document.getElementById('ts'), 
+            pd: document.getElementById('pd'), td: document.getElementById('td'), 
+            ws: document.getElementById('ws'), 
+            eta_single: document.getElementById('eta_single'), 
+            eta_2st_1: document.getElementById('eta_2st_1'),
+            eta_2st_2: document.getElementById('eta_2st_2') 
+        };
+        const autoEtaCb = document.getElementById('auto_eta'), statusAlert = document.getElementById('status_alert');
+        const panels = { single: document.getElementById('panel_single_stage'), double: document.getElementById('panel_two_stage') };
+        const svgCards = { single: document.getElementById('svg_card_single'), double: document.getElementById('svg_card_double') };
+        
+        const ptPairs = [{ p: inputs.pm, t: inputs.tm }, { p: inputs.ps, t: inputs.ts }, { p: inputs.pd, t: inputs.td }];
+        ptPairs.forEach(pair => {
+            pair.p.addEventListener('input', () => { const v = parseFloat(pair.p.value); pair.t.value = (v > 0) ? calcSatT(v).toFixed(1) : ''; evaluateSystem(); });
+            pair.t.addEventListener('input', () => { const v = parseFloat(pair.t.value); pair.p.value = (v > -200) ? calcSatP(v).toFixed(1) : ''; evaluateSystem(); });
+        });
+        
+        ['ws', 'eta_single', 'eta_2st_1', 'eta_2st_2'].forEach(k => inputs[k].addEventListener('input', evaluateSystem));
+        
+        autoEtaCb.addEventListener('change', (e) => { 
+            const isAuto = e.target.checked;
+            inputs.eta_single.disabled = isAuto; 
+            inputs.eta_2st_1.disabled = isAuto; 
+            inputs.eta_2st_2.disabled = isAuto; 
+            inputs.eta_single.classList.toggle('bg-gray-200', isAuto); 
+            inputs.eta_2st_1.classList.toggle('bg-gray-200', isAuto); 
+            inputs.eta_2st_2.classList.toggle('bg-gray-200', isAuto); 
+            evaluateSystem(); 
+        });
+
+        function setTxt(id, val) { const el = document.getElementById(id); if(el) el.textContent = val; }
+
+        function clearResults() {
+            ['val_cr','val_er','val_pint','val_tint','val_cr_stage','res_1st_th','res_1st_emp',
+             'res_2st_th_m1','res_2st_th_m2','res_2st_th_tot','res_2st_emp_m1','res_2st_emp_m2','res_2st_emp_tot',
+             'res_1st_cr_display','res_1st_er_display','res_2st_cr_display','res_2st_er1_display','res_2st_er2_display',
+             'res_1st_th_esave','res_1st_emp_esave','res_2st_th_esave','res_2st_emp_esave',
+             'svg1_pm','svg1_tm','svg1_wm','svg1_ps','svg1_ts','svg1_ws','svg1_pd','svg1_td','svg1_wd',
+             'svg2_pm','svg2_tm','svg2_wm1','svg2_wm2','svg2_ps','svg2_ts','svg2_ws','svg2_pint','svg2_tint','svg2_wint','svg2_pd','svg2_td','svg2_wd'].forEach(id => setTxt(id, '--'));
+        }
+
+        function evaluateSystem() {
+            const Pm = parseFloat(inputs.pm.value), Ps = parseFloat(inputs.ps.value), Pd = parseFloat(inputs.pd.value), Ws = parseFloat(inputs.ws.value);
+            const Tm = parseFloat(inputs.tm.value), Ts = parseFloat(inputs.ts.value), Td = parseFloat(inputs.td.value);
+            clearResults();
+
+            if (isNaN(Pm) || isNaN(Ps) || isNaN(Pd) || isNaN(Ws)) { statusAlert.innerHTML = `<div class="alert-yellow">Please input Operating Conditions.</div>`; return; }
+            if (Pm <= Pd || Pd <= Ps) { statusAlert.innerHTML = `<div class="alert-red"><strong>Error:</strong> Invalid Pressure Hierarchy. Require P<sub>m</sub> > P<sub>d</sub> > P<sub>s</sub>.</div>`; return; }
+
+            const Cr_total = Pd / Ps, Er_total = Pm / Ps;
+            setTxt('val_cr', Cr_total.toFixed(2)); setTxt('val_er', Er_total.toFixed(2));
+            
+            setTxt('res_1st_cr_display', Cr_total.toFixed(2));
+            setTxt('res_1st_er_display', Er_total.toFixed(2));
+
+            setTxt('svg1_pm', Pm.toFixed(1)); setTxt('svg1_tm', Tm.toFixed(1)); 
+            setTxt('svg1_ps', Ps.toFixed(1)); setTxt('svg1_ts', Ts.toFixed(1)); setTxt('svg1_ws', Math.round(Ws));
+            setTxt('svg1_pd', Pd.toFixed(1)); setTxt('svg1_td', Td.toFixed(1));
+
+            setTxt('svg2_pm', Pm.toFixed(1)); setTxt('svg2_tm', Tm.toFixed(1)); 
+            setTxt('svg2_ps', Ps.toFixed(1)); setTxt('svg2_ts', Ts.toFixed(1)); setTxt('svg2_ws', Math.round(Ws));
+            setTxt('svg2_pd', Pd.toFixed(1)); setTxt('svg2_td', Td.toFixed(1));
+
+            if (Er_total < 10.0) { statusAlert.innerHTML = `<div class="alert-red"><strong>Error:</strong> E<sub>r</sub> &lt; 10.0. Insufficient motive pressure.</div>`; return; }
+
+            let isTwoStageNeeded = Cr_total > 4.0;
+            let isSingleFeasible = Cr_total <= 6.0;
+
+            const Pint = Math.sqrt(Ps * Pd);
+            const Tint = calcSatT(Pint);
+            const Cr_stage1 = Pint / Ps;
+            const Cr_stage2 = Pd / Pint;
+            const Er_stage2 = Pm / Pint;
+
+            setTxt('res_2st_cr_display', Cr_stage1.toFixed(2));
+            setTxt('res_2st_er1_display', Er_total.toFixed(2));
+            setTxt('res_2st_er2_display', Er_stage2.toFixed(2));
+
+            panels.single.style.display = isSingleFeasible ? 'flex' : 'none';
+            panels.double.style.display = isTwoStageNeeded ? 'flex' : 'none';
+            svgCards.single.style.display = isSingleFeasible ? 'flex' : 'none';
+            svgCards.double.style.display = isTwoStageNeeded ? 'flex' : 'none';
+            
+            document.getElementById('summary_pint_div').classList.toggle('opacity-50', !isTwoStageNeeded);
+            document.getElementById('summary_crst_div').classList.toggle('opacity-50', !isTwoStageNeeded);
+
+            let alertHtml = '';
+            if (Cr_total <= 4.0) alertHtml = `<div class="alert-green"><strong>Recommendation: Single-Stage.</strong> Cr &le; 4.0 is optimal for single-stage.</div>`;
+            else if (Cr_total <= 6.0) alertHtml = `<div class="alert-yellow"><strong>Recommendation: Evaluate Both.</strong> Cr is marginal. Single-stage may be unstable; Two-stage is stable but consumes more motive steam.</div>`;
+            else alertHtml = `<div class="alert-red"><strong>Recommendation: Two-Stage Required (or MVR).</strong> Cr &gt; 6.0 exceeds single-stage limits. Note the high OPEX of two-stage due to mass compounding.</div>`;
+            statusAlert.innerHTML = alertHtml;
+
+            if (autoEtaCb.checked) {
+                inputs.eta_single.value = getEtaEstimate(Cr_total, Er_total).toFixed(3);
+                inputs.eta_2st_1.value = getEtaEstimate(Cr_stage1, Er_total).toFixed(3);
+                inputs.eta_2st_2.value = getEtaEstimate(Cr_stage2, Er_stage2).toFixed(3);
+            }
+
+            let eta_s = parseFloat(inputs.eta_single.value);
+            let eta_2_1 = parseFloat(inputs.eta_2st_1.value);
+            let eta_2_2 = parseFloat(inputs.eta_2st_2.value);
+
+            let hasValidEtaS = !isNaN(eta_s) && eta_s > 0;
+            let hasValidEta2_1 = !isNaN(eta_2_1) && eta_2_1 > 0;
+            let hasValidEta2_2 = !isNaN(eta_2_2) && eta_2_2 > 0;
+
+            // 1. Single-Stage Calculation
+            let Wm_1st_final = null;
+            if (isSingleFeasible) {
+                const { dHm: dHm1st, dHs: dHs1st } = calculateEnthalpyParams(Tm, Ts, Td);
+                
+                if (hasValidEtaS && dHm1st > 0) {
+                    const Wm_1st_th = Ws * (dHs1st / (dHm1st * eta_s));
+                    setTxt('res_1st_th', Math.round(Wm_1st_th).toLocaleString());
+                    setTxt('res_1st_th_esave', calcESR(Wm_1st_th, Ws, Tm, Td));
+                    Wm_1st_final = Wm_1st_th;
+                }
+                const Wm_1st_emp = getEmpiricalWm(Ws, Cr_total, Er_total);
+                setTxt('res_1st_emp', Math.round(Wm_1st_emp).toLocaleString());
+                setTxt('res_1st_emp_esave', calcESR(Wm_1st_emp, Ws, Tm, Td));
+                
+                if(!Wm_1st_final) Wm_1st_final = Wm_1st_emp;
+
+                if (Wm_1st_final) {
+                    setTxt('svg1_wm', Math.round(Wm_1st_final));
+                    setTxt('svg1_wd', Math.round(Ws + Wm_1st_final));
+                }
+            }
+
+            // 2. Two-Stage Calculation
+            if (isTwoStageNeeded) {
+                setTxt('val_pint', Pint.toFixed(1)); setTxt('val_tint', Tint.toFixed(1)); setTxt('val_cr_stage', Cr_stage1.toFixed(2));
+                setTxt('svg2_pint', Pint.toFixed(1)); setTxt('svg2_tint', Tint.toFixed(1));
+
+                const { dHm: dHm_s1, dHs: dHs_s1 } = calculateEnthalpyParams(Tm, Ts, Tint);
+                const { dHm: dHm_s2, dHs: dHs_s2 } = calculateEnthalpyParams(Tm, Tint, Td);
+
+                if (hasValidEta2_1 && hasValidEta2_2) {
+                    const Wm_s1_th = Ws * (dHs_s1 / (dHm_s1 * eta_2_1));
+                    const Wm_s2_th = (Ws + Wm_s1_th) * (dHs_s2 / (dHm_s2 * eta_2_2));
+                    if (!isNaN(Wm_s1_th) && !isNaN(Wm_s2_th)) {
+                        setTxt('res_2st_th_m1', Math.round(Wm_s1_th).toLocaleString());
+                        setTxt('res_2st_th_m2', Math.round(Wm_s2_th).toLocaleString());
+                        setTxt('res_2st_th_tot', Math.round(Wm_s1_th + Wm_s2_th).toLocaleString());
+                        setTxt('res_2st_th_esave', calcESR(Wm_s1_th + Wm_s2_th, Ws, Tm, Td));
+                    }
+                }
+
+                const Wm_s1_emp = getEmpiricalWm(Ws, Cr_stage1, Er_total);
+                const Wm_s2_emp = getEmpiricalWm(Ws + Wm_s1_emp, Cr_stage2, Er_stage2);
+
+                if (!isNaN(Wm_s1_emp) && !isNaN(Wm_s2_emp)) {
+                    setTxt('res_2st_emp_m1', Math.round(Wm_s1_emp).toLocaleString());
+                    setTxt('res_2st_emp_m2', Math.round(Wm_s2_emp).toLocaleString());
+                    setTxt('res_2st_emp_tot', Math.round(Wm_s1_emp + Wm_s2_emp).toLocaleString());
+                    setTxt('res_2st_emp_esave', calcESR(Wm_s1_emp + Wm_s2_emp, Ws, Tm, Td));
+                }
+                
+                const disp_m1 = (hasValidEta2_1 && document.getElementById('res_2st_th_m1').textContent !== '--') ? parseFloat(document.getElementById('res_2st_th_m1').textContent.replace(/,/g, '')) : Wm_s1_emp;
+                const disp_m2 = (hasValidEta2_2 && document.getElementById('res_2st_th_m2').textContent !== '--') ? parseFloat(document.getElementById('res_2st_th_m2').textContent.replace(/,/g, '')) : Wm_s2_emp;
+                
+                setTxt('svg2_wm1', Math.round(disp_m1));
+                setTxt('svg2_wm2', Math.round(disp_m2));
+                setTxt('svg2_wint', Math.round(Ws + disp_m1)); 
+                setTxt('svg2_wd', Math.round(Ws + disp_m1 + disp_m2));
+            }
+        }
+
+        // Initialize display and system
+        evaluateSystem();
+    </script>
+</body>
+</html>

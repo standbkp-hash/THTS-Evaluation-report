@@ -175,61 +175,96 @@
             <!-- 3.1 實驗紀錄 -->
             <div class="mb-6">
                 <h3 class="text-xl font-semibold text-gray-800 mb-3">3.1 實驗操作紀錄</h3>
-                <div class="bg-white border border-gray-300 rounded-lg overflow-hidden">
-                    <table class="min-w-full">
+                <div class="bg-white border border-gray-300 rounded-lg overflow-x-auto">
+                    <table class="min-w-full whitespace-nowrap">
                         <thead class="bg-gray-100 border-b border-gray-300 text-sm">
                             <tr>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">測試項目/參數</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">記錄數值與觀察結果</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">工程備註</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">實驗日期</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">樣品名稱</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">操作壓力</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">操作溫度</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">蒸出液外觀</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">塔底殘餘物狀態</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">工程備註 / 觀察紀錄</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm text-gray-700 divide-y divide-gray-200">
                             <tr>
-                                <td class="py-2 px-4 font-medium">初始樣品狀態</td>
-                                <td class="py-2 px-4">含約 10% 高分子聚合物之廢混合溶劑</td>
-                                <td class="py-2 px-4 text-gray-500">模擬機台端實際排廢濃度</td>
+                                <td class="py-2 px-4">2026/06/16</td>
+                                <td class="py-2 px-4 font-medium">Thinner 廢液</td>
+                                <td class="py-2 px-4">~50 torr</td>
+                                <td class="py-2 px-4">100°C ~ 120°C</td>
+                                <td class="py-2 px-4">完全透明澄清</td>
+                                <td class="py-2 px-4">半透明膠狀物，冷卻後無流動性</td>
+                                <td class="py-2 px-4 text-gray-500">殘留物無明顯變黃或焦化，常溫加回溶劑 (1:20) 可完全回溶。</td>
                             </tr>
                             <tr>
-                                <td class="py-2 px-4 font-medium">系統操作壓力</td>
-                                <td class="py-2 px-4">真空度區間 (如: ~50 torr)</td>
-                                <td class="py-2 px-4 text-gray-500">壓降可有效降低沸點，避免高分子受熱</td>
+                                <td class="py-2 px-4">2026/06/16</td>
+                                <td class="py-2 px-4 font-medium">Thinner 廢液</td>
+                                <td class="py-2 px-4">~50 torr</td>
+                                <td class="py-2 px-4">蒸餾系統測試</td>
+                                <td class="py-2 px-4">管口出現白色粉末/混濁液</td>
+                                <td class="py-2 px-4">-</td>
+                                <td class="py-2 px-4 text-gray-500">收集瓶管路出現起泡與微量析出物，需注意系統密閉性或微量成分夾帶。</td>
                             </tr>
                             <tr>
-                                <td class="py-2 px-4 font-medium">加熱/蒸餾溫度</td>
-                                <td class="py-2 px-4">操作溫度區間 (如: 100°C ~ 120°C)</td>
-                                <td class="py-2 px-4 text-gray-500">確保主溶劑對薄荷烷穩定蒸出</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2 px-4 font-medium">餾出物 (Distillate)</td>
-                                <td class="py-2 px-4">無色透明液體</td>
-                                <td class="py-2 px-4 text-gray-500">主要為對薄荷烷與低沸點助溶劑</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2 px-4 font-medium">蒸餘殘留物狀態</td>
-                                <td class="py-2 px-4">半透明膠狀物，冷卻後無流動性，且無明顯變黃或焦化</td>
-                                <td class="py-2 px-4 text-gray-500">證實高分子未發生熱氧化或裂解</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2 px-4 font-medium">常溫回溶測試</td>
-                                <td class="py-2 px-4">膠與溶劑以 1:20 比例混合，常溫下緩慢溶解，最終成完全透明液體</td>
-                                <td class="py-2 px-4 text-gray-500">確認殘留物為物理性相變，無化學交聯</td>
+                                <td class="py-2 px-4">2026/06/17</td>
+                                <td class="py-2 px-4 font-medium">PMA 廢液</td>
+                                <td class="py-2 px-4">~50 torr</td>
+                                <td class="py-2 px-4">待確認</td>
+                                <td class="py-2 px-4">完全透明澄清</td>
+                                <td class="py-2 px-4">深色黏稠殘留物</td>
+                                <td class="py-2 px-4 text-gray-500">對照組測試，蒸出液純度高，分離效果符合預期。</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="mt-2 text-xs text-gray-500">* 註：表內數值已依據前期討論參數建立，若與原始手寫實驗紀錄本存在細微誤差，請以實際批次記錄為準進行修正。</p>
             </div>
 
-            <!-- 3.2 實驗影片紀錄 -->
+            <!-- 3.2 實驗過程影像紀錄 -->
             <div class="mb-6">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 蒸餾末期現象紀錄 (影片)</h3>
-                <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg max-w-2xl">
-                    <p class="text-sm text-gray-700 mb-3">以下影片展示蒸餾末期，溶劑大量揮發後底部殘餘高分子聚合物呈現高黏度、半透明膠狀之狀態。此現象為後端排料設備設計之重要參考依據。</p>
-                    <!-- 使用相對路徑嵌入影片，確保檔案位於同一層目錄 -->
-                    <video controls class="w-full rounded border border-gray-300 shadow-sm" src="20260616_底部結膠.mp4">
-                        您的瀏覽器不支援 HTML5 影片播放，請確認影片檔案 `20260616_底部結膠.mp4` 是否與本網頁放置於同一目錄。
-                    </video>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 實驗過程影像紀錄</h3>
+                
+                <!-- 圖片組 -->
+                <h4 class="text-lg font-medium text-gray-700 mb-2 mt-4 border-l-2 border-gray-400 pl-2">樣品與產物外觀 (圖片)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="Thinner & PMA廢液樣品.jpg" alt="Thinner & PMA廢液樣品" class="max-h-64 object-contain rounded shadow-sm mb-2">
+                        <p class="text-sm text-gray-600 font-medium">Thinner & PMA廢液樣品</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="Thinner & PMA廢液蒸出液(完全透明澄清).jpg" alt="Thinner & PMA廢液蒸出液(完全透明澄清)" class="max-h-64 object-contain rounded shadow-sm mb-2">
+                        <p class="text-sm text-gray-600 font-medium">Thinner & PMA廢液蒸出液(完全透明澄清)</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左)" class="max-h-64 object-contain rounded shadow-sm mb-2">
+                        <p class="text-sm text-gray-600 font-medium">20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左)</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左)" class="max-h-64 object-contain rounded shadow-sm mb-2">
+                        <p class="text-sm text-gray-600 font-medium">20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左)</p>
+                    </div>
+                </div>
+
+                <!-- 影片組 -->
+                <h4 class="text-lg font-medium text-gray-700 mb-2 mt-4 border-l-2 border-gray-400 pl-2">蒸餾動態現象 (影片)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="max-h-64 w-full object-contain rounded shadow-sm mb-2" src="20260616_底部結膠前.mp4"></video>
+                        <p class="text-sm text-gray-600 font-medium">20260616_底部結膠前</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="max-h-64 w-full object-contain rounded shadow-sm mb-2" src="20260616_底部結膠.mp4"></video>
+                        <p class="text-sm text-gray-600 font-medium">20260616_底部結膠</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="max-h-64 w-full object-contain rounded shadow-sm mb-2" src="20260616_連接處起泡.mp4"></video>
+                        <p class="text-sm text-gray-600 font-medium">20260616_連接處起泡</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="max-h-64 w-full object-contain rounded shadow-sm mb-2" src="20260616_收集瓶白色混濁液管口有白色粉末.mp4"></video>
+                        <p class="text-sm text-gray-600 font-medium">20260616_收集瓶白色混濁液管口有白色粉末</p>
+                    </div>
                 </div>
             </div>
 

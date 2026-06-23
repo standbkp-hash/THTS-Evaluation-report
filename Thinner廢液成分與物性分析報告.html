@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>半導體暫時接合製程廢液 (Thinner Waste) 成分與物性分析報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .table-header { background-color: #1e3a8a; color: white; }
+        .table-row:nth-child(even) { background-color: #f9fafb; }
+        .table-row:hover { background-color: #e5e7eb; }
+    </style>
+</head>
+<body class="p-6 text-gray-800">
+
+    <div class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <header class="border-b-2 border-blue-900 pb-4 mb-6">
+            <h1 class="text-3xl font-bold text-blue-900">廢液成分與物性分析報告</h1>
+            <p class="text-sm text-gray-500 mt-2">基準設定：年處理量 5,000 噸 | 廢液來源：先進封裝暫時接合 (Temporary Bonding) 清洗製程</p>
+        </header>
+
+        <!-- Section 1: 物質清單與物性數據 -->
+        <section class="mb-10">
+            <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">1. 廢液組成物質與物理特性 (Physical Properties)</h2>
+            <p class="mb-4 text-sm text-gray-700">註：高分子物質基於 SDS 揭露與「常溫回溶、無黃變」等實驗現象，判定為熱塑性彈性體與環烯烴聚合物。數據來源為常規化學品資料庫，供工程設計參考。</p>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300">
+                    <thead class="table-header text-sm">
+                        <tr>
+                            <th class="py-3 px-4 text-left border border-gray-300">物質分類</th>
+                            <th class="py-3 px-4 text-left border border-gray-300">化學名稱 (推估/已知成分)</th>
+                            <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 1 atm)</th>
+                            <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 50 torr)</th>
+                            <th class="py-3 px-4 text-left border border-gray-300">比重 (25°C)</th>
+                            <th class="py-3 px-4 text-left border border-gray-300">動態黏度 (cP, 25°C)</th>
+                            <th class="py-3 px-4 text-left border border-gray-300">製程中之功能</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <!-- Thinner Components -->
+                        <tr class="table-row">
+                            <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">清洗液主體<br>(TZNR-HC)</td>
+                            <td class="py-2 px-4 border border-gray-300">對薄荷烷 (p-Menthane)</td>
+                            <td class="py-2 px-4 border border-gray-300">168 ~ 172</td>
+                            <td class="py-2 px-4 border border-gray-300">~ 80 ~ 85</td>
+                            <td class="py-2 px-4 border border-gray-300">0.80 ~ 0.81</td>
+                            <td class="py-2 px-4 border border-gray-300">1.5 ~ 2.0</td>
+                            <td class="py-2 px-4 border border-gray-300">解鍵/殘膠清洗之核心溶劑</td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="py-2 px-4 border border-gray-300">單萜烯混合物 (Mono Terpenes)<br><span class="text-xs text-gray-500">以 d-Limonene 為參考</span></td>
+                            <td class="py-2 px-4 border border-gray-300">175 ~ 176</td>
+                            <td class="py-2 px-4 border border-gray-300">~ 85 ~ 90</td>
+                            <td class="py-2 px-4 border border-gray-300">0.84</td>
+                            <td class="py-2 px-4 border border-gray-300">0.8 ~ 1.0</td>
+                            <td class="py-2 px-4 border border-gray-300">清洗助溶劑 (具雙鍵反應性)</td>
+                        </tr>
+                        <!-- Adhesive Polymers -->
+                        <tr class="table-row">
+                            <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">高分子固體物<br>(源自 TZNR-A)</td>
+                            <td class="py-2 px-4 border border-gray-300">熱塑性彈性體 (SEBS/SEPS)</td>
+                            <td class="py-2 px-4 border border-gray-300">N/A (熱熔相變)</td>
+                            <td class="py-2 px-4 border border-gray-300">N/A</td>
+                            <td class="py-2 px-4 border border-gray-300">0.91</td>
+                            <td class="py-2 px-4 border border-gray-300">固態<br><span class="text-xs text-gray-500">(150°C 熔體 > 10,000 cP)</span></td>
+                            <td class="py-2 px-4 border border-gray-300">暫時接合膠之彈性緩衝主體</td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="py-2 px-4 border border-gray-300">環烯烴聚合物 (COP/COC)</td>
+                            <td class="py-2 px-4 border border-gray-300">N/A (熱熔相變)</td>
+                            <td class="py-2 px-4 border border-gray-300">N/A</td>
+                            <td class="py-2 px-4 border border-gray-300">1.01</td>
+                            <td class="py-2 px-4 border border-gray-300">固態</td>
+                            <td class="py-2 px-4 border border-gray-300">增黏與耐高溫支撐基材</td>
+                        </tr>
+                        <!-- Minor Solvents from Adhesive -->
+                        <tr class="table-row">
+                            <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">膠體原生溶劑<br>(視廢液端點而定)</td>
+                            <td class="py-2 px-4 border border-gray-300">十氫萘 (Decahydronaphthalene)</td>
+                            <td class="py-2 px-4 border border-gray-300">187 ~ 196</td>
+                            <td class="py-2 px-4 border border-gray-300">~ 95 ~ 100</td>
+                            <td class="py-2 px-4 border border-gray-300">0.89</td>
+                            <td class="py-2 px-4 border border-gray-300">2.5 ~ 3.0</td>
+                            <td class="py-2 px-4 border border-gray-300">接合膠塗佈前之液化主溶劑</td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="py-2 px-4 border border-gray-300">醋酸正丁酯 (N-Butyl acetate)</td>
+                            <td class="py-2 px-4 border border-gray-300">126</td>
+                            <td class="py-2 px-4 border border-gray-300">~ 45 ~ 50</td>
+                            <td class="py-2 px-4 border border-gray-300">0.88</td>
+                            <td class="py-2 px-4 border border-gray-300">0.73</td>
+                            <td class="py-2 px-4 border border-gray-300">流變調節與表面潤濕劑</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 2: 質量平衡估算 -->
+        <section class="mb-10">
+            <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">2. 質量平衡與回收價值估算 (Mass Balance Estimate)</h2>
+            <p class="mb-4 text-sm text-gray-700">依據未烘烤塗佈端/機台清洗廢液之情境設定：廢液中固含聚合物 (Polymer) 佔 10%。此 10% 聚合物係源自原生接合膠 (TZNR-A，逆推估算含 30% 聚合物、65% 十氫萘、5% 醋酸正丁酯)，其餘質量則為外加之清洗液 (TZNR-HC，估算含 95% 對薄荷烷、5% 單萜烯)。<br>
+            計算基準：<strong>總廢液 5,000 噸 / 年</strong></p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Data Card 1 -->
+                <div class="bg-blue-50 p-5 rounded-lg border border-blue-100 shadow-sm">
+                    <h3 class="text-lg font-bold text-blue-900 mb-3">清洗液成分 (TZNR-HC)</h3>
+                    <ul class="space-y-2 text-sm text-gray-800">
+                        <li class="flex justify-between border-b border-blue-200 pb-1">
+                            <span>推算總加入量：</span>
+                            <span class="font-bold">~ 3,333 噸/年</span>
+                        </li>
+                        <li class="flex justify-between border-b border-blue-200 pb-1">
+                            <span>對薄荷烷 (估 95%)：</span>
+                            <span class="font-bold">~ 3,166 噸/年</span>
+                        </li>
+                        <li class="flex justify-between border-b border-blue-200 pb-1">
+                            <span>單萜烯混合物 (估 5%)：</span>
+                            <span class="font-bold">~ 167 噸/年</span>
+                        </li>
+                    </ul>
+                    <p class="mt-3 text-xs text-gray-500">工程備註：對薄荷烷為本系統最高價值之純化回收標的。</p>
+                </div>
+
+                <!-- Data Card 2 -->
+                <div class="bg-green-50 p-5 rounded-lg border border-green-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-green-900 mb-3">膠體原生溶劑 (TBA Solvents)</h3>
+                    <ul class="space-y-2 text-sm text-gray-800">
+                        <li class="flex justify-between border-b border-green-200 pb-1">
+                            <span>伴隨聚合物混入量：</span>
+                            <span class="font-bold">~ 1,167 噸/年</span>
+                        </li>
+                        <li class="flex justify-between border-b border-green-200 pb-1">
+                            <span>十氫萘 (估 65% of TBA)：</span>
+                            <span class="font-bold">~ 1,083 噸/年</span>
+                        </li>
+                        <li class="flex justify-between border-b border-green-200 pb-1">
+                            <span>醋酸正丁酯 (估 5% of TBA)：</span>
+                            <span class="font-bold">~ 84 噸/年</span>
+                        </li>
+                    </ul>
+                    <p class="mt-3 text-xs text-gray-500">工程備註：十氫萘沸點(190°C)高於對薄荷烷，分離時易與聚合物共留於塔底；醋酸正丁酯沸點最低，會優先蒸出為輕質端 (Light ends)。</p>
+                </div>
+
+                <!-- Data Card 3 -->
+                <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">高分子聚合物 (10% 總佔比)</h3>
+                    <ul class="space-y-2 text-sm text-gray-800">
+                        <li class="flex justify-between border-b border-gray-200 pb-1">
+                            <span>年總入料量：</span>
+                            <span class="font-bold">500 噸/年</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-200 pb-1">
+                            <span>固態聚合物 (SEBS/COP)：</span>
+                            <span class="font-bold">500 噸/年</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-200 pb-1 text-red-600">
+                            <span>排廢液態載體需求：</span>
+                            <span class="font-bold">需保留 ~ 1,166 噸溶劑</span>
+                        </li>
+                    </ul>
+                    <p class="mt-3 text-xs text-gray-500">工程備註：為維持 30% 固含量確保流動排料。塔底排出的載體溶劑將主要由十氫萘構成（因其沸點最高），此物理特性反而能有效減少高價值「對薄荷烷」的夾帶損失。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 實驗結果與討論 -->
+        <section class="mb-10">
+            <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">3. 實驗結果與討論 (Experimental Results & Discussion)</h2>
+            <p class="mb-4 text-sm text-gray-700">本章節彙整廢液之蒸餾濃縮實驗紀錄與物理現象觀察，作為後續設備選型與操作邊界設定之客觀依據。</p>
+
+            <!-- 3.1 實驗紀錄 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.1 實驗操作紀錄</h3>
+                <div class="bg-white border border-gray-300 rounded-lg overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-100 border-b border-gray-300 text-sm">
+                            <tr>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">測試項目/參數</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">記錄數值與觀察結果</th>
+                                <th class="py-2 px-4 text-left font-semibold text-gray-700">工程備註</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-700 divide-y divide-gray-200">
+                            <tr>
+                                <td class="py-2 px-4 font-medium">初始樣品狀態</td>
+                                <td class="py-2 px-4">含約 10% 高分子聚合物之廢混合溶劑</td>
+                                <td class="py-2 px-4 text-gray-500">模擬機台端實際排廢濃度</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 font-medium">系統操作壓力</td>
+                                <td class="py-2 px-4">真空度區間 (如: ~50 torr)</td>
+                                <td class="py-2 px-4 text-gray-500">壓降可有效降低沸點，避免高分子受熱</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 font-medium">加熱/蒸餾溫度</td>
+                                <td class="py-2 px-4">操作溫度區間 (如: 100°C ~ 120°C)</td>
+                                <td class="py-2 px-4 text-gray-500">確保主溶劑對薄荷烷穩定蒸出</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 font-medium">餾出物 (Distillate)</td>
+                                <td class="py-2 px-4">無色透明液體</td>
+                                <td class="py-2 px-4 text-gray-500">主要為對薄荷烷與低沸點助溶劑</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 font-medium">蒸餘殘留物狀態</td>
+                                <td class="py-2 px-4">半透明膠狀物，冷卻後無流動性，且無明顯變黃或焦化</td>
+                                <td class="py-2 px-4 text-gray-500">證實高分子未發生熱氧化或裂解</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 font-medium">常溫回溶測試</td>
+                                <td class="py-2 px-4">膠與溶劑以 1:20 比例混合，常溫下緩慢溶解，最終成完全透明液體</td>
+                                <td class="py-2 px-4 text-gray-500">確認殘留物為物理性相變，無化學交聯</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-2 text-xs text-gray-500">* 註：表內數值已依據前期討論參數建立，若與原始手寫實驗紀錄本存在細微誤差，請以實際批次記錄為準進行修正。</p>
+            </div>
+
+            <!-- 3.2 實驗影片紀錄 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 蒸餾末期現象紀錄 (影片)</h3>
+                <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg max-w-2xl">
+                    <p class="text-sm text-gray-700 mb-3">以下影片展示蒸餾末期，溶劑大量揮發後底部殘餘高分子聚合物呈現高黏度、半透明膠狀之狀態。此現象為後端排料設備設計之重要參考依據。</p>
+                    <!-- 使用相對路徑嵌入影片，確保檔案位於同一層目錄 -->
+                    <video controls class="w-full rounded border border-gray-300 shadow-sm" src="20260616_底部結膠.mp4">
+                        您的瀏覽器不支援 HTML5 影片播放，請確認影片檔案 `20260616_底部結膠.mp4` 是否與本網頁放置於同一目錄。
+                    </video>
+                </div>
+            </div>
+
+            <!-- 3.3 結論與工程探討 -->
+            <div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.3 實驗結論與工程意義</h3>
+                <div class="bg-white p-5 border border-gray-300 rounded-lg">
+                    <ul class="list-disc list-inside space-y-2 text-sm text-gray-800">
+                        <li><strong>化學穩定性驗證：</strong> 殘餘膠體「無黃變」且「具備常溫 1:20 比例回溶能力」，實證該廢液中的高分子成分 (SEBS/COP) 在目前設定的真空與溫度區間下，僅發生可逆的物理相變，未觸發不可逆的化學交聯或熱降解反應。</li>
+                        <li><strong>避免焦化結垢風險：</strong> 因未發生熱固化 (Thermosetting) 現象，可排除傳統蒸發器表面產生永久性碳化死垢的風險。</li>
+                        <li><strong>排料流體力學挑戰：</strong> 影片證實該物料在喪失溶劑載體後將失去流動性。因此，蒸餾系統設計必須排除依靠重力排料的傳統鍋爐，需採用 <strong>薄膜蒸發器 (WFE/TFE)</strong> 進行機械強制刮膜，並於底部保留適當比例之溶劑 (固含量建議控制於 30%~40%)，搭配高黏度齒輪泵 (Gear Pump) 方可實現連續排料。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

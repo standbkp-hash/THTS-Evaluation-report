@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>半導體暫時接合製程廢液 (Thinner Waste) 成分與物性分析報告</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Chart.js 與 DataLabels 套件以繪製時間軸圖表 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
         .table-header { background-color: #1e3a8a; color: white; }
@@ -170,54 +173,42 @@
         <!-- Section 3: 實驗結果與討論 -->
         <section class="mb-10">
             <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">3. 實驗結果與討論 (Experimental Results & Discussion)</h2>
-            <p class="mb-4 text-sm text-gray-700">本章節彙整廢液之蒸餾濃縮實驗紀錄與物理現象觀察，作為後續設備選型與操作邊界設定之客觀依據。</p>
+            <p class="mb-4 text-sm text-gray-700">本章節彙整廢液之旋轉濃縮實驗紀錄與物理現象觀察，作為後續設備選型與操作邊界設定之客觀依據。</p>
 
             <!-- 3.1 實驗紀錄 -->
             <div class="mb-6">
                 <h3 class="text-xl font-semibold text-gray-800 mb-3">3.1 實驗操作紀錄</h3>
-                <div class="bg-white border border-gray-300 rounded-lg overflow-x-auto">
-                    <table class="min-w-full whitespace-nowrap">
-                        <thead class="bg-gray-100 border-b border-gray-300 text-sm">
-                            <tr>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">實驗日期</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">樣品名稱</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">操作壓力</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">操作溫度</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">蒸出液外觀</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">塔底殘餘物狀態</th>
-                                <th class="py-2 px-4 text-left font-semibold text-gray-700">工程備註 / 觀察紀錄</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm text-gray-700 divide-y divide-gray-200">
-                            <tr>
-                                <td class="py-2 px-4">2026/06/16</td>
-                                <td class="py-2 px-4 font-medium">Thinner 廢液</td>
-                                <td class="py-2 px-4">~50 torr</td>
-                                <td class="py-2 px-4">100°C ~ 120°C</td>
-                                <td class="py-2 px-4">完全透明澄清</td>
-                                <td class="py-2 px-4">半透明膠狀物，冷卻後無流動性</td>
-                                <td class="py-2 px-4 text-gray-500">殘留物無明顯變黃或焦化，常溫加回溶劑 (1:20) 可完全回溶。</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2 px-4">2026/06/16</td>
-                                <td class="py-2 px-4 font-medium">Thinner 廢液</td>
-                                <td class="py-2 px-4">~50 torr</td>
-                                <td class="py-2 px-4">蒸餾系統測試</td>
-                                <td class="py-2 px-4">管口出現白色粉末/混濁液</td>
-                                <td class="py-2 px-4">-</td>
-                                <td class="py-2 px-4 text-gray-500">收集瓶管路出現起泡與微量析出物，需注意系統密閉性或微量成分夾帶。</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2 px-4">2026/06/17</td>
-                                <td class="py-2 px-4 font-medium">PMA 廢液</td>
-                                <td class="py-2 px-4">~50 torr</td>
-                                <td class="py-2 px-4">待確認</td>
-                                <td class="py-2 px-4">完全透明澄清</td>
-                                <td class="py-2 px-4">深色黏稠殘留物</td>
-                                <td class="py-2 px-4 text-gray-500">對照組測試，蒸出液純度高，分離效果符合預期。</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                
+                <!-- 基本資訊 -->
+                <div class="bg-white border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
+                    <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">實驗基本資訊</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                        <div><span class="font-medium">實驗日期：</span>2026/06/16</div>
+                        <div><span class="font-medium">實驗地點：</span>台大</div>
+                        <div><span class="font-medium">樣品名稱：</span>矽品 HC Thinner廢液</div>
+                        <div><span class="font-medium">實驗設備：</span>理海旋轉濃縮設備</div>
+                    </div>
+                </div>
+
+                <!-- 質量平衡紀錄 -->
+                <div class="bg-white border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
+                    <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">質量平衡紀錄</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                        <div><span class="font-medium">梨形瓶空重：</span>263.49 g</div>
+                        <div><span class="font-medium">入料重量：</span>196.12 g</div>
+                        <div><span class="font-medium">收集瓶空重：</span>306.15 g</div>
+                        <div><span class="font-medium">底部剩餘：</span>20.80 g</div>
+                        <div class="md:col-start-3"><span class="font-medium">收集瓶淨重：</span>170.32 g</div>
+                    </div>
+                </div>
+
+                <!-- 操作參數紀錄 (改為時間軸圖表) -->
+                <div class="bg-white border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
+                    <h4 class="font-semibold text-gray-700 mb-4 border-b pb-1">操作參數時間軸 (時間 vs 梨形瓶內溫)</h4>
+                    <div class="relative w-full h-[500px]">
+                        <!-- 繪製圖表的 Canvas 畫布 -->
+                        <canvas id="tempTimeChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -283,5 +274,106 @@
 
     </div>
 
+    <!-- 繪製圖表的 JavaScript 邏輯 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 註冊 DataLabels 插件
+            Chart.register(ChartDataLabels);
+
+            const ctx = document.getElementById('tempTimeChart').getContext('2d');
+            
+            // 完整實驗紀錄數據
+            const rawData = [
+                { time: '14:00', temp: 26.0, remark: null },
+                { time: '14:07', temp: 36.3, remark: null },
+                { time: '14:11', temp: 42.9, remark: null },
+                { time: '14:15', temp: 51.3, remark: ['有些微液體蒸出', '(微量在管壁)'] },
+                { time: '14:20', temp: 61.7, remark: null },
+                { time: '14:23', temp: 67.2, remark: '梨形瓶跟濃縮機接口有泡泡' },
+                { time: '14:25', temp: 71.9, remark: null },
+                { time: '14:28', temp: 75.1, remark: null },
+                { time: '14:30', temp: 83.3, remark: null },
+                { time: '14:32', temp: 88.2, remark: null },
+                { time: '14:36', temp: 97.4, remark: null },
+                { time: '14:39', temp: 102.7, remark: null },
+                { time: '14:41', temp: 103.3, remark: ['開始蒸出，收集瓶跟', '濃縮機接口有泡泡'] },
+                { time: '14:51', temp: 107.1, remark: null },
+                { time: '15:05', temp: 111.3, remark: ['溫度計碰不到液體', '→塔底沸騰→塔底結膠'] }
+            ];
+
+            const labels = rawData.map(d => d.time);
+            const temps = rawData.map(d => d.temp);
+            const remarks = rawData.map(d => d.remark);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '梨形瓶內溫 (℃)',
+                        data: temps,
+                        borderColor: '#2563eb', // Tailwind blue-600
+                        backgroundColor: '#3b82f6',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        datalabels: {
+                            align: 'right', // 備註文字靠右對齊
+                            anchor: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            borderColor: '#9ca3af',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 6,
+                            color: '#1f2937',
+                            font: {
+                                size: 12,
+                                family: 'sans-serif'
+                            },
+                            formatter: function(value, context) {
+                                return remarks[context.dataIndex];
+                            },
+                            display: function(context) {
+                                // 僅在有備註數據時顯示標籤
+                                return remarks[context.dataIndex] !== null; 
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: '溫度 (℃)'
+                            },
+                            suggestedMin: 20,
+                            suggestedMax: 120
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '時間 (hh:mm)'
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            right: 180, // 右側預留空間避免備註文字被切斷
+                            top: 20
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

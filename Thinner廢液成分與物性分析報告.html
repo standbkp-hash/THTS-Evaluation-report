@@ -209,16 +209,16 @@
                     </div>
                 </div>
 
-                <!-- 操作參數紀錄 (時間軸圖表) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">Thinner 廢液操作參數時間軸<br><span class="text-sm text-blue-600">系統壓力: 100 torr</span></h4>
+                <!-- 操作參數紀錄 (時間軸圖表獨立排列) -->
+                <div class="space-y-6 mb-6">
+                    <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
+                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">Thinner 廢液操作參數時間軸<br><span class="text-sm text-blue-600 font-normal">系統壓力: 100 torr</span></h4>
                         <div class="relative w-full h-[400px]">
                             <canvas id="tempTimeChart_thinner"></canvas>
                         </div>
                     </div>
-                    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">PMA 廢液操作參數時間軸<br><span class="text-sm text-blue-600">系統壓力: 100 torr</span></h4>
+                    <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
+                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">PMA 廢液操作參數時間軸<br><span class="text-sm text-blue-600 font-normal">系統壓力: 100 torr</span></h4>
                         <div class="relative w-full h-[400px]">
                             <canvas id="tempTimeChart_pma"></canvas>
                         </div>
@@ -230,47 +230,53 @@
             <div class="mb-6">
                 <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 實驗影像紀錄與外觀分析</h3>
                 
-                <!-- 圖片組 -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="Thinner & PMA廢液樣品.jpg" alt="Thinner & PMA廢液樣品" class="h-40 object-contain rounded shadow-sm mb-2">
-                        <p class="text-xs text-gray-600 font-medium text-center">原廢液樣品比較</p>
+                <!-- 圖片組 (3欄 2列配置，最大化呈現) -->
+                <h4 class="text-lg font-medium text-gray-700 mb-3 border-l-2 border-gray-400 pl-2">樣品與產物外觀 (圖片)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="Thinner & PMA廢液樣品.jpg" alt="Thinner & PMA廢液樣品" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                        <p class="text-sm text-gray-600 font-medium text-center">1. 原廢液樣品比較</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="Thinner & PMA廢液蒸出液(完全透明澄清).jpg" alt="Thinner & PMA廢液蒸出液" class="h-40 object-contain rounded shadow-sm mb-2">
-                        <p class="text-xs text-gray-600 font-medium text-center">雙廢液蒸出液 (透明澄清)</p>
+                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="Thinner & PMA廢液蒸出液(完全透明澄清).jpg" alt="Thinner & PMA廢液蒸出液" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                        <p class="text-sm text-gray-600 font-medium text-center">2. 雙廢液蒸出液 (透明澄清)</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="Thinner 塔底蒸餘物" class="h-40 object-contain rounded shadow-sm mb-2">
-                        <p class="text-xs text-gray-600 font-medium text-center">Thinner 蒸餘物 (半透明膠狀)</p>
+                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="Thinner 塔底蒸餘物" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                        <p class="text-sm text-gray-600 font-medium text-center">3. Thinner 蒸餘物 (半透明膠狀)</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="PMA 塔底蒸餘物" class="h-40 object-contain rounded shadow-sm mb-2">
-                        <p class="text-xs text-gray-600 font-medium text-center">PMA 蒸餘物 (深色黏稠)</p>
+                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <img src="20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="PMA 塔底蒸餘物" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                        <p class="text-sm text-gray-600 font-medium text-center">4. PMA 蒸餘物 (深色黏稠)</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-blue-300">
-                        <img src="20260617_PMA廢液_旋轉濃縮實驗蒸到乾_100torr.jpg" alt="PMA廢液蒸到乾殘渣" class="h-40 object-contain rounded shadow-sm mb-2">
-                        <p class="text-xs text-blue-700 font-medium text-center">PMA 蒸到乾殘渣 (深褐色固態)</p>
+                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-blue-300">
+                        <img src="20260622_矽品_蒸餘物很黏牽絲.jpg" alt="Thinner 蒸餘物牽絲" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                        <p class="text-sm text-blue-700 font-medium text-center">5. Thinner 蒸餘物 (高黏度牽絲狀態)</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-blue-300">
+                        <img src="20260617_PMA廢液_旋轉濃縮實驗蒸到乾_100torr.jpg" alt="PMA廢液蒸到乾殘渣" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                        <p class="text-sm text-blue-700 font-medium text-center">6. PMA 蒸到乾殘渣 (深褐色固態)</p>
                     </div>
                 </div>
 
-                <!-- 影片組 -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center col-span-1">
-                        <video controls class="max-h-56 w-full object-contain rounded shadow-sm mb-2" src="20260616_底部結膠前.mp4"></video>
+                <!-- 影片組 (單列 4 欄配置，寬度最大化) -->
+                <h4 class="text-lg font-medium text-gray-700 mb-3 border-l-2 border-gray-400 pl-2">蒸餾動態現象 (影片)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_底部結膠前.mp4"></video>
                         <p class="text-xs text-gray-600 font-medium text-center">Thinner: 底部結膠前</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center col-span-1">
-                        <video controls class="max-h-56 w-full object-contain rounded shadow-sm mb-2" src="20260616_底部結膠.mp4"></video>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_底部結膠.mp4"></video>
                         <p class="text-xs text-gray-600 font-medium text-center">Thinner: 底部結膠</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center col-span-1">
-                        <video controls class="max-h-56 w-full object-contain rounded shadow-sm mb-2" src="20260616_連接處起泡.mp4"></video>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_連接處起泡.mp4"></video>
                         <p class="text-xs text-gray-600 font-medium text-center">Thinner: 連接處起泡</p>
                     </div>
-                    <div class="bg-gray-50 p-2 border border-gray-200 rounded-lg flex flex-col items-center justify-center col-span-1">
-                        <video controls class="max-h-56 w-full object-contain rounded shadow-sm mb-2" src="20260616_收集瓶白色混濁液管口有白色粉末.mp4"></video>
-                        <p class="text-xs text-gray-600 font-medium text-center">Thinner: 管口白色粉末析出</p>
+                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_收集瓶白色混濁液管口有白色粉末.mp4"></video>
+                        <p class="text-xs text-gray-600 font-medium text-center">Thinner: 管口析出現象</p>
                     </div>
                 </div>
             </div>
@@ -319,15 +325,15 @@
                         plugins: {
                             legend: { position: 'top' },
                             datalabels: {
-                                align: 'right',
-                                anchor: 'center',
+                                align: 'left',
+                                anchor: 'end',
                                 backgroundColor: 'rgba(255, 255, 255, 0.85)',
                                 borderColor: '#9ca3af',
                                 borderWidth: 1,
                                 borderRadius: 4,
-                                padding: 4,
+                                padding: 6,
                                 color: '#1f2937',
-                                font: { size: 11, family: 'sans-serif' },
+                                font: { size: 12, family: 'sans-serif' },
                                 formatter: function(value, context) {
                                     return remarks[context.dataIndex];
                                 },
@@ -347,7 +353,7 @@
                             }
                         },
                         layout: {
-                            padding: { right: 120, top: 20 }
+                            padding: { right: 50, top: 20 }
                         }
                     }
                 });
@@ -387,8 +393,8 @@
                 { time: '11:25', temp: 78.9, remark: null },
                 { time: '11:28', temp: 83.1, remark: '開始蒸出' },
                 { time: '11:31', temp: 86.9, remark: '穩定蒸出' },
-                { time: '11:39', temp: 88.9, remark: ['塔底快乾，溫度計', '碰不到液面'] },
-                { time: '11:42', temp: 92.1, remark: ['塔底乾涸，溫度計', '碰到器壁'] }
+                { time: '11:39', temp: 88.9, remark: ['塔底快乾', '溫度計碰不到液面'] },
+                { time: '11:42', temp: 92.1, remark: ['塔底乾涸', '溫度計碰到器壁'] }
             ];
 
             const ctxPma = document.getElementById('tempTimeChart_pma').getContext('2d');

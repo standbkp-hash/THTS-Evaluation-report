@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>矽品廢液回收評估：物料分析與技術方案總覽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .table-header { background-color: #1e3a8a; color: white; }
+        .table-row:nth-child(even) { background-color: #f9fafb; }
+        .table-row:hover { background-color: #e5e7eb; }
+        .svg-container { width: 100%; overflow-x: auto; background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 1rem; }
+        /* SVG Text Styling */
+        .svg-text { font-family: 'Segoe UI', sans-serif; font-size: 13px; fill: #374151; }
+        .svg-title { font-weight: bold; font-size: 14px; fill: #1e3a8a; }
+        .svg-value { font-weight: bold; fill: #b91c1c; } /* Red for flow rates */
+        .svg-condition { fill: #047857; font-size: 12px; } /* Green for conditions */
+        .svg-line { stroke: #4b5563; stroke-width: 2; fill: none; }
+        .svg-equipment { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; }
+        .svg-equipment-pma { fill: #f0fdf4; stroke: #059669; stroke-width: 2; }
+    </style>
+</head>
+<body class="p-6 text-gray-800">
+
+    <div class="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <header class="pb-2 mb-4">
+            <h1 class="text-3xl font-bold text-blue-900">廢液回收評估：物料分析與技術方案總覽</h1>
+            <p class="text-sm text-gray-500 mt-2">系統設定基準：Thinner 年處理量 5,000 噸 / PMA 年處理量 100 噸</p>
+        </header>
+
+        <div class="border-b border-gray-200 mb-6 flex overflow-x-auto">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button id="btn-tab1" onclick="switchTab('tab1')" class="border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    基本物料資訊與實驗分析
+                </button>
+                <button id="btn-tab2" onclick="switchTab('tab2')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    技術回收方案 (Thinner)
+                </button>
+                <button id="btn-tab3" onclick="switchTab('tab3')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    技術回收方案 (PMA)
+                </button>
+                <button id="btn-tab4" onclick="switchTab('tab4')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    經濟性與碳排分析
+                </button>
+            </nav>
+        </div>
+
+        <div id="tab1" class="tab-content block">
+            <section class="mb-10">
+                <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">1. 廢液組成物質與物理特性 (Physical Properties)</h2>
+                <p class="mb-4 text-sm text-gray-700">註：高分子物質基於 SDS 揭露與實驗現象判定；各溶劑不同真空度之沸點依據安托萬方程 (Antoine equation) 或常規化學品資料庫推估，供工程設計參考。</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-300">
+                        <thead class="table-header text-sm">
+                            <tr>
+                                <th class="py-3 px-4 text-left border border-gray-300">物質分類</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">化學名稱 (推估/已知成分)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 1 atm)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 100 torr)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 50 torr)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">比重 (25°C)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">動態黏度 (cP)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">製程中之功能</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">清洗液主體<br>(TZNR-HC)</td>
+                                <td class="py-2 px-4 border border-gray-300">對薄荷烷 (p-Menthane)</td>
+                                <td class="py-2 px-4 border border-gray-300">168 ~ 172</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 100 ~ 105</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 80 ~ 85</td>
+                                <td class="py-2 px-4 border border-gray-300">0.80 ~ 0.81</td>
+                                <td class="py-2 px-4 border border-gray-300">1.5 ~ 2.0</td>
+                                <td class="py-2 px-4 border border-gray-300">解鍵/殘膠清洗之核心溶劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300">單萜烯混合物 (Mono Terpenes)</td>
+                                <td class="py-2 px-4 border border-gray-300">175 ~ 176</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 105 ~ 110</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 85 ~ 90</td>
+                                <td class="py-2 px-4 border border-gray-300">0.84</td>
+                                <td class="py-2 px-4 border border-gray-300">0.8 ~ 1.0</td>
+                                <td class="py-2 px-4 border border-gray-300">清洗助溶劑 (具雙鍵反應性)</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">高分子固體物<br>(源自 TZNR-A)</td>
+                                <td class="py-2 px-4 border border-gray-300">熱塑性彈性體 (SEBS/SEPS)</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">0.91</td>
+                                <td class="py-2 px-4 border border-gray-300">固態</td>
+                                <td class="py-2 px-4 border border-gray-300">暫時接合膠之彈性緩衝主體</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300">環烯烴聚合物 (COP/COC)</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">1.01</td>
+                                <td class="py-2 px-4 border border-gray-300">固態</td>
+                                <td class="py-2 px-4 border border-gray-300">增黏與耐高溫支撐基材</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">膠體原生溶劑<br>(視廢液端點而定)</td>
+                                <td class="py-2 px-4 border border-gray-300">十氫萘 (Decahydronaphthalene)</td>
+                                <td class="py-2 px-4 border border-gray-300">187 ~ 196</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 115 ~ 120</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 95 ~ 100</td>
+                                <td class="py-2 px-4 border border-gray-300">0.89</td>
+                                <td class="py-2 px-4 border border-gray-300">2.5 ~ 3.0</td>
+                                <td class="py-2 px-4 border border-gray-300">接合膠塗佈前之液化主溶劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300">醋酸正丁酯 (N-Butyl acetate)</td>
+                                <td class="py-2 px-4 border border-gray-300">126</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 65 ~ 70</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 45 ~ 50</td>
+                                <td class="py-2 px-4 border border-gray-300">0.88</td>
+                                <td class="py-2 px-4 border border-gray-300">0.73</td>
+                                <td class="py-2 px-4 border border-gray-300">流變調節與表面潤濕劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold text-emerald-700" rowspan="2">光阻製程廢液<br>(新增評估)</td>
+                                <td class="py-2 px-4 border border-gray-300 text-emerald-700">丙二醇甲醚醋酸酯<br>(PMA / PGMEA)</td>
+                                <td class="py-2 px-4 border border-gray-300">146</td>
+                                <td class="py-2 px-4 border border-gray-300 font-bold">~ 88 ~ 89</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 70</td>
+                                <td class="py-2 px-4 border border-gray-300">0.96 ~ 0.97</td>
+                                <td class="py-2 px-4 border border-gray-300">1.1 ~ 1.2</td>
+                                <td class="py-2 px-4 border border-gray-300">光阻清洗與稀釋劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 text-emerald-700">乙二醇單丁醚<br>(Butyl cellosolve)</td>
+                                <td class="py-2 px-4 border border-gray-300">171</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 105 ~ 110</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 85 ~ 90</td>
+                                <td class="py-2 px-4 border border-gray-300">0.90</td>
+                                <td class="py-2 px-4 border border-gray-300">3.3</td>
+                                <td class="py-2 px-4 border border-gray-300">光阻液之高沸點助溶劑</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="mb-10">
+                <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">2. 質量平衡與回收價值估算 (Mass Balance Estimate)</h2>
+                <div class="space-y-6">
+                    <div class="bg-white p-5 rounded-lg border border-gray-300 shadow-sm w-full">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">A. Thinner 廢液系統詳細質量平衡 (總處理量：5,000 噸/年)</h3>
+                        <p class="text-sm text-gray-500 mb-4">依據原物料組成還原推算，總廢液中包含清洗液 (Thinner) 與原生接合膠 (TBA) 兩大來源，其詳細組成佔比與預期分配流向如下：</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-blue-50 p-4 rounded-md border border-blue-200">
+                                <h4 class="font-bold text-blue-900 mb-2 border-b border-blue-200 pb-2 flex justify-between items-center">
+                                    <span>清洗液 (Thinner)</span>
+                                    <span>3,333 噸/年 (66.7%)</span>
+                                </h4>
+                                <ul class="space-y-3 text-sm text-gray-800 mt-3">
+                                    <li class="flex justify-between items-center">
+                                        <span class="font-semibold text-blue-700">

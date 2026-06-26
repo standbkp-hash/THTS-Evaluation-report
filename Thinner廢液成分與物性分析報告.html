@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>半導體暫時接合製程廢液 (Thinner Waste) 成分與物性分析報告</title>
+    <title>矽品廢液回收評估：物料分析與技術方案總覽</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Chart.js 與 DataLabels 套件以繪製時間軸圖表 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,296 +13,720 @@
         .table-header { background-color: #1e3a8a; color: white; }
         .table-row:nth-child(even) { background-color: #f9fafb; }
         .table-row:hover { background-color: #e5e7eb; }
+        .svg-container { width: 100%; overflow-x: auto; background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 1rem; }
+        /* SVG Text Styling */
+        .svg-text { font-family: 'Segoe UI', sans-serif; font-size: 13px; fill: #374151; }
+        .svg-title { font-weight: bold; font-size: 14px; fill: #1e3a8a; }
+        .svg-value { font-weight: bold; fill: #b91c1c; } /* Red for flow rates */
+        .svg-condition { fill: #047857; font-size: 12px; } /* Green for conditions */
+        .svg-line { stroke: #4b5563; stroke-width: 2; fill: none; }
+        .svg-equipment { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; }
+        .svg-equipment-pma { fill: #f0fdf4; stroke: #059669; stroke-width: 2; }
     </style>
 </head>
 <body class="p-6 text-gray-800">
 
     <div class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <header class="border-b-2 border-blue-900 pb-4 mb-6">
-            <h1 class="text-3xl font-bold text-blue-900">廢液成分與物性分析報告</h1>
-            <p class="text-sm text-gray-500 mt-2">基準設定：Thinner 年處理量 5,000 噸 / PMA 年處理量 100 噸 | 廢液來源：先進封裝清洗與光阻製程</p>
+        <header class="pb-2 mb-4">
+            <h1 class="text-3xl font-bold text-blue-900">廢液回收評估：物料分析與技術方案總覽</h1>
+            <p class="text-sm text-gray-500 mt-2">系統設定基準：Thinner 年處理量 5,000 噸 / PMA 年處理量 100 噸</p>
         </header>
 
-        <!-- Section 1: 物質清單與物性數據 -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">1. 廢液組成物質與物理特性 (Physical Properties)</h2>
-            <p class="mb-4 text-sm text-gray-700">註：高分子物質基於 SDS 揭露與實驗現象判定；各溶劑不同真空度之沸點依據安托萬方程 (Antoine equation) 或常規化學品資料庫推估，供工程設計參考。</p>
+        <!-- Tab Navigation -->
+        <div class="border-b border-gray-200 mb-6 flex overflow-x-auto">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button id="btn-tab1" onclick="switchTab('tab1')" class="border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    基本物料資訊與實驗分析
+                </button>
+                <button id="btn-tab2" onclick="switchTab('tab2')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    技術回收方案 (Thinner)
+                </button>
+                <button id="btn-tab3" onclick="switchTab('tab3')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
+                    技術回收方案 (PMA)
+                </button>
+            </nav>
+        </div>
+
+        <!-- ==================== TAB 1 CONTENT (物料資訊) ==================== -->
+        <div id="tab1" class="tab-content block">
             
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-300">
-                    <thead class="table-header text-sm">
-                        <tr>
-                            <th class="py-3 px-4 text-left border border-gray-300">物質分類</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">化學名稱 (推估/已知成分)</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 1 atm)</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 100 torr)</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 50 torr)</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">比重 (25°C)</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">動態黏度 (cP)</th>
-                            <th class="py-3 px-4 text-left border border-gray-300">製程中之功能</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                        <!-- Thinner Components -->
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">清洗液主體<br>(TZNR-HC)</td>
-                            <td class="py-2 px-4 border border-gray-300">對薄荷烷 (p-Menthane)</td>
-                            <td class="py-2 px-4 border border-gray-300">168 ~ 172</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 100 ~ 105</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 80 ~ 85</td>
-                            <td class="py-2 px-4 border border-gray-300">0.80 ~ 0.81</td>
-                            <td class="py-2 px-4 border border-gray-300">1.5 ~ 2.0</td>
-                            <td class="py-2 px-4 border border-gray-300">解鍵/殘膠清洗之核心溶劑</td>
-                        </tr>
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300">單萜烯混合物 (Mono Terpenes)</td>
-                            <td class="py-2 px-4 border border-gray-300">175 ~ 176</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 105 ~ 110</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 85 ~ 90</td>
-                            <td class="py-2 px-4 border border-gray-300">0.84</td>
-                            <td class="py-2 px-4 border border-gray-300">0.8 ~ 1.0</td>
-                            <td class="py-2 px-4 border border-gray-300">清洗助溶劑 (具雙鍵反應性)</td>
-                        </tr>
-                        <!-- Adhesive Polymers -->
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">高分子固體物<br>(源自 TZNR-A)</td>
-                            <td class="py-2 px-4 border border-gray-300">熱塑性彈性體 (SEBS/SEPS)</td>
-                            <td class="py-2 px-4 border border-gray-300">N/A</td>
-                            <td class="py-2 px-4 border border-gray-300">N/A</td>
-                            <td class="py-2 px-4 border border-gray-300">N/A</td>
-                            <td class="py-2 px-4 border border-gray-300">0.91</td>
-                            <td class="py-2 px-4 border border-gray-300">固態</td>
-                            <td class="py-2 px-4 border border-gray-300">暫時接合膠之彈性緩衝主體</td>
-                        </tr>
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300">環烯烴聚合物 (COP/COC)</td>
-                            <td class="py-2 px-4 border border-gray-300">N/A</td>
-                            <td class="py-2 px-4 border border-gray-300">N/A</td>
-                            <td class="py-2 px-4 border border-gray-300">N/A</td>
-                            <td class="py-2 px-4 border border-gray-300">1.01</td>
-                            <td class="py-2 px-4 border border-gray-300">固態</td>
-                            <td class="py-2 px-4 border border-gray-300">增黏與耐高溫支撐基材</td>
-                        </tr>
-                        <!-- Minor Solvents from Adhesive -->
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">膠體原生溶劑<br>(視廢液端點而定)</td>
-                            <td class="py-2 px-4 border border-gray-300">十氫萘 (Decahydronaphthalene)</td>
-                            <td class="py-2 px-4 border border-gray-300">187 ~ 196</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 115 ~ 120</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 95 ~ 100</td>
-                            <td class="py-2 px-4 border border-gray-300">0.89</td>
-                            <td class="py-2 px-4 border border-gray-300">2.5 ~ 3.0</td>
-                            <td class="py-2 px-4 border border-gray-300">接合膠塗佈前之液化主溶劑</td>
-                        </tr>
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300">醋酸正丁酯 (N-Butyl acetate)</td>
-                            <td class="py-2 px-4 border border-gray-300">126</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 65 ~ 70</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 45 ~ 50</td>
-                            <td class="py-2 px-4 border border-gray-300">0.88</td>
-                            <td class="py-2 px-4 border border-gray-300">0.73</td>
-                            <td class="py-2 px-4 border border-gray-300">流變調節與表面潤濕劑</td>
-                        </tr>
-                        <!-- PMA Solvent -->
-                        <tr class="table-row">
-                            <td class="py-2 px-4 border border-gray-300 font-semibold text-blue-700">光阻製程廢液<br>(新增評估)</td>
-                            <td class="py-2 px-4 border border-gray-300 text-blue-700">丙二醇甲醚醋酸酯<br>(PMA / PGMEA)</td>
-                            <td class="py-2 px-4 border border-gray-300">146</td>
-                            <td class="py-2 px-4 border border-gray-300 font-bold">~ 88 ~ 89</td>
-                            <td class="py-2 px-4 border border-gray-300">~ 70</td>
-                            <td class="py-2 px-4 border border-gray-300">0.96 ~ 0.97</td>
-                            <td class="py-2 px-4 border border-gray-300">1.1 ~ 1.2</td>
-                            <td class="py-2 px-4 border border-gray-300">光阻清洗與稀釋劑</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Section 2: 質量平衡估算 -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">2. 質量平衡與回收價值估算 (Mass Balance Estimate)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Thinner System -->
-                <div class="bg-white p-5 rounded-lg border border-gray-300 shadow-sm">
-                    <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">A. Thinner 廢液系統 (5,000 噸 / 年)</h3>
-                    <p class="text-xs text-gray-500 mb-3">設定條件：聚合物佔 10%，清洗液 TZNR-HC 佔比多數，並含少量原生溶劑十氫萘。</p>
-                    <ul class="space-y-2 text-sm text-gray-800">
-                        <li class="flex justify-between border-b border-gray-100 pb-1">
-                            <span>固態聚合物 (SEBS/COP)：</span>
-                            <span class="font-bold">500 噸/年 (10%)</span>
-                        </li>
-                        <li class="flex justify-between border-b border-gray-100 pb-1">
-                            <span>對薄荷烷 (高價值回收標的)：</span>
-                            <span class="font-bold text-blue-700">~ 3,166 噸/年</span>
-                        </li>
-                        <li class="flex justify-between border-b border-gray-100 pb-1">
-                            <span>排廢液態載體需求 (維持30%固含量)：</span>
-                            <span class="font-bold text-red-600">需保留 ~ 1,166 噸</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- PMA System -->
-                <div class="bg-white p-5 rounded-lg border border-gray-300 shadow-sm">
-                    <h3 class="text-lg font-bold text-blue-800 mb-3 border-b pb-2">B. PMA 廢液系統 (100 噸 / 年)</h3>
-                    <p class="text-xs text-gray-500 mb-3">設定條件：實驗結果顯示深褐色殘渣佔比約 6%，用於光阻製程清洗。</p>
-                    <ul class="space-y-2 text-sm text-gray-800">
-                        <li class="flex justify-between border-b border-gray-100 pb-1">
-                            <span>光阻殘渣 (深褐色固體)：</span>
-                            <span class="font-bold">6 噸/年 (6%)</span>
-                        </li>
-                        <li class="flex justify-between border-b border-gray-100 pb-1">
-                            <span>可回收 PMA 溶劑 (理論值)：</span>
-                            <span class="font-bold text-blue-700">94 噸/年 (94%)</span>
-                        </li>
-                        <li class="flex justify-between border-b border-gray-100 pb-1">
-                            <span>經濟性評估指標：</span>
-                            <span class="font-bold text-orange-600">廢液總量偏低</span>
-                        </li>
-                    </ul>
-                    <p class="mt-2 text-xs text-gray-600">工程備註：PMA 成分相對單純，回收率可達 90% 以上，但因年產生量僅 100 噸，獨立建置精煉設備之經濟效益需進一步建立 ROI 模型分析。</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 3: 實驗結果與討論 -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">3. 實驗結果與工程參數探討 (Experimental Results)</h2>
-            <p class="mb-4 text-sm text-gray-700">本節紀錄 Thinner 廢液與 PMA 廢液於 <strong>操作壓力 100 torr</strong> 下之旋轉濃縮實驗動態現象，作為設備熱傳設計依據。</p>
-
-            <!-- 3.1 實驗操作紀錄表 -->
-            <div class="mb-6">
-                <div class="bg-white border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
-                    <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">旋轉濃縮實驗質量平衡紀錄 (操作壓力：100 torr)</h4>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full whitespace-nowrap text-sm text-center">
-                            <thead class="bg-gray-100 border-b border-gray-300">
-                                <tr>
-                                    <th class="py-2 px-4 font-semibold text-gray-700">樣品名稱</th>
-                                    <th class="py-2 px-4 font-semibold text-gray-700">入料重量 (g)</th>
-                                    <th class="py-2 px-4 font-semibold text-gray-700">底部殘餘重 (g)</th>
-                                    <th class="py-2 px-4 font-semibold text-gray-700">殘餘物佔比 (%)</th>
-                                    <th class="py-2 px-4 font-semibold text-gray-700">收集瓶淨重 (g)</th>
-                                    <th class="py-2 px-4 font-semibold text-gray-700">冷卻後狀態觀察</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr>
-                                    <td class="py-2 px-4 text-left font-medium">Thinner 廢液</td>
-                                    <td class="py-2 px-4">196.12</td>
-                                    <td class="py-2 px-4">20.80</td>
-                                    <td class="py-2 px-4">10.6 %</td>
-                                    <td class="py-2 px-4">170.32</td>
-                                    <td class="py-2 px-4 text-left">半透明膠狀，無流動性，可回溶</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 text-left font-medium">PMA 廢液</td>
-                                    <td class="py-2 px-4">198.24</td>
-                                    <td class="py-2 px-4">12.42</td>
-                                    <td class="py-2 px-4 text-blue-700 font-bold">6.26 %</td>
-                                    <td class="py-2 px-4">179.35</td>
-                                    <td class="py-2 px-4 text-left">深褐色黏稠殘渣，達塔底乾涸</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- 操作參數紀錄 (時間軸圖表獨立排列) -->
-                <div class="space-y-6 mb-6">
-                    <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
-                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">Thinner 廢液操作參數時間軸<br><span class="text-sm text-blue-600 font-normal">系統壓力: 100 torr</span></h4>
-                        <div class="relative w-full h-[400px]">
-                            <canvas id="tempTimeChart_thinner"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
-                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">PMA 廢液操作參數時間軸<br><span class="text-sm text-blue-600 font-normal">系統壓力: 100 torr</span></h4>
-                        <div class="relative w-full h-[400px]">
-                            <canvas id="tempTimeChart_pma"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3.2 實驗過程影像紀錄 -->
-            <div class="mb-6">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 實驗影像紀錄與外觀分析</h3>
+            <!-- Section 1: 物質清單與物性數據 -->
+            <section class="mb-10">
+                <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">1. 廢液組成物質與物理特性 (Physical Properties)</h2>
+                <p class="mb-4 text-sm text-gray-700">註：高分子物質基於 SDS 揭露與實驗現象判定；各溶劑不同真空度之沸點依據安托萬方程 (Antoine equation) 或常規化學品資料庫推估，供工程設計參考。</p>
                 
-                <!-- 圖片組 (3欄 2列配置，最大化呈現) -->
-                <h4 class="text-lg font-medium text-gray-700 mb-3 border-l-2 border-gray-400 pl-2">樣品與產物外觀 (圖片)</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="Thinner & PMA廢液樣品.jpg" alt="Thinner & PMA廢液樣品" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
-                        <p class="text-sm text-gray-600 font-medium text-center">1. 原廢液樣品比較</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-300">
+                        <thead class="table-header text-sm">
+                            <tr>
+                                <th class="py-3 px-4 text-left border border-gray-300">物質分類</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">化學名稱 (推估/已知成分)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 1 atm)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 100 torr)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">沸點 (°C, 50 torr)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">比重 (25°C)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">動態黏度 (cP)</th>
+                                <th class="py-3 px-4 text-left border border-gray-300">製程中之功能</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <!-- Thinner Components -->
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">清洗液主體<br>(TZNR-HC)</td>
+                                <td class="py-2 px-4 border border-gray-300">對薄荷烷 (p-Menthane)</td>
+                                <td class="py-2 px-4 border border-gray-300">168 ~ 172</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 100 ~ 105</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 80 ~ 85</td>
+                                <td class="py-2 px-4 border border-gray-300">0.80 ~ 0.81</td>
+                                <td class="py-2 px-4 border border-gray-300">1.5 ~ 2.0</td>
+                                <td class="py-2 px-4 border border-gray-300">解鍵/殘膠清洗之核心溶劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300">單萜烯混合物 (Mono Terpenes)</td>
+                                <td class="py-2 px-4 border border-gray-300">175 ~ 176</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 105 ~ 110</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 85 ~ 90</td>
+                                <td class="py-2 px-4 border border-gray-300">0.84</td>
+                                <td class="py-2 px-4 border border-gray-300">0.8 ~ 1.0</td>
+                                <td class="py-2 px-4 border border-gray-300">清洗助溶劑 (具雙鍵反應性)</td>
+                            </tr>
+                            <!-- Adhesive Polymers -->
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">高分子固體物<br>(源自 TZNR-A)</td>
+                                <td class="py-2 px-4 border border-gray-300">熱塑性彈性體 (SEBS/SEPS)</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">0.91</td>
+                                <td class="py-2 px-4 border border-gray-300">固態</td>
+                                <td class="py-2 px-4 border border-gray-300">暫時接合膠之彈性緩衝主體</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300">環烯烴聚合物 (COP/COC)</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">N/A</td>
+                                <td class="py-2 px-4 border border-gray-300">1.01</td>
+                                <td class="py-2 px-4 border border-gray-300">固態</td>
+                                <td class="py-2 px-4 border border-gray-300">增黏與耐高溫支撐基材</td>
+                            </tr>
+                            <!-- Minor Solvents from Adhesive -->
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold" rowspan="2">膠體原生溶劑<br>(視廢液端點而定)</td>
+                                <td class="py-2 px-4 border border-gray-300">十氫萘 (Decahydronaphthalene)</td>
+                                <td class="py-2 px-4 border border-gray-300">187 ~ 196</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 115 ~ 120</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 95 ~ 100</td>
+                                <td class="py-2 px-4 border border-gray-300">0.89</td>
+                                <td class="py-2 px-4 border border-gray-300">2.5 ~ 3.0</td>
+                                <td class="py-2 px-4 border border-gray-300">接合膠塗佈前之液化主溶劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300">醋酸正丁酯 (N-Butyl acetate)</td>
+                                <td class="py-2 px-4 border border-gray-300">126</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 65 ~ 70</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 45 ~ 50</td>
+                                <td class="py-2 px-4 border border-gray-300">0.88</td>
+                                <td class="py-2 px-4 border border-gray-300">0.73</td>
+                                <td class="py-2 px-4 border border-gray-300">流變調節與表面潤濕劑</td>
+                            </tr>
+                            <!-- PMA Solvent Group -->
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 font-semibold text-emerald-700" rowspan="2">光阻製程廢液<br>(新增評估)</td>
+                                <td class="py-2 px-4 border border-gray-300 text-emerald-700">丙二醇甲醚醋酸酯<br>(PMA / PGMEA)</td>
+                                <td class="py-2 px-4 border border-gray-300">146</td>
+                                <td class="py-2 px-4 border border-gray-300 font-bold">~ 88 ~ 89</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 70</td>
+                                <td class="py-2 px-4 border border-gray-300">0.96 ~ 0.97</td>
+                                <td class="py-2 px-4 border border-gray-300">1.1 ~ 1.2</td>
+                                <td class="py-2 px-4 border border-gray-300">光阻清洗與稀釋劑</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="py-2 px-4 border border-gray-300 text-emerald-700">乙二醇單丁醚<br>(Butyl cellosolve)</td>
+                                <td class="py-2 px-4 border border-gray-300">171</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 105 ~ 110</td>
+                                <td class="py-2 px-4 border border-gray-300">~ 85 ~ 90</td>
+                                <td class="py-2 px-4 border border-gray-300">0.90</td>
+                                <td class="py-2 px-4 border border-gray-300">3.3</td>
+                                <td class="py-2 px-4 border border-gray-300">光阻液之高沸點助溶劑</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 2: 質量平衡估算 -->
+            <section class="mb-10">
+                <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">2. 質量平衡與回收價值估算 (Mass Balance Estimate)</h2>
+                <div class="space-y-6">
+                    <!-- Thinner System 詳細推算 -->
+                    <div class="bg-white p-5 rounded-lg border border-gray-300 shadow-sm w-full">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">A. Thinner 廢液系統詳細質量平衡 (總處理量：5,000 噸/年)</h3>
+                        <p class="text-sm text-gray-500 mb-4">依據原物料組成還原推算，總廢液中包含清洗液 (Thinner) 與原生接合膠 (TBA) 兩大來源，其詳細組成佔比與預期分配流向如下：</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Thinner (可回收) -->
+                            <div class="bg-blue-50 p-4 rounded-md border border-blue-200">
+                                <h4 class="font-bold text-blue-900 mb-2 border-b border-blue-200 pb-2 flex justify-between items-center">
+                                    <span>清洗液 (Thinner)</span>
+                                    <span>3,333 噸/年 (66.7%)</span>
+                                </h4>
+                                <ul class="space-y-3 text-sm text-gray-800 mt-3">
+                                    <li class="flex justify-between items-center">
+                                        <span class="font-semibold text-blue-700">對薄荷烷 (p-Menthane)</span>
+                                        <span class="text-right">3,166 噸/年 <span class="text-xs text-gray-500">(63.3%)</span></span>
+                                    </li>
+                                    <li class="flex justify-between items-center">
+                                        <span class="font-semibold text-blue-700">單萜烯 (Mono Terpene)</span>
+                                        <span class="text-right">167 噸/年 <span class="text-xs text-gray-500">(3.3%)</span></span>
+                                    </li>
+                                </ul>
+                                <div class="mt-4 bg-blue-100 p-2 rounded text-xs text-blue-800 font-semibold text-center">
+                                    ▶ 預期流向：全數作為高價值溶劑回收 (最大理論純化量)
+                                </div>
+                            </div>
+
+                            <!-- TBA (排廢) -->
+                            <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                                <h4 class="font-bold text-gray-800 mb-2 border-b border-gray-200 pb-2 flex justify-between items-center">
+                                    <span>暫時接合膠 (TBA)</span>
+                                    <span>1,667 噸/年 (33.3%)</span>
+                                </h4>
+                                <div class="space-y-4 text-sm text-gray-800 mt-3">
+                                    <!-- 高分子 -->
+                                    <div>
+                                        <div class="flex justify-between font-semibold text-gray-700 border-b border-gray-200 border-dashed pb-1">
+                                            <span>高分子固體物</span>
+                                            <span>500 噸/年 (10.0%)</span>
+                                        </div>
+                                        <ul class="pl-3 mt-2 space-y-1 text-xs text-gray-600">
+                                            <li class="flex justify-between"><span>• Thermoplastic Elastomer</span><span>100~200 噸/年 (2~4%)</span></li>
+                                            <li class="flex justify-between"><span>• Cycloolefin polymer</span><span>100~200 噸/年 (2~4%)</span></li>
+                                        </ul>
+                                    </div>
+                                    <!-- 原生溶劑 -->
+                                    <div>
+                                        <div class="flex justify-between font-semibold text-gray-700 border-b border-gray-200 border-dashed pb-1">
+                                            <span>TBA 原生溶劑</span>
+                                            <span>1,167 噸/年 (23.3%)</span>
+                                        </div>
+                                        <ul class="pl-3 mt-2 space-y-1 text-xs text-gray-600">
+                                            <li class="flex justify-between"><span>• Decahydronaphthalene</span><span>1,083 噸/年 (21.7%)</span></li>
+                                            <li class="flex justify-between"><span>• N-Butyl acetate</span><span>84 噸/年 (1.7%)</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mt-4 bg-red-50 p-2 rounded text-xs text-red-800 font-semibold border border-red-100 text-center">
+                                    ▶ 預期流向：原生溶劑提供足量之液態載體，隨高分子排廢
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="Thinner & PMA廢液蒸出液(完全透明澄清).jpg" alt="Thinner & PMA廢液蒸出液" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
-                        <p class="text-sm text-gray-600 font-medium text-center">2. 雙廢液蒸出液 (透明澄清)</p>
+
+                    <!-- PMA System -->
+                    <div class="bg-white p-5 rounded-lg border border-gray-300 shadow-sm w-full">
+                        <h3 class="text-lg font-bold text-emerald-800 mb-3 border-b pb-2">B. PMA 廢液系統 (100 噸 / 年)</h3>
+                        <p class="text-xs text-gray-500 mb-3">設定條件：實驗結果顯示深褐色殘渣佔比約 6%，用於光阻製程清洗。</p>
+                        <ul class="space-y-2 text-sm text-gray-800 max-w-2xl">
+                            <li class="flex justify-between border-b border-gray-100 pb-1">
+                                <span>光阻殘渣 (深褐色固體)：</span>
+                                <span class="font-bold">6 噸/年 (6%)</span>
+                            </li>
+                            <li class="flex justify-between border-b border-gray-100 pb-1">
+                                <span>可回收 PMA 溶劑 (理論值)：</span>
+                                <span class="font-bold text-emerald-700">94 噸/年 (94%)</span>
+                            </li>
+                            <li class="flex justify-between border-b border-gray-100 pb-1">
+                                <span>經濟性評估指標：</span>
+                                <span class="font-bold text-orange-600">廢液總量偏低</span>
+                            </li>
+                        </ul>
+                        <p class="mt-2 text-xs text-gray-600">工程備註：PMA 成分相對單純，回收率可達 90% 以上，建議依單塔除輕重分離設計提升經濟性。</p>
                     </div>
-                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="Thinner 塔底蒸餘物" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
-                        <p class="text-sm text-gray-600 font-medium text-center">3. Thinner 蒸餘物 (半透明膠狀)</p>
+                </div>
+            </section>
+
+            <!-- Section 3: 實驗結果與討論 -->
+            <section class="mb-10">
+                <h2 class="text-2xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">3. 實驗結果與工程參數探討 (Experimental Results)</h2>
+                <p class="mb-4 text-sm text-gray-700">本節紀錄 Thinner 廢液與 PMA 廢液於 <strong>操作壓力 100 torr</strong> 下之旋轉濃縮實驗動態現象，作為設備熱傳設計依據。</p>
+
+                <!-- 3.1 實驗操作紀錄表 -->
+                <div class="mb-6">
+                    <div class="bg-white border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
+                        <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">旋轉濃縮實驗質量平衡紀錄 (操作壓力：100 torr)</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full whitespace-nowrap text-sm text-center">
+                                <thead class="bg-gray-100 border-b border-gray-300">
+                                    <tr>
+                                        <th class="py-2 px-4 font-semibold text-gray-700">樣品名稱</th>
+                                        <th class="py-2 px-4 font-semibold text-gray-700">入料重量 (g)</th>
+                                        <th class="py-2 px-4 font-semibold text-gray-700">底部殘餘重 (g)</th>
+                                        <th class="py-2 px-4 font-semibold text-gray-700">殘餘物佔比 (%)</th>
+                                        <th class="py-2 px-4 font-semibold text-gray-700">收集瓶淨重 (g)</th>
+                                        <th class="py-2 px-4 font-semibold text-gray-700">冷卻後狀態觀察</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="py-2 px-4 text-left font-medium">Thinner 廢液</td>
+                                        <td class="py-2 px-4">196.12</td>
+                                        <td class="py-2 px-4">20.80</td>
+                                        <td class="py-2 px-4">10.6 %</td>
+                                        <td class="py-2 px-4">170.32</td>
+                                        <td class="py-2 px-4 text-left">半透明膠狀，無流動性，可回溶</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-4 text-left font-medium">PMA 廢液</td>
+                                        <td class="py-2 px-4">198.24</td>
+                                        <td class="py-2 px-4">12.42</td>
+                                        <td class="py-2 px-4 text-emerald-700 font-bold">6.26 %</td>
+                                        <td class="py-2 px-4">179.35</td>
+                                        <td class="py-2 px-4 text-left">深褐色黏稠殘渣，達塔底乾涸</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <img src="20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="PMA 塔底蒸餘物" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
-                        <p class="text-sm text-gray-600 font-medium text-center">4. PMA 蒸餘物 (深色黏稠)</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-blue-300">
-                        <img src="20260622_矽品_蒸餘物很黏牽絲.jpg" alt="Thinner 蒸餘物牽絲" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
-                        <p class="text-sm text-blue-700 font-medium text-center">5. Thinner 蒸餘物 (高黏度牽絲狀態)</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-blue-300">
-                        <img src="20260617_PMA廢液_旋轉濃縮實驗蒸到乾_100torr.jpg" alt="PMA廢液蒸到乾殘渣" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
-                        <p class="text-sm text-blue-700 font-medium text-center">6. PMA 蒸到乾殘渣 (深褐色固態)</p>
+
+                    <!-- 操作參數紀錄 (時間軸圖表獨立排列) -->
+                    <div class="space-y-6 mb-6">
+                        <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
+                            <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">Thinner 廢液操作參數時間軸<br><span class="text-sm text-blue-600 font-normal">系統壓力: 100 torr</span></h4>
+                            <div class="relative w-full h-[400px]">
+                                <canvas id="tempTimeChart_thinner"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
+                            <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">PMA 廢液操作參數時間軸<br><span class="text-sm text-emerald-600 font-normal">系統壓力: 100 torr</span></h4>
+                            <div class="relative w-full h-[400px]">
+                                <canvas id="tempTimeChart_pma"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 影片組 (單列 4 欄配置，寬度最大化) -->
-                <h4 class="text-lg font-medium text-gray-700 mb-3 border-l-2 border-gray-400 pl-2">蒸餾動態現象 (影片)</h4>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_底部結膠前.mp4"></video>
-                        <p class="text-xs text-gray-600 font-medium text-center">Thinner: 底部結膠前</p>
+                <!-- 3.2 實驗過程影像紀錄 -->
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 實驗影像紀錄與外觀分析</h3>
+                    
+                    <h4 class="text-lg font-medium text-gray-700 mb-3 border-l-2 border-gray-400 pl-2">樣品與產物外觀 (圖片)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <img src="Thinner & PMA廢液樣品.jpg" alt="Thinner & PMA廢液樣品" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                            <p class="text-sm text-gray-600 font-medium text-center">1. 原廢液樣品比較</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <img src="Thinner & PMA廢液蒸出液(完全透明澄清).jpg" alt="Thinner & PMA廢液蒸出液" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                            <p class="text-sm text-gray-600 font-medium text-center">2. 雙廢液蒸出液 (透明澄清)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <img src="20260616_Thinner廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="Thinner 塔底蒸餘物" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                            <p class="text-sm text-gray-600 font-medium text-center">3. Thinner 蒸餘物 (半透明膠狀)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <img src="20260617_PMA廢液蒸出物(右)與塔底蒸餘物(左).jpg" alt="PMA 塔底蒸餘物" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                            <p class="text-sm text-gray-600 font-medium text-center">4. PMA 蒸餘物 (深色黏稠)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-blue-300">
+                            <img src="20260622_矽品_蒸餘物很黏牽絲.jpg" alt="Thinner 蒸餘物牽絲" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                            <p class="text-sm text-blue-700 font-medium text-center">5. Thinner 蒸餘物 (高黏度牽絲狀態)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 border border-gray-200 rounded-lg flex flex-col items-center justify-center border-emerald-300">
+                            <img src="20260617_PMA廢液_旋轉濃縮實驗蒸到乾_100torr.jpg" alt="PMA廢液蒸到乾殘渣" class="h-64 w-full object-contain rounded shadow-sm mb-3 bg-white">
+                            <p class="text-sm text-emerald-700 font-medium text-center">6. PMA 蒸到乾殘渣 (深褐色固態)</p>
+                        </div>
                     </div>
-                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_底部結膠.mp4"></video>
-                        <p class="text-xs text-gray-600 font-medium text-center">Thinner: 底部結膠</p>
-                    </div>
-                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_連接處起泡.mp4"></video>
-                        <p class="text-xs text-gray-600 font-medium text-center">Thinner: 連接處起泡</p>
-                    </div>
-                    <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
-                        <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_收集瓶白色混濁液管口有白色粉末.mp4"></video>
-                        <p class="text-xs text-gray-600 font-medium text-center">Thinner: 管口析出現象</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- 3.3 結論與工程探討 -->
-            <div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.3 實驗結論與工程意義</h3>
-                <div class="bg-white p-5 border border-gray-300 rounded-lg">
-                    <ul class="list-disc list-inside space-y-3 text-sm text-gray-800">
-                        <li><strong>Thinner 廢液流體力學挑戰：</strong> 殘餘物為熱塑性彈性體，喪失溶劑載體後即失去流動性。製程設計需排除依賴重力的傳統鍋爐，強制採用 <strong>薄膜蒸發器 (WFE)</strong> 並保留 30%~40% 溶劑配合齒輪泵排料。</li>
-                        <li><strong>PMA 廢液單一溶劑判定 (VLE 基礎)：</strong> 於 100 torr 真空度下，PMA 廢液的蒸出溫度極為穩定地維持在 <strong>88.9°C</strong> 附近。由氣液平衡 (Vapor-Liquid Equilibrium, VLE) 物理特性判斷，該恆溫蒸發現象證實此股廢液組成單一，無其他共沸物或不同沸點溶劑干擾，理論上純化回收難度極低。</li>
-                        <li><strong>PMA 經濟效益初步評估：</strong> 雖然 PMA 廢液的物性極適合蒸餾回收，且殘渣比例僅 6%，但因全廠年排廢量僅 100 噸，建立專屬單元可能面臨設備折舊無法攤提的風險，需進一步計算 ROI。建議評估採行與其他溶劑共用設備（批次操作）的工程可行性。</li>
-                    </ul>
+                    <h4 class="text-lg font-medium text-gray-700 mb-3 border-l-2 border-gray-400 pl-2">蒸餾動態現象 (影片)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_底部結膠前.mp4"></video>
+                            <p class="text-xs text-gray-600 font-medium text-center">Thinner: 底部結膠前</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_底部結膠.mp4"></video>
+                            <p class="text-xs text-gray-600 font-medium text-center">Thinner: 底部結膠</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_連接處起泡.mp4"></video>
+                            <p class="text-xs text-gray-600 font-medium text-center">Thinner: 連接處起泡</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 border border-gray-200 rounded-lg flex flex-col items-center justify-center">
+                            <video controls class="w-full h-auto object-contain rounded shadow-sm mb-2" src="20260616_收集瓶白色混濁液管口有白色粉末.mp4"></video>
+                            <p class="text-xs text-gray-600 font-medium text-center">Thinner: 管口析出現象</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
+
+                <!-- 3.3 實驗樣品分析結果報告 (GC-MS) -->
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">3.3 實驗樣品分析結果報告 (GC-MS)</h3>
+                    <p class="text-sm text-gray-700 mb-4">依據 2026/06/25 GC-MS 定性與面積百分比分析報告，針對旋轉濃縮實驗之蒸出液進行成分解析，以驗證精餾設備分離規格之物理基礎。</p>
+
+                    <div class="space-y-8">
+                        <!-- Thinner 蒸出液分析結果 -->
+                        <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
+                            <h4 class="font-semibold text-blue-800 mb-4 border-b border-gray-200 pb-2">表 3.3-1: Thinner 蒸出液成分分析<br><span class="text-xs text-gray-500 font-normal">樣品名稱: 20260616Thinner蒸出</span></h4>
+                            
+                            <!-- 單列全寬圖片 -->
+                            <div class="mb-4">
+                                <img src="Thinner 餾出物GC-MS分析圖譜.jpg" alt="Thinner GC-MS 分析圖譜" class="w-full h-auto object-contain border border-gray-200 rounded shadow-sm">
+                                <p class="text-xs text-center text-gray-500 mt-2">圖: Thinner 蒸出液 GC-MS 總離子層析圖 (TIC)</p>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm text-center">
+                                    <thead class="bg-blue-50 border-b border-blue-200">
+                                        <tr>
+                                            <th class="py-2 px-3 text-blue-800">Peak #</th>
+                                            <th class="py-2 px-3 text-blue-800 text-left">Compound Name (化學物質名稱)</th>
+                                            <th class="py-2 px-3 text-blue-800">Area % (面積百分比)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100 text-gray-700">
+                                        <tr><td class="py-2">1</td><td class="text-left">n-Butyl acetate (醋酸正丁酯)</td><td>~ 1.07</td></tr>
+                                        <tr><td class="py-2">2</td><td class="text-left">3-Methylnonane</td><td>~ 2.96</td></tr>
+                                        <tr><td class="py-2">8, 9</td><td class="text-left">Mono Terpenes (單萜烯混合物)</td><td>~ 0.20</td></tr>
+                                        <tr class="bg-gray-50"><td class="py-2">10, 12</td><td class="text-left font-semibold">Decahydronaphthalene (十氫萘)</td><td class="font-semibold">~ 14.40</td></tr>
+                                        <tr class="bg-blue-100"><td class="py-2 font-bold text-blue-900">Main</td><td class="text-left font-bold text-blue-900">p-Menthane (對薄荷烷, cis+trans)</td><td class="font-bold text-blue-900">~ 81.10</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-4 bg-blue-50 p-3 rounded text-sm text-blue-900 border border-blue-200">
+                                <strong>分析與工程對策：</strong><br>
+                                GC-MS 定性結果顯示，餾出液中主成分對薄荷烷 (p-Menthane) 佔約 81.1%；源自原生接合膠 (TBA) 的溶劑十氫萘 (Decahydronaphthalene) 則佔約 14.4%。值得注意的是，原 SDS 揭露含 <10% 之單萜烯混合物 (Mono Terpenes)，在此次廢液分析中僅檢出約 0.2%，此實際濃度之巨幅落差對後續蒸餾塔 (除輕重沸塔) 之分離負載設計為一項極為有利的物理參數。
+                            </div>
+                        </div>
+
+                        <!-- PMA 蒸出液分析結果 -->
+                        <div class="bg-white border border-gray-300 rounded-lg p-5 shadow-sm w-full">
+                            <h4 class="font-semibold text-emerald-800 mb-4 border-b border-gray-200 pb-2">表 3.3-2: PMA 蒸出液成分分析<br><span class="text-xs text-gray-500 font-normal">樣品名稱: 20260617PMA蒸出</span></h4>
+                            
+                            <!-- 單列全寬圖片 -->
+                            <div class="mb-4">
+                                <img src="PMA餾出物GC-MS分析圖譜.jpg" alt="PMA GC-MS 分析圖譜" class="w-full h-auto object-contain border border-gray-200 rounded shadow-sm">
+                                <p class="text-xs text-center text-gray-500 mt-2">圖: PMA 蒸出液 GC-MS 總離子層析圖 (TIC)</p>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm text-center">
+                                    <thead class="bg-emerald-50 border-b border-emerald-200">
+                                        <tr>
+                                            <th class="py-2 px-3 text-emerald-800">Peak #</th>
+                                            <th class="py-2 px-3 text-emerald-800">Ret.Time (min)</th>
+                                            <th class="py-2 px-3 text-emerald-800 text-left">Compound Name (化學物質名稱)</th>
+                                            <th class="py-2 px-3 text-emerald-800">Area %</th>
+                                            <th class="py-2 px-3 text-emerald-800">比對率</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100 text-gray-700">
+                                        <tr><td class="py-2">1</td><td>8.565</td><td class="text-left">n-Butyl acetate</td><td>0.055</td><td>78</td></tr>
+                                        <tr class="bg-emerald-100"><td class="py-2 font-bold text-emerald-900">2</td><td class="font-bold text-emerald-900">9.464</td><td class="text-left font-bold text-emerald-900">PMA</td><td class="font-bold text-emerald-900">97.537</td><td class="font-bold text-emerald-900">92</td></tr>
+                                        <tr class="bg-gray-50"><td class="py-2">3</td><td>10.118</td><td class="text-left">Butyl cellosolve (乙二醇單丁醚)</td><td>2.369</td><td>92</td></tr>
+                                        <tr><td class="py-2">4</td><td>11.479</td><td class="text-left text-gray-500">trans-p-Menthane*</td><td class="text-gray-500">0.018</td><td class="text-gray-500">80</td></tr>
+                                        <tr><td class="py-2">5</td><td>11.749</td><td class="text-left text-gray-500">cis-p-Menthane*</td><td class="text-gray-500">0.020</td><td class="text-gray-500">80</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-4 bg-emerald-50 p-3 rounded text-sm text-emerald-900 border border-emerald-200">
+                                <strong>分析與工程對策：</strong><br>
+                                主成分 PMA 佔 97.54%。廢液中確實含有沸點相異之微量雜質，如高沸點的 Butyl cellosolve (約 171°C) 佔 2.37%，以及輕沸點的 n-Butyl acetate (126°C)。<br>
+                                * 註解：圖譜中 Peak #4 與 #5 檢出微量 p-Menthane (總和 0.038%)，基於半導體光阻製程屬性判定，此應為該批次實驗設備未能完全清洗乾淨所導致之交叉污染 (Cross-contamination)，排除其為 PMA 廢液原生雜質的可能。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3.4 結論與工程探討 -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">3.4 實驗結論與總結</h3>
+                    <div class="bg-white p-5 border border-gray-300 rounded-lg">
+                        <ul class="list-disc list-inside space-y-3 text-sm text-gray-800">
+                            <li><strong>Thinner 廢液流體力學挑戰：</strong> 殘餘物為熱塑性彈性體，喪失溶劑載體後即失去流動性。製程設計需排除依賴重力的傳統鍋爐，強制採用 <strong>薄膜蒸發器 (WFE)</strong> 並保留 30%~40% 溶劑配合齒輪泵排料。</li>
+                            <li><strong>PMA 廢液單一溶劑判定 (VLE 基礎)：</strong> 於 100 torr 真空度下，PMA 廢液的蒸出溫度極為穩定地維持在 <strong>88.9°C</strong> 附近。由氣液平衡 (Vapor-Liquid Equilibrium, VLE) 物理特性判斷，該恆溫蒸發現象證實此股廢液組成相對單一，無其他共沸物或嚴重干擾溶劑。</li>
+                            <li><strong>分離流程架構確立：</strong> GC-MS 結果證實雙股廢液皆含有高低沸點雜質，此數據驗證了配置多級精餾設備 (除輕/除重塔) 以及引入 DWC (隔板蒸餾塔) 同步排除輕重沸雜質之技術必要性與可行性。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== TAB 2 CONTENT (Thinner) ==================== -->
+        <div id="tab2" class="tab-content hidden">
+            <!-- Section 1: 主要目標 -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-3">1. 主要目標 (Thinner 回收)</h2>
+                <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                    <p class="text-sm text-gray-700">
+                        本製程設計之核心目標為回收主溶劑 <strong>對薄荷烷 (p-Menthane)</strong>。由於原始廢液配方與製程特性，回收之產品中將摻混微量之單萜烯混合物 (Mono Terpenes，以 D-Limonene 為代表)。整體回收率與純度將直接決定系統之經濟效益。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 2: 流程架構圖 -->
+            <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">2. 製程流程圖 (Process Flow Diagram)</h2>
+                <p class="text-sm text-gray-600 mb-2">圖例說明：紅字標示質量流量 (t/a)，綠字標示操作壓力與溫度條件。</p>
+                
+                <div class="svg-container shadow-inner">
+                    <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" width="100%" height="500">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563" />
+                            </marker>
+                        </defs>
+
+                        <!-- Equipment Blocks -->
+                        <rect x="250" y="150" width="100" height="150" rx="5" class="svg-equipment" />
+                        <text x="300" y="215" text-anchor="middle" class="svg-title">第一單元</text>
+                        <text x="300" y="235" text-anchor="middle" class="svg-title">WFE 蒸發器</text>
+
+                        <rect x="250" y="400" width="100" height="100" rx="5" class="svg-equipment" />
+                        <text x="300" y="445" text-anchor="middle" class="svg-title">第二單元</text>
+                        <text x="300" y="465" text-anchor="middle" class="svg-title">雜溶劑蒸發機</text>
+                        <text x="300" y="485" text-anchor="middle" class="svg-condition">(批次操作)</text>
+
+                        <rect x="500" y="120" width="70" height="200" rx="5" class="svg-equipment" />
+                        <text x="535" y="150" text-anchor="middle" class="svg-title">第三單元</text>
+                        <text x="535" y="170" text-anchor="middle" class="svg-title">除輕沸塔</text>
+                        <text x="535" y="210" text-anchor="middle" class="svg-condition">100 torr</text>
+                        <text x="535" y="230" text-anchor="middle" class="svg-condition">Top: ~50°C</text>
+                        <text x="535" y="250" text-anchor="middle" class="svg-condition">Btm: 100~110°C</text>
+
+                        <rect x="750" y="120" width="70" height="200" rx="5" class="svg-equipment" />
+                        <text x="785" y="150" text-anchor="middle" class="svg-title">第四單元</text>
+                        <text x="785" y="170" text-anchor="middle" class="svg-title">除重沸塔</text>
+                        <text x="785" y="210" text-anchor="middle" class="svg-condition">50 torr</text>
+                        <text x="785" y="230" text-anchor="middle" class="svg-condition">Top: ~85°C</text>
+                        <text x="785" y="250" text-anchor="middle" class="svg-condition">Btm: ~120°C</text>
+
+                        <!-- Process Flow Lines & Labels -->
+                        <path d="M 50 200 L 240 200" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="60" y="175" class="svg-text">廢液進料</text>
+                        <text x="60" y="193" class="svg-value">5,000 t/a</text>
+
+                        <path d="M 250 450 L 160 450 L 160 250 L 240 250" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="170" y="360" class="svg-text">蒸出雜溶劑</text>
+                        <text x="170" y="380" class="svg-value">1,000 t/a</text>
+
+                        <path d="M 350 200 L 490 200" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="380" y="175" class="svg-text">粗蒸氣</text>
+                        <text x="380" y="193" class="svg-value">4,333 t/a</text>
+
+                        <path d="M 300 300 L 300 390" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="310" y="340" class="svg-text">高濃度膠液 (溶劑約70%)</text>
+                        <text x="310" y="360" class="svg-value">1,667 t/a</text>
+
+                        <path d="M 300 500 L 300 560" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="310" y="530" class="svg-text">蒸餘殘渣 (委外焚燒)</text>
+                        <text x="310" y="550" class="svg-value">667 t/a</text>
+
+                        <path d="M 535 120 L 535 60 L 620 60" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="630" y="55" class="svg-text">輕沸雜質/水</text>
+                        <text x="630" y="75" class="svg-value">100 t/a</text>
+
+                        <path d="M 535 320 L 535 380 L 700 380 L 700 200 L 740 200" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="560" y="370" class="svg-text">除輕後塔底物料</text>
+                        <text x="560" y="395" class="svg-value">4,233 t/a</text>
+
+                        <path d="M 785 120 L 785 60 L 860 60" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="870" y="55" class="svg-text font-bold">主產品 (p-Menthane + Terpenes)</text>
+                        <text x="870" y="75" class="svg-value">3,333 t/a</text>
+
+                        <path d="M 785 320 L 785 450 L 860 450" class="svg-line" marker-end="url(#arrow)" />
+                        <text x="870" y="445" class="svg-text">高沸點雜溶劑 (低價出售)</text>
+                        <text x="870" y="465" class="svg-value">900 t/a</text>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Section 3: 單元流程說明 -->
+            <section>
+                <h2 class="text-xl font-semibold text-blue-800 border-l-4 border-blue-600 pl-3 mb-4">3. 單元製程說明</h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-5 border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">3.1 第一單元 (WFE 蒸發器)</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            原始廢液 <strong>5,000 t/a</strong> 與來自第二單元（雜溶劑蒸發機）之回收雜溶劑 <strong>1,000 t/a</strong> 混合，共計 <strong>6,000 t/a</strong> 進入薄膜蒸發器 (WFE)。利用轉子刮刀強制成膜進行高效熱傳，將大部分目標溶劑蒸出，產出粗蒸氣約 <strong>4,333 t/a</strong> 進入第三單元（除輕沸塔）。塔底未蒸發之高濃度膠液（約含 70% 溶劑作為流動載體）共 <strong>1,667 t/a</strong>，排入第二單元進行後續處理。
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">3.2 第二單元 (雜溶劑蒸發機)</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            接收來自第一單元底部之 1,667 t/a 高濃度膠液。初期規劃採 <strong>批次操作 (Batch Operation)</strong>，將膠液中剩餘溶劑深度蒸出，冷凝收集約 <strong>1,000 t/a</strong> 雜溶劑回流至 WFE 前段；蒸餘殘渣約 <strong>667 t/a</strong> 以袋裝取出，委外進行焚燒處理。<br><br>
+                            <span class="text-xs text-blue-700 font-semibold">※ 工程延伸規劃：若後續評估高分子樹脂 (SEBS/COP) 具二次市場回收價值，本單元可變更設計為「去揮發押出機 (Devolatilization Extruder)」，在連續蒸乾溶劑的同時，直接產出固態高黏度樹脂產品。</span>
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">3.3 第三單元 (除輕沸塔)</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            來自第一單元之 4,333 t/a 粗蒸氣進入除輕沸塔。此塔操作壓力設定為 <strong>100 torr</strong>。透過精餾段將沸點較低的雜質（包含水分及可能與水共沸之微量溶劑）由塔頂蒸出，估計排廢量約 <strong>100 t/a</strong>（確切質量將視進料廢液含水率浮動）。塔頂操作溫度控制約 <strong>50°C</strong>；塔底溫度維持約 <strong>100~110°C</strong>。經去除輕沸物之塔底物料 <strong>4,233 t/a</strong>，由底部泵送至第四單元。
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">3.4 第四單元 (除重沸塔)</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            除輕後之 4,233 t/a 物料進入除重沸塔進行最終純化。為降低主產品熱裂解風險，操作壓力進一步降至 <strong>50 torr</strong>。於此真空條件下，主產品「對薄荷烷 (p-Menthane)」與少量「單萜烯混合物」由塔頂順利蒸出，產量約 <strong>3,333 t/a</strong>，塔頂操作溫度約 <strong>85°C</strong>。<br>
+                            塔底溫度控制在 <strong>120°C</strong>，未蒸發之高沸點雜溶劑（如原生接合膠混入之十氫萘等）由塔底排出，量約 <strong>900 t/a</strong>，此股副產物具備低階燃料或工業溶劑價值，可對外低價出售。
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== TAB 3 CONTENT (PMA) ==================== -->
+        <div id="tab3" class="tab-content hidden">
+            <!-- Section 1: 主要目標 -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold text-emerald-800 border-l-4 border-emerald-600 pl-3 mb-3">1. 主要目標 (PMA 回收)</h2>
+                <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                    <p class="text-sm text-gray-700">
+                        本製程目標為回收單一溶劑 <strong>PMA (丙二醇甲醚醋酸酯)</strong>。儘管廢液量體較小 (100 t/a)，但溶劑成分單純且純化品質管控佳。工程設計導入 <strong>DWC (Dividing-Wall Column, 隔板蒸餾塔)</strong> 製程強化技術，單塔即可同步去除輕、重沸雜質，有效精簡設備投資，提升小批量溶劑回收之經濟誘因。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 2: 流程架構圖 -->
+            <section class="mb-10">
+                <h2 class="text-xl font-semibold text-emerald-800 border-l-4 border-emerald-600 pl-3 mb-4">2. 製程流程圖 (DWC 隔板蒸餾塔配置)</h2>
+                <p class="text-sm text-gray-600 mb-2">圖例說明：紅字標示質量流量 (t/a)，綠字標示操作壓力與溫度條件。</p>
+                
+                <div class="svg-container shadow-inner">
+                    <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" width="100%" height="500">
+                        <defs>
+                            <marker id="arrow-pma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563" />
+                            </marker>
+                        </defs>
+
+                        <!-- Unit 1: WFE -->
+                        <rect x="150" y="250" width="80" height="120" rx="5" class="svg-equipment-pma" />
+                        <text x="190" y="295" text-anchor="middle" class="svg-title">第一單元</text>
+                        <text x="190" y="315" text-anchor="middle" class="svg-title">WFE</text>
+                        <text x="190" y="340" text-anchor="middle" class="svg-condition">120 torr</text>
+                        <text x="190" y="355" text-anchor="middle" class="svg-condition">~100°C</text>
+
+                        <!-- Feed to WFE -->
+                        <path d="M 40 310 L 140 310" class="svg-line" marker-end="url(#arrow-pma)" />
+                        <text x="50" y="285" class="svg-text">廢液進料</text>
+                        <text x="50" y="303" class="svg-value">100 t/a</text>
+
+                        <!-- WFE Bottom to Waste -->
+                        <path d="M 190 370 L 190 440" class="svg-line" marker-end="url(#arrow-pma)" />
+                        <text x="200" y="410" class="svg-text">高濃度膠液 (委外處理)</text>
+                        <text x="200" y="430" class="svg-value">20 t/a</text>
+
+                        <!-- WFE Top to DWC Left Side -->
+                        <path d="M 190 250 L 190 210 L 440 210 L 440 310 L 490 310" class="svg-line" marker-end="url(#arrow-pma)" />
+                        <text x="250" y="195" class="svg-text">粗 PMA 溶劑</text>
+                        <text x="250" y="215" class="svg-value">80 t/a</text>
+
+                        <!-- Unit 2: DWC Column -->
+                        <rect x="500" y="100" width="120" height="340" rx="5" class="svg-equipment-pma" />
+                        
+                        <!-- Dividing Wall (Straight solid line in the middle, 1/2 of column height and centered) 
+                             Column height is 340 (Y: 100 to 440). Middle 1/2 height is 170.
+                             Centered vertically: 100 + (340 - 170)/2 = 185 to 355. -->
+                        <line x1="560" y1="185" x2="560" y2="355" stroke="#1f2937" stroke-width="4" />
+                        
+                        <text x="560" y="130" text-anchor="middle" class="svg-title">第二單元 (DWC 塔)</text>
+                        <text x="560" y="160" text-anchor="middle" class="svg-condition">100 torr</text>
+                        
+                        <!-- DWC Top Light Impurities -->
+                        <path d="M 560 100 L 560 50 L 680 50" class="svg-line" marker-end="url(#arrow-pma)" />
+                        <text x="690" y="45" class="svg-text">水與輕沸雜質</text>
+                        <text x="690" y="65" class="svg-value">1 t/a</text>
+                        <text x="690" y="85" class="svg-condition">Top: ~50°C</text>
+
+                        <!-- DWC Bottom Heavy Impurities -->
+                        <path d="M 560 440 L 560 510 L 680 510" class="svg-line" marker-end="url(#arrow-pma)" />
+                        <text x="690" y="505" class="svg-text">重沸雜質 (2-Butoxyethanol)</text>
+                        <text x="690" y="525" class="svg-value">1 t/a</text>
+                        <text x="690" y="545" class="svg-condition">Btm: ~110°C</text>
+
+                        <!-- DWC Middle Product (Right Side) -->
+                        <path d="M 620 310 L 760 310" class="svg-line" marker-end="url(#arrow-pma)" />
+                        <text x="770" y="295" class="svg-text font-bold">高純度 PMA 產品 (>99.5%)</text>
+                        <text x="770" y="315" class="svg-value">78 t/a</text>
+                        <text x="770" y="335" class="svg-condition">Side Draw: ~90°C</text>
+
+                        <!-- Indicator for Dividing Wall -->
+                        <text x="515" y="280" class="svg-text" fill="#6b7280" font-size="11">汽液</text>
+                        <text x="515" y="295" class="svg-text" fill="#6b7280" font-size="11">質傳</text>
+                        <text x="515" y="310" class="svg-text" fill="#6b7280" font-size="11">分隔</text>
+                        
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Section 3: 單元流程說明 -->
+            <section>
+                <h2 class="text-xl font-semibold text-emerald-800 border-l-4 border-emerald-600 pl-3 mb-4">3. 單元製程說明</h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-5 border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">3.1 第一單元 (WFE 蒸發器)</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            <strong>100 t/a</strong> 光阻製程廢液進入薄膜蒸發器 (WFE)。操作壓力設定為 <strong>120 torr</strong>、操作溫度約 <strong>100°C</strong>。此單元主要任務為分離非揮發性光阻樹脂與多數溶劑，粗蒸氣產出約 <strong>80 t/a</strong>，直接進入第二單元 (DWC 塔) 進行純化；塔底排出之高濃度膠液約 <strong>20 t/a</strong> (溶劑佔比約 68% 確保流動性)，採直接委外處理。
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">3.2 第二單元 (DWC 隔板蒸餾塔)</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                            <strong>技術原理：</strong><br>
+                            DWC (Dividing-Wall Column) 為熱整合型製程強化設備。透過塔體內部設置的物理隔板（長度佔總塔高之 1/2 並垂直置中），將進料側與出料側的汽液質傳區域明確分隔，同時保留塔頂與塔底之無隔板共通段。此結構能有效在單一塔槽內分離三種以上之成分，避免傳統蒸餾塔中進料位置可能產生的「成分反混 (Remixing)」現象，取代傳統「除輕塔＋除重塔」雙塔架構，顯著節省設備佔地空間與熱能消耗。
+                        </p>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            <strong>操作參數與質量平衡：</strong><br>
+                            80 t/a 粗 PMA 溶劑由 DWC 塔之隔板左側進入，操作壓力設定於 <strong>100 torr</strong>。<br>
+                            1. <strong>塔頂產物 (約 50°C)：</strong> 極少量的水與輕沸雜質 (如 PMA 與 2-Butoxyethanol 形成之低沸點共沸物) 向上汽化由塔頂排出，量約 <strong>1 t/a</strong>。<br>
+                            2. <strong>塔底產物 (約 110°C)：</strong> 進料中沸點較高的重沸雜質 (如殘餘之 2-Butoxyethanol 等) 往下集中，由塔底排出，量約 <strong>1 t/a</strong>。<br>
+                            3. <strong>側線產品出料 (約 90°C)：</strong> 絕大部分之 PMA 溶劑在精餾過程中，跨越內部隔板頂部與底部之流通空間至隔板右側，取得高度純化後，由側線出料口穩定抽出。產量約為 <strong>78 t/a</strong>，預期純度可達 <strong>99.5% 以上</strong>。
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
 
     </div>
 
-    <!-- 繪製圖表的 JavaScript 邏輯 -->
+    <!-- 頁籤切換與圖表繪製 JavaScript 邏輯 -->
     <script>
+        // Tab 切換邏輯
+        function switchTab(tabId) {
+            // 隱藏所有內容
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            // 重置所有按鈕樣式
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('border-blue-600', 'text-blue-600', 'border-emerald-600', 'text-emerald-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // 顯示目標內容與反白按鈕
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+            
+            // 針對不同 Tab 調整強調顏色
+            let activeColorClass = tabId === 'tab3' ? 'border-emerald-600' : 'border-blue-600';
+            let activeTextColorClass = tabId === 'tab3' ? 'text-emerald-600' : 'text-blue-600';
+            
+            document.getElementById('btn-' + tabId).classList.remove('border-transparent', 'text-gray-500');
+            document.getElementById('btn-' + tabId).classList.add(activeColorClass, activeTextColorClass);
+        }
+
+        // 註冊 Chart.js 標籤套件並繪製圖表
         document.addEventListener('DOMContentLoaded', function() {
-            // 註冊 DataLabels 插件
             Chart.register(ChartDataLabels);
 
-            // 通用圖表設定函數
             function createChart(ctx, titleText, labels, dataPoints, remarks, colorHex) {
                 return new Chart(ctx, {
                     type: 'line',
@@ -334,12 +758,8 @@
                                 padding: 6,
                                 color: '#1f2937',
                                 font: { size: 12, family: 'sans-serif' },
-                                formatter: function(value, context) {
-                                    return remarks[context.dataIndex];
-                                },
-                                display: function(context) {
-                                    return remarks[context.dataIndex] !== null; 
-                                }
+                                formatter: function(value, context) { return remarks[context.dataIndex]; },
+                                display: function(context) { return remarks[context.dataIndex] !== null; }
                             }
                         },
                         scales: {
@@ -359,7 +779,7 @@
                 });
             }
 
-            // --- Thinner 實驗紀錄數據 (100 torr) ---
+            // Thinner 數據
             const rawData_thinner = [
                 { time: '14:00', temp: 26.0, remark: null },
                 { time: '14:07', temp: 36.3, remark: null },
@@ -374,18 +794,12 @@
                 { time: '14:51', temp: 107.1, remark: null },
                 { time: '15:05', temp: 111.3, remark: ['塔底沸騰/結膠'] }
             ];
-            
-            const ctxThinner = document.getElementById('tempTimeChart_thinner').getContext('2d');
             createChart(
-                ctxThinner, 
-                'Thinner 內溫變化', 
-                rawData_thinner.map(d => d.time), 
-                rawData_thinner.map(d => d.temp), 
-                rawData_thinner.map(d => d.remark),
-                '#2563eb' // Blue
+                document.getElementById('tempTimeChart_thinner').getContext('2d'), 
+                'Thinner 內溫變化', rawData_thinner.map(d => d.time), rawData_thinner.map(d => d.temp), rawData_thinner.map(d => d.remark), '#2563eb'
             );
 
-            // --- PMA 實驗紀錄數據 (100 torr) ---
+            // PMA 數據
             const rawData_pma = [
                 { time: '11:12', temp: 25.0, remark: null },
                 { time: '11:18', temp: 45.0, remark: '瓶壁有蒸汽' },
@@ -396,15 +810,9 @@
                 { time: '11:39', temp: 88.9, remark: ['塔底快乾', '溫度計碰不到液面'] },
                 { time: '11:42', temp: 92.1, remark: ['塔底乾涸', '溫度計碰到器壁'] }
             ];
-
-            const ctxPma = document.getElementById('tempTimeChart_pma').getContext('2d');
             createChart(
-                ctxPma, 
-                'PMA 內溫變化', 
-                rawData_pma.map(d => d.time), 
-                rawData_pma.map(d => d.temp), 
-                rawData_pma.map(d => d.remark),
-                '#059669' // Emerald Green
+                document.getElementById('tempTimeChart_pma').getContext('2d'), 
+                'PMA 內溫變化', rawData_pma.map(d => d.time), rawData_pma.map(d => d.temp), rawData_pma.map(d => d.remark), '#059669'
             );
         });
     </script>
